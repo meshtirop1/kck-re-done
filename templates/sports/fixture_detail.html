@@ -1,0 +1,215 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}{{ fixture.home_team.name }} vs {{ fixture.away_team.name }} — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="section-sp" style="padding-top:2rem;">
+    <div class="container-sp">
+        <a href="{% url 'sports:fixture_list' %}" class="sp-btn sp-btn-ghost" style="margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> Back to Fixtures
+        </a>
+
+        {# Match header #}
+        <div class="sp-fixture {% if fixture.status == 'live' %}live{% endif %}" style="padding:3rem 2rem;">
+            <div class="meta" style="justify-content:center;margin-bottom:2rem;">
+                <span class="sp-badge">{{ fixture.competition.name }}</span>
+                {% if fixture.status == 'live' %}
+                    <span class="sp-badge sp-badge-live"><span class="live-pulse"></span> LIVE</span>
+                {% elif fixture.status == 'completed' %}
+                    <span class="sp-badge sp-badge-completed">FULL TIME</span>
+                {% elif fixture.status == 'postponed' %}
+                    <span class="sp-badge sp-badge-postponed">POSTPONED</span>
+                {% elif fixture.status == 'cancelled' %}
+                    <span class="sp-badge sp-badge-cancelled">CANCELLED</span>
+                {% else %}
+                    <span class="sp-badge sp-badge-scheduled">SCHEDULED</span>
+                {% endif %}
+            </div>
+
+            <div class="teams" style="gap:3rem;">
+                <div class="team" style="flex:1;">
+                    <a href="{% url 'sports:team_detail' fixture.home_team.slug %}" style="text-decoration:none;color:inherit;">
+                        {% if fixture.home_team.logo %}
+                            <img src="{{ fixture.home_team.logo.url }}" class="team-logo" style="width:120px;height:120px;font-size:2.5rem;" alt="{{ fixture.home_team.name }}">
+                        {% else %}
+                            <div class="team-logo" style="width:120px;height:120px;font-size:2.5rem;">{{ fixture.home_team.short_name|default:fixture.home_team.name|slice:":2"|upper }}</div>
+                        {% endif %}
+                        <div class="team-name" style="font-size:1.5rem;margin-top:1rem;">{{ fixture.home_team.name }}</div>
+                    </a>
+                </div>
+
+                {% if fixture.status == 'completed' or fixture.status == 'live' %}
+                <div class="score" style="font-size:4rem;">
+                    <span {% if fixture.home_score > fixture.away_score %}class="won"{% endif %}>{{ fixture.home_score|default:0 }}</span>
+                    <span class="sep">-</span>
+                    <span {% if fixture.away_score > fixture.home_score %}class="won"{% endif %}>{{ fixture.away_score|default:0 }}</span>
+                </div>
+                {% else %}
+                <div style="text-align:center;">
+                    <div class="vs" style="font-size:2rem;padding:0.75rem 1.5rem;">VS</div>
+                    <div style="margin-top:1rem;color:var(--sp-gold,#FFD700);font-family:Oswald,sans-serif;font-size:1.25rem;">
+                        {{ fixture.kickoff|date:"l, F j" }}
+                    </div>
+                    <div style="color:var(--sp-text-dim,#8a93a4);">
+                        <i class="bi bi-clock"></i> {{ fixture.kickoff|date:"g:i A" }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="team" style="flex:1;">
+                    <a href="{% url 'sports:team_detail' fixture.away_team.slug %}" style="text-decoration:none;color:inherit;">
+                        {% if fixture.away_team.logo %}
+                            <img src="{{ fixture.away_team.logo.url }}" class="team-logo" style="width:120px;height:120px;font-size:2.5rem;" alt="{{ fixture.away_team.name }}">
+                        {% else %}
+                            <div class="team-logo" style="width:120px;height:120px;font-size:2.5rem;">{{ fixture.away_team.short_name|default:fixture.away_team.name|slice:":2"|upper }}</div>
+                        {% endif %}
+                        <div class="team-name" style="font-size:1.5rem;margin-top:1rem;">{{ fixture.away_team.name }}</div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer" style="margin-top:2rem;justify-content:center;gap:2rem;">
+                <span><i class="bi bi-geo-alt"></i> {{ fixture.venue|default:"Venue TBA" }}</span>
+                <span><i class="bi bi-calendar"></i> {{ fixture.kickoff|date:"D, M j, Y · g:i A" }}</span>
+                {% if fixture.referee %}<span><i class="bi bi-person-badge"></i> Ref: {{ fixture.referee }}</span>{% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# MVP #}
+{% if fixture.mvp %}
+<section class="section-sp section-alt">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar" style="background:var(--sp-gold,#FFD700);"></div>
+            <h2 style="color:var(--sp-gold,#FFD700);">MAN OF THE MATCH</h2>
+        </div>
+        <div style="max-width:400px;margin:0 auto;">
+            <div class="sp-player">
+                {% if fixture.mvp.photo %}
+                    <img src="{{ fixture.mvp.photo.url }}" class="photo" alt="{{ fixture.mvp.name }}">
+                {% else %}
+                    <div class="photo" style="display:flex;align-items:center;justify-content:center;font-size:2rem;"><i class="bi bi-person"></i></div>
+                {% endif %}
+                <div class="jersey">#{{ fixture.mvp.jersey_number|default:"-" }}</div>
+                <div class="name">{{ fixture.mvp.name }}</div>
+                <div class="pos">{{ fixture.mvp.position|default:"" }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# LINEUPS #}
+<section class="section-sp">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>LINEUPS</h2>
+        </div>
+        <div class="grid-2">
+            {# HOME #}
+            <div>
+                <h3 style="font-family:Oswald,sans-serif;margin-bottom:1rem;">
+                    {{ fixture.home_team.name }}
+                </h3>
+                {% if home_lineup %}
+                <div class="grid-4">
+                    {% for player in home_lineup %}
+                    <div class="sp-player {% if player.is_captain %}captain{% endif %}">
+                        {% if player.photo %}
+                            <img src="{{ player.photo.url }}" class="photo" alt="{{ player.name }}">
+                        {% else %}
+                            <div class="photo" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="bi bi-person"></i></div>
+                        {% endif %}
+                        <div class="jersey">#{{ player.jersey_number|default:"-" }}</div>
+                        <div class="name">{{ player.name }}</div>
+                        <div class="pos">{{ player.position|default:"" }}</div>
+                        {% if player.goals or player.assists or player.yellow_cards or player.red_cards %}
+                        <div style="margin-top:0.5rem;display:flex;gap:0.25rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;">
+                            {% if player.goals %}<span title="Goals">⚽ {{ player.goals }}</span>{% endif %}
+                            {% if player.assists %}<span title="Assists">🅰 {{ player.assists }}</span>{% endif %}
+                            {% if player.yellow_cards %}<span title="Yellow">🟨 {{ player.yellow_cards }}</span>{% endif %}
+                            {% if player.red_cards %}<span title="Red">🟥 {{ player.red_cards }}</span>{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="sp-empty"><p>Lineup not announced.</p></div>
+                {% endif %}
+            </div>
+
+            {# AWAY #}
+            <div>
+                <h3 style="font-family:Oswald,sans-serif;margin-bottom:1rem;">
+                    {{ fixture.away_team.name }}
+                </h3>
+                {% if away_lineup %}
+                <div class="grid-4">
+                    {% for player in away_lineup %}
+                    <div class="sp-player {% if player.is_captain %}captain{% endif %}">
+                        {% if player.photo %}
+                            <img src="{{ player.photo.url }}" class="photo" alt="{{ player.name }}">
+                        {% else %}
+                            <div class="photo" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><i class="bi bi-person"></i></div>
+                        {% endif %}
+                        <div class="jersey">#{{ player.jersey_number|default:"-" }}</div>
+                        <div class="name">{{ player.name }}</div>
+                        <div class="pos">{{ player.position|default:"" }}</div>
+                        {% if player.goals or player.assists or player.yellow_cards or player.red_cards %}
+                        <div style="margin-top:0.5rem;display:flex;gap:0.25rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;">
+                            {% if player.goals %}<span title="Goals">⚽ {{ player.goals }}</span>{% endif %}
+                            {% if player.assists %}<span title="Assists">🅰 {{ player.assists }}</span>{% endif %}
+                            {% if player.yellow_cards %}<span title="Yellow">🟨 {{ player.yellow_cards }}</span>{% endif %}
+                            {% if player.red_cards %}<span title="Red">🟥 {{ player.red_cards }}</span>{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="sp-empty"><p>Lineup not announced.</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# MATCH REPORT #}
+{% if fixture.match_report %}
+<section class="section-sp section-alt">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>MATCH REPORT</h2>
+        </div>
+        <div class="sp-fixture" style="padding:2rem;">
+            {{ fixture.match_report|safe }}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# HIGHLIGHTS #}
+{% if fixture.highlights_video_url %}
+<section class="section-sp">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>HIGHLIGHTS</h2>
+        </div>
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;">
+            <iframe src="{{ fixture.highlights_video_url }}"
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

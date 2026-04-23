@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}{{ event.title }} - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>{{ event.title }}</h1>
+        <p class="lead">{{ event.date|date:"l, F j, Y - g:i a" }}</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                {% if event.image %}<img src="{{ event.image.url }}" alt="{{ event.title }}" class="img-fluid rounded mb-4">{% endif %}
+                <h3>About this event</h3>
+                <div class="lead">{{ event.description|linebreaks }}</div>
+
+                {% if event.gallery_images.all %}
+                <h4 class="mt-5">Gallery</h4>
+                <div class="row g-2">
+                    {% for img in event.gallery_images.all %}
+                    <div class="col-md-4"><img src="{{ img.image.url }}" class="img-fluid rounded" alt="{{ img.caption }}"></div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h5>Event Details</h5>
+                        <div class="mb-3"><i class="bi bi-calendar text-kck-blue"></i> <strong>Date:</strong><br>{{ event.date|date:"l, F j, Y" }}</div>
+                        <div class="mb-3"><i class="bi bi-clock text-kck-blue"></i> <strong>Time:</strong><br>{{ event.date|date:"g:i a" }}{% if event.end_date %} - {{ event.end_date|date:"g:i a" }}{% endif %}</div>
+                        <div class="mb-3"><i class="bi bi-geo-alt text-kck-blue"></i> <strong>Location:</strong><br>{{ event.location }}</div>
+                        {% if event.capacity %}
+                        <div class="mb-3">
+                            <i class="bi bi-people text-kck-blue"></i> <strong>Registered:</strong> {{ event.registration_count }} / {{ event.capacity }}
+                            <div class="progress mt-2" style="height:6px;">
+                                <div class="progress-bar bg-kck-red" style="width: {% widthratio event.registration_count event.capacity 100 %}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if event.registration_deadline %}
+                        <div class="mb-3"><i class="bi bi-hourglass text-kck-blue"></i> <strong>Deadline:</strong><br>{{ event.registration_deadline|date:"M j, Y" }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if not event.is_past %}
+                    {% if user.is_authenticated %}
+                        {% if is_registered %}
+                        <div class="alert alert-success"><i class="bi bi-check-circle"></i> You are registered for this event!</div>
+                        <form method="post" action="{% url 'events:event_cancel' event.slug %}" class="confirm-form" data-confirm="Cancel your registration?">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger w-100">Cancel Registration</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'events:event_register' event.slug %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg w-100"><i class="bi bi-check-circle"></i> Register Now</button>
+                        </form>
+                        {% endif %}
+                    {% else %}
+                    <div class="alert alert-info">
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100">Login to Register</a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                <div class="alert alert-secondary">This event has ended.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Event Highlights - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Event Highlights</h1>
+        <p class="lead">Memorable moments from our community gatherings</p>
+    </div>
+</section>
+
+{% if featured_events %}
+<section>
+    <div class="container">
+        <h3 class="mb-4"><i class="bi bi-star-fill text-warning"></i> Featured Events</h3>
+        <div class="row g-4">
+            {% for event in featured_events %}
+            <div class="col-md-6">
+                <div class="card event-card h-100 border-0 shadow-sm">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height:300px; object-fit:cover;">
+                    {% else %}
+                        <div class="bg-kck-blue text-white text-center py-5">
+                            <i class="bi bi-star" style="font-size:4rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-kck-red mb-2">Featured</span>
+                        <h4>{{ event.title }}</h4>
+                        <p class="text-muted small"><i class="bi bi-calendar"></i> {{ event.date|date:"F j, Y" }} &middot; <i class="bi bi-geo-alt"></i> {{ event.location }}</p>
+                        <p>{{ event.description|truncatewords:30 }}</p>
+                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section-alt">
+    <div class="container">
+        <h3 class="mb-4">Past Event Gallery</h3>
+        {% if past_events %}
+        <div class="row g-3">
+            {% for event in past_events %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'events:event_detail' event.slug %}" class="text-decoration-none">
+                    <div class="card event-card h-100 border-0">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="height:180px; object-fit:cover;">
+                        {% else %}
+                            <div class="bg-secondary text-white text-center py-4">
+                                <i class="bi bi-image" style="font-size:2rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <small class="text-muted">{{ event.date|date:"M Y" }}</small>
+                            <div class="fw-semibold small">{{ event.title|truncatewords:6 }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No past events to display yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <h3>Don't miss our upcoming events</h3>
+        <p class="lead">Stay connected with the community by joining our next gathering</p>
+        <a href="{% url 'events:event_list' %}" class="btn btn-light btn-lg">View All Events</a>
+    </div>
+</section>
+{% endblock %}

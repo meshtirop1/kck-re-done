@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}{% if is_edit %}Edit{% else %}New{% endif %} Announcement{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container" style="max-width: 860px;">
+    <a href="{% url 'communications:manage_announcements' %}" class="text-decoration-none mb-3 d-inline-block">
+      <i class="bi bi-arrow-left"></i> Back to list
+    </a>
+    <h1 class="fw-bold mb-4">{% if is_edit %}Edit Announcement{% else %}New Announcement{% endif %}</h1>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        {% crispy form %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

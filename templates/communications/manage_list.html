@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Manage Communications{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="fw-bold mb-0">Manage Communications</h1>
+      <div>
+        <a href="{% url 'communications:manage_announcements' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-megaphone"></i> Announcements
+        </a>
+        <a href="{% url 'communications:create' %}" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> New Communication
+        </a>
+      </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+      <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search subject/ref...">
+      </div>
+      <div class="col-md-3">
+        <select name="status" class="form-select">
+          <option value="">All statuses</option>
+          {% for value, label in statuses %}
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="category" class="form-select">
+          <option value="">All categories</option>
+          {% for value, label in categories %}
+            <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Ref #</th>
+              <th>Subject</th>
+              <th>Category</th>
+              <th>Audience</th>
+              <th>Status</th>
+              <th>Published</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for comm in page_obj %}
+              <tr>
+                <td class="font-monospace small">{{ comm.reference_number }}</td>
+                <td>{{ comm.subject|truncatechars:50 }}</td>
+                <td><span class="badge bg-secondary">{{ comm.get_category_display }}</span></td>
+                <td>{{ comm.get_audience_display }}</td>
+                <td>
+                  {% if comm.status == 'published' %}
+                    <span class="badge bg-success">Published</span>
+                  {% elif comm.status == 'draft' %}
+                    <span class="badge bg-warning text-dark">Draft</span>
+                  {% elif comm.status == 'processing' %}
+                    <span class="badge bg-info">Processing</span>
+                  {% else %}
+                    <span class="badge bg-secondary">{{ comm.get_status_display }}</span>
+                  {% endif %}
+                </td>
+                <td class="small text-muted">{{ comm.published_at|date:"M j, Y"|default:"-" }}</td>
+                <td class="text-end">
+                  <a href="{% url 'communications:manage_detail' comm.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                  <a href="{% url 'communications:edit' comm.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7" class="text-center text-muted py-4">No communications found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Kenya–Korea Relations - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Kenya &amp; Korea</h1>
+        <p class="lead">A journey of diplomacy, partnership, and enduring friendship between Kenya and Korea &mdash; and the community that's grown here because of it.</p>
+    </div>
+</section>
+
+<section class="py-3" style="background: #fff3cd; border-bottom: 2px solid #ffc107;">
+    <div class="container">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-info-circle-fill text-warning fs-4 flex-shrink-0"></i>
+            <div class="small mb-0">
+                <strong>KCK is a community organisation, not the Kenyan Embassy.</strong>
+                This page offers general historical context about Kenya–Korea relations and the Kenyan community in Korea.
+                The official Embassy of the Republic of Kenya in Seoul is a separate government institution.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h2 class="text-kck-blue">Kenya &amp; Korea — A Long Friendship</h2>
+                <p>Diplomatic relations between the Republic of Kenya and the Republic of Korea were formally established in 1964, just one year after Kenya gained independence. This early recognition marked the beginning of a partnership that has grown steadily over more than six decades.</p>
+                <p>In those early years, both nations were navigating the challenges of nation-building and economic development. The mutual recognition reflected a shared vision of self-determination, international cooperation, and peaceful coexistence in a rapidly changing world.</p>
+
+                <h2 class="text-kck-blue mt-5">Milestones in Bilateral Cooperation</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><strong class="text-kck-red">1964</strong> &mdash; Kenya and South Korea establish diplomatic relations.</li>
+                    <li class="mb-3"><strong class="text-kck-red">1980s</strong> &mdash; Expansion of economic cooperation and trade missions between the two countries.</li>
+                    <li class="mb-3"><strong class="text-kck-red">1990s</strong> &mdash; Launch of educational exchange programs and Korean development assistance initiatives in Kenya.</li>
+                    <li class="mb-3"><strong class="text-kck-red">2000s</strong> &mdash; Strengthening of high-level political dialogue and bilateral agreements.</li>
+                    <li class="mb-3"><strong class="text-kck-red">2010s</strong> &mdash; Deepening of investment ties and cultural cooperation, including heritage exhibitions and arts exchanges.</li>
+                    <li class="mb-3"><strong class="text-kck-red">Today</strong> &mdash; A modern partnership focused on technology, sustainable development, and people-to-people connections.</li>
+                </ul>
+
+                <h2 class="text-kck-blue mt-5">The Kenyan Community in Korea</h2>
+                <p>Alongside the formal diplomatic relationship, a vibrant community of Kenyans has taken root in Korea &mdash; students pursuing degrees, professionals working in diverse industries, entrepreneurs building businesses, athletes competing in Korean leagues, and families making Korea home.</p>
+                <p>From the earliest Kenyan students who arrived in Korea to the thriving diaspora of today, Kenyans in Korea have built networks of support, celebration, and advocacy. <strong>Kenya Community in Korea (KCK)</strong> grew out of this spirit &mdash; a volunteer-run community organisation, by and for Kenyans in Korea.</p>
+
+                <h2 class="text-kck-blue mt-5">About KCK</h2>
+                <p>KCK exists to connect and serve Kenyans living in Korea. We organise community events and cultural celebrations, run welfare programmes for members in need, issue community certificates and endorsements, and facilitate liaison with the Kenyan Embassy when members need help with official consular matters.</p>
+                <p>We are <strong>not affiliated with the Kenyan or Korean government</strong>, and we do not issue official documents. What we offer is community, support, and a trusted bridge between Kenyans in Korea and the institutions that serve us.</p>
+
+                <h2 class="text-kck-blue mt-5">Looking Forward</h2>
+                <p>As the Kenya–Korea partnership continues to evolve &mdash; across technology, green energy, education and global cooperation &mdash; the Kenyan community in Korea grows alongside it. KCK looks to the future with optimism, building on a strong foundation of friendship and shared goals.</p>
+                <p class="fw-semibold text-kck-red"><em>Sote Pamoja &mdash; all together.</em></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Be Part of Our Story</h2>
+        <p class="lead">Connect with the Kenyan community in Korea &mdash; events, welfare, liaison, and friendship.</p>
+        <a href="{% url 'events:event_list' %}" class="btn btn-light btn-lg">
+            <i class="bi bi-calendar-event"></i> View Events
+        </a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg ms-2">
+            <i class="bi bi-person-plus"></i> Join the Community
+        </a>
+    </div>
+</section>
+{% endblock %}

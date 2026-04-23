@@ -1,0 +1,208 @@
+{% extends 'portal/portal_base.html' %}
+{% block title %}Admin Portal — {{ SITE_NAME }}{% endblock %}
+{% block portal_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Admin Portal</h2>
+        <p class="text-muted mb-0">Welcome back, {{ user.first_name|default:user.username }}. Manage all site content from here.</p>
+    </div>
+    <div class="d-none d-md-flex gap-2">
+        <a href="{% url 'portal:list' 'visa-types' %}?new=1" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> Add Visa Type</a>
+        <a href="{% url 'portal:list' 'events' %}" class="btn btn-danger"><i class="bi bi-calendar-plus"></i> New Event</a>
+    </div>
+</div>
+
+{# Stats grid #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'visa-types' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.visa_types }}</div><div class="stat-label">Visa Types</div></div>
+                <div class="stat-icon">🛂</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'service-guides' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.service_guides }}</div><div class="stat-label">Service Guides</div></div>
+                <div class="stat-icon">📋</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'events' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.events_upcoming }}</div><div class="stat-label">Active Events</div></div>
+                <div class="stat-icon">📅</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'faqs' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.faqs }}</div><div class="stat-label">FAQs</div></div>
+                <div class="stat-icon">❓</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'announcements' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.announcements }}</div><div class="stat-label">Announcements</div></div>
+                <div class="stat-icon">📢</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'news' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.news }}</div><div class="stat-label">News Articles</div></div>
+                <div class="stat-icon">📰</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'leaders' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.leaders }}</div><div class="stat-label">Leaders</div></div>
+                <div class="stat-icon">👥</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'testimonials' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.testimonials }}</div><div class="stat-label">Testimonials</div></div>
+                <div class="stat-icon">💬</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'market:leader_queue' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-number">
+                        {{ stats.market_sellers_pending }}
+                        {% if stats.market_sellers_pending %}<span class="badge bg-danger" style="font-size:0.5em; vertical-align:middle;">NEW</span>{% endif %}
+                    </div>
+                    <div class="stat-label">Market Sellers (pending)</div>
+                </div>
+                <div class="stat-icon">🛒</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+{# Workflow counters #}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-warning">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number">{{ stats.embassy_requests_open }}</div><div class="stat-label">Open Embassy Requests</div></div>
+                <a href="{% url 'embassy_liaison:officer_request_list' %}" class="btn btn-sm btn-outline-primary align-self-center">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-info">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number">{{ stats.contact_messages_unread }}</div><div class="stat-label">Unread Contact Messages</div></div>
+                <a href="/django-admin/core/contactmessage/" class="btn btn-sm btn-outline-primary align-self-center">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-success">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number">{{ stats.certificates }}</div><div class="stat-label">Certificates Issued</div></div>
+                <a href="{% url 'certificates:manage_list' %}" class="btn btn-sm btn-outline-primary align-self-center">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 {% if stats.market_sellers_pending %}border-danger{% else %}border-warning{% endif %}">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-number">{{ stats.market_sellers_pending }}</div>
+                    <div class="stat-label">
+                        Pending Market Sellers
+                        {% if stats.market_sellers_pending %}
+                            <span class="badge bg-danger ms-1">Review now</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'market:leader_queue' %}" class="btn btn-sm btn-outline-primary align-self-center">Review</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-primary">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number">{{ stats.market_products }}</div><div class="stat-label">Live Market Products</div></div>
+                <a href="{% url 'market:home' %}" class="btn btn-sm btn-outline-primary align-self-center" target="_blank">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-secondary">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number">{{ stats.market_sellers_approved }}</div><div class="stat-label">Approved Sellers</div></div>
+                <a href="{% url 'market:leader_all_sellers' %}" class="btn btn-sm btn-outline-primary align-self-center">Browse</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Recent activity #}
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="portal-card">
+            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="bi bi-envelope"></i> Recent Contact Messages</h6></div>
+            <div class="card-body p-0">
+                {% if recent_contact %}
+                <ul class="list-group list-group-flush">
+                    {% for msg in recent_contact %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ msg.name }}</strong> — {{ msg.subject|truncatechars:40 }}
+                                <div class="small text-muted">{{ msg.email }}</div>
+                            </div>
+                            <small class="text-muted">{{ msg.created_at|date:"M j" }}</small>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center p-4 mb-0">No messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="portal-card">
+            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="bi bi-passport"></i> Recent Embassy Requests</h6></div>
+            <div class="card-body p-0">
+                {% if recent_requests %}
+                <ul class="list-group list-group-flush">
+                    {% for req in recent_requests %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'embassy_liaison:officer_request_detail' req.id %}">{{ req.request_number }}</a> — {{ req.get_service_type_display }}
+                                <div class="small text-muted">{{ req.full_name }}</div>
+                            </div>
+                            <span class="badge bg-{{ req.status_badge_class }}">{{ req.get_status_display }}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center p-4 mb-0">No requests yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

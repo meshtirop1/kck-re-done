@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Register - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light min-vh-75">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card shadow border-0">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-kck-blue">Create Your Account</h2>
+                        </div>
+                        {% crispy form %}
+                        <hr class="my-4">
+                        <p class="text-center mb-0">Already have an account? <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold">Sign In</a></p>
+                    </div>
+                </div>
+                <p class="text-center text-muted small mt-3 mb-0">
+                    By registering, you agree to our Terms of Service and Privacy Policy.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

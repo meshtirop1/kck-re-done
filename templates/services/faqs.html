@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}FAQs - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Frequently Asked Questions</h1>
+        <p class="lead">Find answers to common questions</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {% for category, faqs in grouped_faqs.items %}
+                <h3 class="mt-4 mb-3 text-kck-blue">{{ category }}</h3>
+                <div class="accordion mb-4" id="faq-{{ forloop.counter }}">
+                    {% for faq in faqs %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                {{ faq.question }}
+                            </button>
+                        </h2>
+                        <div id="faq-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faq-{{ forloop.parentloop.counter }}">
+                            <div class="accordion-body">{{ faq.answer|linebreaks }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% empty %}
+                <div class="text-center py-5 text-muted">
+                    <p>No FAQs available.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Still have questions?</h2>
+        <p class="lead">Contact us and we'll be happy to help</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">Contact Us</a>
+    </div>
+</section>
+{% endblock %}

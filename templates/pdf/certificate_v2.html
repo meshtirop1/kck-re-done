@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@page { size: A4 landscape; margin: 0; }
+body { margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', serif; color: #1a1a1a; }
+.certificate {
+    width: 297mm; height: 210mm; padding: 15mm; box-sizing: border-box;
+    position: relative; background: #fffdf7;
+    border: 15px double #0B3D91; outline: 3px solid #C8b470; outline-offset: 6px;
+}
+.corner { position: absolute; width: 60px; height: 60px; border: 4px solid #C8102E; }
+.corner.tl { top: 10mm; left: 10mm; border-right: none; border-bottom: none; }
+.corner.tr { top: 10mm; right: 10mm; border-left: none; border-bottom: none; }
+.corner.bl { bottom: 10mm; left: 10mm; border-right: none; border-top: none; }
+.corner.br { bottom: 10mm; right: 10mm; border-left: none; border-top: none; }
+.watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 500px; opacity: 0.05; z-index: 0; }
+.content { position: relative; z-index: 1; text-align: center; padding: 5mm 10mm; }
+.logo { width: 100px; display: block; margin: 0 auto 8px; }
+.org-name { font-size: 16pt; color: #0B3D91; font-weight: bold; letter-spacing: 3px; margin: 4px 0; }
+.org-subtitle { font-size: 10pt; color: #666; letter-spacing: 2px; margin-bottom: 20px; }
+.cert-title { font-size: 36pt; color: #C8102E; font-weight: bold; text-transform: uppercase; letter-spacing: 4px; margin: 20px 0 5px; font-family: Georgia, serif; }
+.cert-subtitle { font-size: 16pt; color: #0B3D91; font-style: italic; margin-bottom: 25px; }
+.divider { width: 300px; margin: 15px auto; text-align: center; }
+.divider .line { display: inline-block; vertical-align: middle; width: 120px; height: 1px; background: #C8b470; }
+.divider .diamond { display: inline-block; width: 10px; height: 10px; background: #C8b470; transform: rotate(45deg); margin: 0 10px; vertical-align: middle; }
+.presented-to { font-size: 12pt; color: #555; margin-bottom: 15px; font-style: italic; }
+.recipient-name { font-size: 34pt; color: #0B3D91; font-weight: bold; font-family: Georgia, serif; margin: 10px 0; padding-bottom: 8px; border-bottom: 2px solid #C8b470; display: inline-block; min-width: 60%; }
+.body-text { font-size: 12pt; color: #333; line-height: 1.6; margin: 25px auto; max-width: 75%; }
+.event-title { font-size: 11pt; color: #666; margin-top: 8px; font-style: italic; }
+.footer { position: absolute; bottom: 18mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; align-items: flex-end; }
+.signature-block { text-align: center; width: 33%; }
+.signature-line { border-top: 2px solid #333; width: 200px; margin: 0 auto 4px; padding-top: 40px; }
+.signature-img { max-height: 50px; }
+.signature-name { font-size: 11pt; font-weight: bold; color: #0B3D91; }
+.signature-role { font-size: 9pt; color: #666; font-style: italic; }
+.cert-number-block { text-align: center; width: 33%; font-size: 9pt; color: #555; }
+.cert-number { font-weight: bold; color: #0B3D91; }
+.qr-block { text-align: center; width: 33%; }
+.qr-block img { width: 80px; height: 80px; border: 1px solid #ddd; padding: 2px; background: white; }
+.qr-caption { font-size: 8pt; color: #666; margin-top: 4px; }
+.flag-bar { display: flex; height: 8px; margin: 10px 0; }
+.flag-bar .black { flex: 1; background: #000; }
+.flag-bar .red { flex: 1; background: #C8102E; }
+.flag-bar .green { flex: 1; background: #007A33; }
+</style>
+</head>
+<body>
+<div class="certificate">
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <img src="file:///{{ logo_path }}" class="watermark" alt="">
+
+    <div class="content">
+        <img src="file:///{{ logo_path }}" class="logo" alt="">
+        <div class="org-name">KENYA COMMUNITY IN KOREA</div>
+        <div class="org-subtitle">Connecting Kenyans in South Korea</div>
+        <div class="flag-bar"><div class="black"></div><div class="red"></div><div class="green"></div></div>
+
+        <div class="cert-title">{{ certificate.get_cert_type_display|cut:"Certificate of "|default:certificate.title|default:"Certificate" }}</div>
+        <div class="cert-subtitle">This certificate is proudly presented to</div>
+
+        <div class="divider">
+            <span class="line"></span><span class="diamond"></span><span class="line"></span>
+        </div>
+
+        <div class="recipient-name">{{ certificate.recipient_name }}</div>
+
+        <div class="body-text">{{ certificate.body }}</div>
+        {% if certificate.event_title %}<div class="event-title">&mdash; {{ certificate.event_title }} &mdash;</div>{% endif %}
+    </div>
+
+    <div class="footer">
+        <div class="signature-block">
+            {% if signature_url %}
+                <img src="file:///{{ signature_url }}" class="signature-img" alt="">
+            {% endif %}
+            <div class="signature-line"></div>
+            <div class="signature-name">{{ issuer_name }}</div>
+            <div class="signature-role">{{ issuer_role }}</div>
+        </div>
+        <div class="cert-number-block">
+            <div><strong>Date Issued</strong></div>
+            <div>{{ certificate.issued_date|date:"F j, Y" }}</div>
+            <div style="margin-top:8px;"><strong>Certificate No.</strong></div>
+            <div class="cert-number">{{ certificate.cert_number }}</div>
+        </div>
+        <div class="qr-block">
+            <img src="{{ qr_data_url }}" alt="Verify">
+            <div class="qr-caption">Scan to verify<br>{{ site_url }}</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

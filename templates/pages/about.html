@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}About KCK - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>About Kenya Community in Korea</h1>
+        <p class="lead">A community organization by and for Kenyans living in South Korea</p>
+        <div class="mt-3 d-flex justify-content-center">
+            <span class="slogan-badge">SOTE PAMOJA &middot; All Together</span>
+        </div>
+    </div>
+</section>
+
+{# IMPORTANT DISCLAIMER SECTION #}
+<section class="py-5" style="background: #fff3cd; border-bottom: 3px solid #ffc107;">
+    <div class="container">
+        <div class="d-flex gap-4 align-items-start">
+            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 3rem;"></i>
+            <div>
+                <h3 class="fw-bold text-kck-red">We Are a Community Liaison, Not The Embassy</h3>
+                <p class="lead mb-2">The Kenya Community in Korea (KCK) is a <strong>community-led organization</strong> — we are not the Kenyan Embassy, but we work to help you access embassy services more easily.</p>
+                <p class="mb-2">Through our <strong>Embassy Services Liaison</strong>, community members can submit service requests (passport applications, renewals, notarization, and more) through our platform. Our trained KCK officers review each request, help members prepare correct documentation, and coordinate with the <strong>Embassy of the Republic of Kenya in Seoul</strong> on behalf of the member.</p>
+                <p class="mb-0"><strong>The embassy remains the sole issuer</strong> of all official Kenyan government documents. KCK facilitates and coordinates — we do not issue passports, visas, or IDs ourselves. <a href="{% url 'embassy_liaison:info' %}" class="btn btn-sm btn-outline-dark mt-2">Learn How the Liaison Service Works →</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <h2 class="text-kck-blue fw-bold mb-3">Who We Are</h2>
+                <p class="lead">KCK is a community platform that connects, supports, and celebrates Kenyans living, studying, and working in South Korea.</p>
+                <p>Our community brings together students, professionals, workers, tourists, and long-term residents who share a common heritage and the shared experience of building lives in Korea. Whether you just arrived or have been here for years, KCK is here to help you stay connected to home and find support in your new home.</p>
+
+                <h3 class="text-kck-blue fw-bold mt-5 mb-3">What We Do</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Community Events</strong> — cultural celebrations, networking gatherings, sports, Swahili classes</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Welfare Support</strong> — assistance during emergencies, condolence messages, peer support</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Official Communications</strong> — community letters, announcements, news from community leadership</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Certificates & Recognition</strong> — certificates of appreciation, participation, and leadership for community members</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Community Directory</strong> — a verified network of Kenyans across Korean cities</li>
+                    <li class="mb-3"><i class="bi bi-check-circle-fill text-success"></i> <strong>Information Hub</strong> — general guidance on visas, life in Korea, and cultural integration</li>
+                </ul>
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="text-kck-blue fw-bold">Our Mission</h4>
+                        <p>To connect, serve, and support the Kenyan community in South Korea while promoting Kenyan culture and fostering goodwill between our two nations.</p>
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="text-kck-red fw-bold">Our Vision</h4>
+                        <p>A thriving, well-connected Kenyan diaspora community in Korea that celebrates our heritage, supports one another, and contributes positively to both Kenya and Korea.</p>
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0 bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="text-kck-blue fw-bold">For Embassy Services</h5>
+                        <p class="small mb-2">Passport, visa, and other official consular services are handled by the <strong>Embassy of the Republic of Kenya in Seoul</strong>, not by KCK.</p>
+                        <a href="https://www.mfa.go.ke/" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right"></i> Kenya Ministry of Foreign Affairs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <h2>How We Serve The Community</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card feature-card p-4 text-center h-100 border-top border-5 border-danger">
+                    <div class="card-icon">🛂</div>
+                    <h5>Embassy Service Liaison</h5>
+                    <p class="text-muted">Submit embassy-service requests (passport, notarization, etc.) online. Our officers review and coordinate with the Kenyan Embassy.</p>
+                    <a href="{% url 'embassy_liaison:info' %}" class="btn btn-danger mt-auto">Start a Request</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card p-4 text-center h-100">
+                    <div class="card-icon">👥</div>
+                    <h5>Elected Leadership</h5>
+                    <p class="text-muted">Our president, secretary, treasurer, welfare officer, and committee members are elected by the community.</p>
+                    <a href="{% url 'leaders:list' %}" class="btn btn-outline-primary mt-auto">Meet Our Leaders</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card p-4 text-center h-100">
+                    <div class="card-icon">📜</div>
+                    <h5>Official Certificates</h5>
+                    <p class="text-muted">We issue certificates of appreciation, participation, and recognition to community members. Every certificate can be verified online.</p>
+                    <a href="{% url 'certificates:verify_home' %}" class="btn btn-outline-primary mt-auto">Verify a Certificate</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card p-4 text-center h-100">
+                    <div class="card-icon">📢</div>
+                    <h5>Community Communications</h5>
+                    <p class="text-muted">Official letters, announcements, and news from our community leadership to keep everyone informed.</p>
+                    <a href="{% url 'communications:public_list' %}" class="btn btn-outline-primary mt-auto">View Communications</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Join the KCK Community</h2>
+        <p class="lead">Register an account to access member-only features, apply for certificates, and stay updated.</p>
+        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg me-2">Register Now</a>
+        <a href="{% url 'core:contact' %}" class="btn btn-outline-light btn-lg">Contact Us</a>
+    </div>
+</section>
+{% endblock %}

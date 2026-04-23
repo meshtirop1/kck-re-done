@@ -1,0 +1,82 @@
+{% extends 'portal/portal_base.html' %}
+{% load static %}
+{% block title %}Seller Applications Queue — Leader Portal{% endblock %}
+{% block portal_content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-clipboard-check"></i> Seller Applications</h2>
+        <p class="text-muted mb-0">Review pending seller applications for the Kenyan Market.</p>
+    </div>
+    <a href="{% url 'market:leader_all_sellers' %}" class="btn btn-outline-primary">
+        <i class="bi bi-people"></i> All sellers
+    </a>
+</div>
+
+<div class="queue-stats">
+    <div class="queue-stat pending">
+        <div class="num">{{ pending_count|default:0 }}</div>
+        <div class="lbl">Pending review</div>
+    </div>
+    <div class="queue-stat approved">
+        <div class="num">{{ approved_total|default:0 }}</div>
+        <div class="lbl">Approved total</div>
+    </div>
+    <div class="queue-stat rejected">
+        <div class="num">{{ rejected_total|default:0 }}</div>
+        <div class="lbl">Rejected total</div>
+    </div>
+    <div class="queue-stat">
+        <div class="num">{{ suspended_total|default:0 }}</div>
+        <div class="lbl">Suspended</div>
+    </div>
+</div>
+
+{% if pending_apps %}
+<div class="queue-table table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Business</th>
+                <th>Applicant</th>
+                <th>City</th>
+                <th>Applied</th>
+                <th class="text-end">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in pending_apps %}
+            <tr>
+                <td>
+                    <strong>{{ app.business_name }}</strong>
+                    {% if app.categories_interested %}
+                        <div class="small text-muted">{{ app.categories_interested|truncatechars:60 }}</div>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ app.user.get_full_name|default:app.user.username }}
+                    <div class="small text-muted">@{{ app.user.username }}</div>
+                </td>
+                <td>{{ app.city|title|default:"—" }}</td>
+                <td>
+                    <span title="{{ app.applied_at|date:'M j, Y g:i a' }}">
+                        {{ app.applied_at|date:"M j, Y" }}
+                    </span>
+                </td>
+                <td class="text-end">
+                    <a href="{% url 'market:leader_review' app.id %}" class="btn btn-sm btn-primary fw-semibold">
+                        <i class="bi bi-eye"></i> Review
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-check2-all"></i>
+    <h4 class="mt-3 fw-bold">All caught up!</h4>
+    <p class="mb-0">No pending seller applications to review right now.</p>
+</div>
+{% endif %}
+{% endblock %}

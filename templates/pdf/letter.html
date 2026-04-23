@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ reference_number }} - {{ subject }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm 2cm 2cm 2cm;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.7;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* === HEADER - matches KCK official letterhead === */
+        .letterhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0;
+            padding-bottom: 10px;
+        }
+        .letterhead-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .letterhead-left img {
+            width: 70px;
+            height: 70px;
+        }
+        .letterhead-left .org-name {
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 16pt;
+            font-weight: bold;
+            color: #CC0000;
+            line-height: 1.2;
+        }
+        .letterhead-right {
+            text-align: right;
+            font-size: 9pt;
+            color: #333;
+            line-height: 1.6;
+        }
+        .letterhead-right .icon {
+            color: #CC0000;
+            font-weight: bold;
+        }
+
+        /* === COLOR BARS - Kenya flag + KCK brand === */
+        .color-bar {
+            height: 5px;
+            display: flex;
+            margin-bottom: 25px;
+        }
+        .color-bar .bar-black { flex: 1; background: #000000; }
+        .color-bar .bar-red { flex: 1; background: #CC0000; }
+        .color-bar .bar-white { flex: 0.3; background: #FFFFFF; }
+
+        /* === DATE LINE === */
+        .date-line {
+            text-align: right;
+            font-size: 10pt;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        /* === SUBJECT === */
+        .subject {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #003366;
+            text-align: center;
+            text-decoration: underline;
+            margin: 15px 0 20px;
+            line-height: 1.4;
+        }
+
+        /* === SALUTATION === */
+        .salutation {
+            margin-bottom: 12px;
+        }
+
+        /* === BODY === */
+        .body-content {
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+        .body-content p {
+            margin: 10px 0;
+        }
+        .body-content ol, .body-content ul {
+            margin: 10px 0 10px 20px;
+        }
+        .body-content li {
+            margin-bottom: 8px;
+        }
+
+        /* === FADED WATERMARK LOGO === */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.06;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .watermark img {
+            width: 350px;
+            height: 350px;
+        }
+
+        /* === HIGHLIGHT BOX (for dates, important info) === */
+        .highlight {
+            color: #CC0000;
+            font-weight: bold;
+        }
+
+        /* === SIGNATURE === */
+        .closing {
+            margin-top: 30px;
+        }
+        .closing .regards {
+            margin-bottom: 30px;
+        }
+        .closing .sig-name {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .closing .sig-title {
+            color: #333;
+            font-size: 10pt;
+        }
+
+        /* === REFERENCE LINE === */
+        .ref-line {
+            font-size: 8pt;
+            color: #999;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+        }
+
+        /* === FOOTER BAR === */
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            display: flex;
+        }
+        .footer-bar .bar-black { flex: 1; background: #000000; }
+        .footer-bar .bar-red { flex: 1; background: #CC0000; }
+    </style>
+</head>
+<body>
+    <!-- Faded Watermark Logo -->
+    <div class="watermark">
+        <img src="file:///C:/kck/backend/media/branding/kck-logo.png" alt="">
+    </div>
+
+    <!-- Letterhead Header -->
+    <div class="letterhead">
+        <div class="letterhead-left">
+            <img src="file:///C:/kck/backend/media/branding/kck-logo.png" alt="KCK Logo">
+            <div class="org-name">KENYA COMMUNITY<br>IN KOREA.</div>
+        </div>
+        <div class="letterhead-right">
+            <span class="icon">&#9993;</span> info@kenyakorea.com<br>
+            <span class="icon">&#9741;</span> www.kenyakorea.com<br>
+            <span class="icon">&#9742;</span> 010 5084 8654
+        </div>
+    </div>
+
+    <!-- Color Bar -->
+    <div class="color-bar">
+        <div class="bar-black"></div>
+        <div class="bar-red"></div>
+    </div>
+
+    <!-- Date -->
+    <div class="date-line">{{ date }}</div>
+
+    <!-- Subject -->
+    <div class="subject">{{ subject }}</div>
+
+    <!-- Salutation -->
+    <div class="salutation">Dear Fellow Kenyans in Korea (KCK Family),</div>
+
+    <!-- Body Content -->
+    <div class="body-content">
+        {{ body|safe }}
+    </div>
+
+    <!-- Closing -->
+    <div class="closing">
+        <div class="regards">Kind Regards</div>
+        <div class="sig-name">{{ sender_name }}</div>
+        <div class="sig-title">{{ sender_title }}</div>
+    </div>
+
+    <!-- Reference -->
+    <div class="ref-line">
+        Ref: {{ reference_number }} | Kenya Community in Korea | www.kenyakorea.com
+    </div>
+
+    <!-- Footer Color Bar -->
+    <div class="footer-bar">
+        <div class="bar-black"></div>
+        <div class="bar-red"></div>
+    </div>
+</body>
+</html>

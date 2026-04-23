@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{{ visa.name }} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <div class="visa-icon text-white display-4">{{ visa.icon }}</div>
+            <div>
+                <h1 class="mb-1">{{ visa.name }}</h1>
+                <p class="lead mb-0">{{ visa.short_description|default:visa.description|truncatechars:120 }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="text-kck-blue mb-3">About This Visa</h3>
+                        <p>{{ visa.description|linebreaks }}</p>
+                    </div>
+                </div>
+
+                {% if visa.requirements %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="text-kck-blue mb-3">Requirements</h3>
+                        <ul class="list-group list-group-flush">
+                            {% for req in visa.requirements %}
+                            <li class="list-group-item"><i class="bi bi-check-circle text-success me-2"></i>{{ req }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if visa.notes %}
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-info-circle"></i> Important Notes</h6>
+                    <p class="mb-0">{{ visa.notes|linebreaks }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card feature-card shadow-sm border-0 sticky-top" style="top: 100px;">
+                    <div class="card-body">
+                        <h5 class="text-kck-blue mb-3">Quick Facts</h5>
+                        <dl class="mb-3">
+                            <dt>Processing Time</dt>
+                            <dd>{{ visa.processing_time }}</dd>
+                            {% if visa.validity %}
+                            <dt>Validity</dt>
+                            <dd>{{ visa.validity }}</dd>
+                            {% endif %}
+                        </dl>
+                        <a href="{% url 'services:visa_apply' %}?type={{ visa.slug }}" class="btn btn-danger w-100 mb-2">Apply Now <i class="bi bi-arrow-right"></i></a>
+                        <a href="{% url 'services:visa_types' %}" class="btn btn-outline-secondary w-100"><i class="bi bi-arrow-left"></i> All Visa Types</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

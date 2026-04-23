@@ -1,0 +1,171 @@
+{% extends 'portal/portal_base.html' %}
+{% block title %}{{ endorsement.reference_number }} - Manage Endorsement - {{ SITE_NAME }}{% endblock %}
+{% block portal_content %}
+<div class="portal-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <nav aria-label="breadcrumb" class="mb-1">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="{% url 'endorsements:manage_list' %}">Endorsements</a></li>
+                <li class="breadcrumb-item active">{{ endorsement.reference_number }}</li>
+            </ol>
+        </nav>
+        <h1 class="h3 fw-bold mb-0" style="color: #0B3D91;">
+            <i class="bi bi-patch-check me-2"></i>{{ endorsement.subject }}
+        </h1>
+        <small class="text-muted">
+            <code>{{ endorsement.reference_number }}</code> ·
+            <span class="badge bg-{{ endorsement.status_badge_class }}">{{ endorsement.get_status_display }}</span>
+        </small>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="portal-card mb-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3" style="color: #0B3D91;">Endorsement Content</h5>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Reference Number</dt>
+                    <dd class="col-sm-8"><code>{{ endorsement.reference_number }}</code></dd>
+
+                    <dt class="col-sm-4">Type</dt>
+                    <dd class="col-sm-8"><span class="badge bg-light text-dark">{{ endorsement.get_endorsement_type_display }}</span></dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8"><span class="badge bg-{{ endorsement.status_badge_class }}">{{ endorsement.get_status_display }}</span></dd>
+
+                    <dt class="col-sm-4">Member</dt>
+                    <dd class="col-sm-8">
+                        <strong>{{ endorsement.member_full_name }}</strong>
+                        {% if endorsement.member %}<br><small class="text-muted">{{ endorsement.member.email }}</small>{% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4">Subject</dt>
+                    <dd class="col-sm-8">{{ endorsement.subject }}</dd>
+
+                    {% if endorsement.addressed_to %}
+                    <dt class="col-sm-4">Addressed To</dt>
+                    <dd class="col-sm-8">{{ endorsement.addressed_to|linebreaks }}</dd>
+                    {% endif %}
+
+                    {% if endorsement.purpose %}
+                    <dt class="col-sm-4">Purpose</dt>
+                    <dd class="col-sm-8">{{ endorsement.purpose|linebreaks }}</dd>
+                    {% endif %}
+
+                    {% if endorsement.body %}
+                    <dt class="col-sm-4">Body</dt>
+                    <dd class="col-sm-8">{{ endorsement.body|linebreaks }}</dd>
+                    {% endif %}
+
+                    {% if endorsement.member_standing %}
+                    <dt class="col-sm-4">Member Standing</dt>
+                    <dd class="col-sm-8">{{ endorsement.member_standing|linebreaks }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-4">Created</dt>
+                    <dd class="col-sm-8">{{ endorsement.created_at|date:"F j, Y g:i A" }}</dd>
+
+                    <dt class="col-sm-4">Issued</dt>
+                    <dd class="col-sm-8">{{ endorsement.issued_at|date:"F j, Y g:i A"|default:"Not yet issued" }}</dd>
+
+                    {% if endorsement.issued_by %}
+                    <dt class="col-sm-4">Issued By</dt>
+                    <dd class="col-sm-8">{{ endorsement.issued_by.user.get_full_name|default:endorsement.issued_by.user.username }}</dd>
+                    {% endif %}
+
+                    {% if endorsement.valid_until %}
+                    <dt class="col-sm-4">Valid Until</dt>
+                    <dd class="col-sm-8">{{ endorsement.valid_until|date:"F j, Y" }}</dd>
+                    {% endif %}
+
+                    {% if endorsement.revoked_at %}
+                    <dt class="col-sm-4">Revoked</dt>
+                    <dd class="col-sm-8 text-danger">{{ endorsement.revoked_at|date:"F j, Y" }}</dd>
+                    {% if endorsement.revocation_reason %}
+                    <dt class="col-sm-4">Revocation Reason</dt>
+                    <dd class="col-sm-8 text-danger">{{ endorsement.revocation_reason|linebreaks }}</dd>
+                    {% endif %}
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        {% if endorsement.status == 'draft' %}
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="bi bi-send-check me-1 text-success"></i>Publish</h6>
+                <form method="post" action="{% url 'endorsements:publish' endorsement.pk %}">
+                    {% csrf_token %}
+                    <p class="small text-muted mb-3">Publishing will issue the endorsement, assign an issue date, and make it verifiable publicly.</p>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-check-circle me-1"></i>Publish Endorsement
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-pencil me-1 text-primary"></i>Edit</h6>
+                <a href="{% url 'endorsements:edit' endorsement.pk %}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-pencil-square me-1"></i>Edit Draft
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if endorsement.status == 'issued' %}
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-download me-1 text-primary"></i>Download</h6>
+                <a href="{% url 'endorsements:download' endorsement.pk %}" class="btn btn-primary w-100">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+                </a>
+            </div>
+        </div>
+
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="bi bi-x-octagon me-1 text-danger"></i>Revoke</h6>
+                <form method="post" action="{% url 'endorsements:revoke' endorsement.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Revocation Reason</label>
+                        <textarea name="reason" class="form-control form-control-sm" rows="3" required placeholder="Explain why this endorsement is being revoked..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to revoke this endorsement? This cannot be undone.');">
+                        <i class="bi bi-x-circle me-1"></i>Revoke Endorsement
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-qr-code me-1 text-primary"></i>QR Verification</h6>
+                <p class="small text-muted mb-2">Public verification URL:</p>
+                <a href="{% url 'endorsements:verify' endorsement.verification_code %}" target="_blank" class="small d-block text-break mb-2">
+                    {% url 'endorsements:verify' endorsement.verification_code %}
+                </a>
+                <code class="small d-block text-muted">{{ endorsement.verification_code }}</code>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if endorsement.related_service_request %}
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-link-45deg me-1 text-primary"></i>Related Request</h6>
+                <a href="{% url 'embassy_liaison:officer_request_detail' endorsement.related_service_request.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i>#{{ endorsement.related_service_request.request_number|default:endorsement.related_service_request.id }}
+                </a>
+                <small class="text-muted d-block mt-1">{{ endorsement.related_service_request.get_service_type_display }}</small>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }} - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>{{ article.title }}</h1>
+        <p class="lead">
+            <i class="bi bi-calendar"></i> {{ article.published_at|date:"F j, Y" }}
+            {% if article.author %} &middot; <i class="bi bi-person"></i> {{ article.author }}{% endif %}
+        </p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <article>
+                    {% if article.featured_image %}
+                    <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" class="img-fluid rounded mb-4">
+                    {% endif %}
+                    {% if article.excerpt %}
+                    <p class="lead">{{ article.excerpt }}</p>
+                    {% endif %}
+                    <div class="article-content">
+                        {{ article.content|safe }}
+                    </div>
+
+                    <hr class="my-5">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'community:news_list' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Back to News</a>
+                        <div>
+                            <small class="text-muted">Share:</small>
+                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <aside class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-journal-text"></i> Related Articles</h5>
+                        {% if related_articles %}
+                        <ul class="list-unstyled mb-0">
+                            {% for related in related_articles %}
+                            <li class="mb-3 pb-3 border-bottom">
+                                <a href="{% url 'community:news_detail' related.slug %}" class="text-decoration-none">
+                                    <div class="fw-semibold">{{ related.title }}</div>
+                                    <small class="text-muted">{{ related.published_at|date:"M j, Y" }}</small>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p class="text-muted small mb-0">No related articles available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-envelope"></i> Stay Updated</h5>
+                        <p class="small text-muted">Sign up to receive our latest news directly in your inbox.</p>
+                        <a href="{% url 'core:contact' %}" class="btn btn-primary w-100">Subscribe</a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Teams — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">OUR CLUBS</div>
+        <h1>OUR <span class="hl">TEAMS</span></h1>
+        <p class="tagline">Meet the teams representing Kenya's community in Korea.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+
+        {# Sport filter chips #}
+        {% if sports %}
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2rem;">
+            <a href="{% url 'sports:team_list' %}" class="sp-btn {% if not selected_sport %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">All Sports</a>
+            {% for sport in sports %}
+                <a href="?sport={{ sport.slug }}" class="sp-btn {% if selected_sport == sport.slug %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+                    {% if sport.icon %}<i class="bi {{ sport.icon }}"></i>{% endif %} {{ sport.name }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if teams %}
+        <div class="grid-3">
+            {% for team in teams %}
+            <a href="{% url 'sports:team_detail' team.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-team-card" style="--team-color: {{ team.color_primary|default:'#00E676' }};">
+                    <div class="team-banner" style="background: linear-gradient(135deg, {{ team.color_primary|default:'#00E676' }}, {{ team.color_secondary|default:'#1a2230' }});">
+                        {% if team.logo %}
+                            <img src="{{ team.logo.url }}" class="team-logo-lg" alt="{{ team.name }}">
+                        {% else %}
+                            <div class="team-logo-lg">{{ team.short_name|default:team.name|slice:":2"|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="team-body">
+                        <div class="team-name">{{ team.name }}</div>
+                        <div class="team-sport">{{ team.sport.name }}</div>
+                        <div class="team-stats">
+                            <div><strong>{{ team.wins|default:0 }}</strong><span>W</span></div>
+                            <div><strong>{{ team.draws|default:0 }}</strong><span>D</span></div>
+                            <div><strong>{{ team.losses|default:0 }}</strong><span>L</span></div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-people"></i></div>
+            <p>No teams registered yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

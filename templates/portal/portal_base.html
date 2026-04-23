@@ -1,0 +1,42 @@
+{% extends 'dashboards/_base.html' %}
+{% load static %}
+
+{% block sidebar_role %}Admin Portal{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'portal:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' and 'portal' in request.resolver_match.namespaces %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-speedometer2"></i></span> Dashboard
+</a>
+
+<h6>Content</h6>
+<a href="{% url 'portal:list' 'visa-types' %}" class="{% if 'visa-types' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-passport"></i></span> Visa Types</a>
+<a href="{% url 'portal:list' 'service-guides' %}" class="{% if 'service-guides' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-clipboard-data"></i></span> Service Guides</a>
+<a href="{% url 'portal:list' 'events' %}" class="{% if '/events' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-calendar-event"></i></span> Events</a>
+<a href="{% url 'portal:list' 'faqs' %}" class="{% if 'faqs' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-question-circle"></i></span> FAQs</a>
+<a href="{% url 'portal:list' 'news' %}" class="{% if '/news' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-newspaper"></i></span> News</a>
+<a href="{% url 'portal:list' 'announcements' %}" class="{% if '/announcements' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-megaphone"></i></span> Announcements</a>
+<a href="{% url 'portal:list' 'site-banners' %}" class="{% if 'site-banners' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-bell"></i></span> Site Banners</a>
+<a href="{% url 'portal:list' 'testimonials' %}" class="{% if 'testimonials' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-chat-quote"></i></span> Testimonials</a>
+<a href="{% url 'portal:list' 'pages' %}" class="{% if '/pages' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-file-earmark-text"></i></span> Content Pages</a>
+
+<h6>People</h6>
+<a href="{% url 'portal:list' 'leaders' %}" class="{% if '/leaders' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-people-fill"></i></span> Leaders</a>
+
+<h6>Workflows</h6>
+<a href="{% url 'embassy_liaison:officer_request_list' %}"><span class="nav-icon"><i class="bi bi-passport-fill"></i></span> Embassy Requests</a>
+<a href="{% url 'endorsements:manage_list' %}" class="{% if '/endorsements' in request.path and 'manage' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-pen-fill"></i></span> Endorsements</a>
+<a href="{% url 'certificates:manage_list' %}"><span class="nav-icon"><i class="bi bi-award-fill"></i></span> Certificates</a>
+<a href="{% url 'communications:manage_list' %}"><span class="nav-icon"><i class="bi bi-envelope-fill"></i></span> Communications</a>
+<a href="{% url 'market:leader_queue' %}" class="{% if '/market/review' in request.path or '/market/sellers' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-shop"></i></span> Market Sellers</a>
+<a href="{% url 'memberships:treasurer_dashboard' %}" class="{% if '/membership/treasurer' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-cash-stack"></i></span> Memberships (Treasurer)</a>
+<a href="{% url 'memberships:oversight_dashboard' %}" class="{% if '/membership/oversight' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-eye-fill"></i></span> Oversight (Read-only)</a>
+
+<h6>System</h6>
+<a href="{% url 'portal:site_settings' %}" class="{% if 'site-settings' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span> Site Settings</a>
+{% if user.is_superuser or user.is_admin %}
+<a href="/django-admin/" target="_blank"><span class="nav-icon"><i class="bi bi-tools"></i></span> Django Admin</a>
+{% endif %}
+<a href="{% url 'core:home' %}"><span class="nav-icon"><i class="bi bi-arrow-left"></i></span> Back to Site</a>
+{% endblock %}
+
+{% block dash_content %}{% block portal_content %}{% endblock %}{% endblock %}

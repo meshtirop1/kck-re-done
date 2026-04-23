@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Testimonials - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Testimonials</h1>
+        <p class="lead">Stories and experiences from our community members</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        {% if testimonials %}
+        <div class="row g-4">
+            {% for t in testimonials %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-red mb-3"><i class="bi bi-quote" style="font-size:2rem;"></i></div>
+                        <p class="fst-italic">{{ t.quote }}</p>
+                        <div class="d-flex align-items-center mt-4">
+                            {% if t.photo %}
+                                <img src="{{ t.photo.url }}" alt="{{ t.name }}" class="rounded-circle me-3" style="width:56px; height:56px; object-fit:cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-kck-blue text-white d-flex align-items-center justify-content-center me-3" style="width:56px; height:56px;">
+                                    <i class="bi bi-person-fill" style="font-size:1.5rem;"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="fw-bold">{{ t.name }}</div>
+                                {% if t.role %}<small class="text-muted">{{ t.role }}</small>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-red mb-3"><i class="bi bi-quote" style="font-size:2rem;"></i></div>
+                        <p class="fst-italic">The team made the visa process simple and stress-free. I felt supported every step of the way.</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="rounded-circle bg-kck-blue text-white d-flex align-items-center justify-content-center me-3" style="width:56px; height:56px;">
+                                <i class="bi bi-person-fill" style="font-size:1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Community Member</div>
+                                <small class="text-muted">Visa Services</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-red mb-3"><i class="bi bi-quote" style="font-size:2rem;"></i></div>
+                        <p class="fst-italic">Our cultural festival was a beautiful celebration. It felt like home away from home.</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="rounded-circle bg-kck-blue text-white d-flex align-items-center justify-content-center me-3" style="width:56px; height:56px;">
+                                <i class="bi bi-person-fill" style="font-size:1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Event Attendee</div>
+                                <small class="text-muted">Cultural Programs</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-red mb-3"><i class="bi bi-quote" style="font-size:2rem;"></i></div>
+                        <p class="fst-italic">The staff was knowledgeable, patient, and kind. I'll recommend their services to everyone I know.</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="rounded-circle bg-kck-blue text-white d-flex align-items-center justify-content-center me-3" style="width:56px; height:56px;">
+                                <i class="bi bi-person-fill" style="font-size:1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Long-time Member</div>
+                                <small class="text-muted">Passport Services</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <h3>Share your story</h3>
+        <p class="lead">We'd love to hear about your experience with our community</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">Submit a Testimonial</a>
+    </div>
+</section>
+{% endblock %}

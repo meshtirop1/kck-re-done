@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ seller.business_name }} — Kenyan Market · KCK{% endblock %}
+{% block extra_css %}
+<style>
+.seller-hero { background: linear-gradient(135deg, var(--kck-blue) 0%, #082d6b 100%); color: white; padding: 3rem 0 4rem; }
+.seller-hero h1 { color: white; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.35rem; }
+.seller-hero .bio { color: rgba(255,255,255,0.92); max-width: 720px; line-height: 1.65; white-space: pre-line; }
+.seller-photo { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.15); box-shadow: var(--shadow-lg); background: #f1f5f9; }
+.seller-meta { display: inline-flex; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.12); padding: 0.4rem 0.95rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.35rem; }
+.stats-row { background: white; border: 1px solid var(--kck-line); border-radius: var(--r-lg); padding: 1.25rem; box-shadow: var(--shadow-sm); margin-top: -2.5rem; position: relative; z-index: 2; }
+.stat-box { text-align: center; padding: 0.5rem; }
+.stat-box .stat-num { font-size: 1.65rem; font-weight: 800; color: var(--kck-blue); letter-spacing: -0.02em; }
+.stat-box .stat-label { font-size: 0.75rem; font-weight: 700; color: var(--kck-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.whatsapp-btn { background: #25D366; color: white; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s ease; }
+.whatsapp-btn:hover { background: #1ebe57; color: white; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37,211,102,0.35); }
+.product-card { border: 1px solid var(--kck-line); border-radius: var(--r-lg); overflow: hidden; transition: all 0.25s ease; height: 100%; background: white; }
+.product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--kck-red); }
+.product-card .product-img { aspect-ratio: 1/1; object-fit: cover; width: 100%; background: #f1f5f9; }
+.product-card .product-body { padding: 0.95rem; }
+.product-card .product-name { font-weight: 700; font-size: 0.98rem; margin-bottom: 0.2rem; color: var(--kck-ink); }
+.product-card .product-price { font-weight: 800; color: var(--kck-red); }
+.empty-shop { background: white; border: 2px dashed var(--kck-line); border-radius: var(--r-lg); padding: 3rem 2rem; text-align: center; color: var(--kck-muted); }
+.empty-shop i { font-size: 3.5rem; opacity: 0.3; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="seller-hero">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-auto text-center text-md-start">
+                {% if seller.profile_photo %}
+                    <img src="{{ seller.profile_photo.url }}" alt="{{ seller.business_name }}" class="seller-photo">
+                {% else %}
+                    <div class="seller-photo d-flex align-items-center justify-content-center">
+                        <i class="bi bi-shop" style="font-size:3.5rem; color: var(--kck-muted);"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2"
+                     style="background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); color: var(--kck-gold); font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">
+                    <i class="bi bi-patch-check-fill"></i> Verified KCK Seller
+                </div>
+                <h1>{{ seller.business_name }}</h1>
+                <div class="mb-2">
+                    {% if seller.city %}<span class="seller-meta"><i class="bi bi-geo-alt-fill"></i> {{ seller.city|title }}</span>{% endif %}
+                    <span class="seller-meta"><i class="bi bi-calendar3"></i> Since {{ seller.applied_at|date:"M Y" }}</span>
+                </div>
+                {% if seller.bio %}
+                    <p class="bio">{{ seller.bio }}</p>
+                {% endif %}
+                {% if seller.whatsapp_number %}
+                <a href="{{ seller.whatsapp_chat_url }}" target="_blank" rel="noopener" class="whatsapp-btn mt-2">
+                    <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <div class="stats-row">
+            <div class="row">
+                <div class="col-4">
+                    <div class="stat-box">
+                        <div class="stat-num">{{ products.count|default:0 }}</div>
+                        <div class="stat-label">Products</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-box">
+                        <div class="stat-num">{{ total_views|default:0|intcomma }}</div>
+                        <div class="stat-label">Shop views</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-box">
+                        <div class="stat-num">{{ seller.applied_at|date:"M Y" }}</div>
+                        <div class="stat-label">Member since</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <h3 class="fw-bold mb-3"><i class="bi bi-grid"></i> Products from this seller</h3>
+        {% if products %}
+        <div class="row g-3">
+            {% for p in products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'market:product_detail' p.slug %}" class="text-decoration-none">
+                    <div class="product-card">
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-img" loading="lazy">
+                        <div class="product-body">
+                            <div class="product-name">{{ p.name|truncatechars:40 }}</div>
+                            <div class="product-price">{{ p.price_display }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-shop">
+            <i class="bi bi-bag"></i>
+            <h4 class="mt-3 fw-bold">No products listed yet</h4>
+            <p class="mb-0">Check back soon — {{ seller.business_name }} is getting ready to launch.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

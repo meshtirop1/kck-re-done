@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Terms of Service - {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.legal-page { background: var(--kck-surface-alt); }
+.legal-meta {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 1rem; background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.3); color: var(--kck-gold);
+    border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+}
+.legal-toc {
+    background: white; border: 1px solid var(--kck-line);
+    border-radius: var(--r-lg); padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    position: sticky; top: 20px;
+}
+.legal-toc h5 {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--kck-muted); font-weight: 700; margin-bottom: 1rem;
+}
+.legal-toc ol { list-style: none; padding: 0; margin: 0; counter-reset: toc; }
+.legal-toc ol li {
+    counter-increment: toc; position: relative;
+    padding: 0.4rem 0 0.4rem 2rem; border-bottom: 1px solid var(--kck-line);
+}
+.legal-toc ol li:last-child { border-bottom: 0; }
+.legal-toc ol li::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute; left: 0; top: 0.45rem;
+    color: var(--kck-gold); font-weight: 700; font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+.legal-toc a {
+    color: var(--kck-ink); font-size: 0.9rem; font-weight: 500;
+    text-decoration: none; display: block;
+}
+.legal-toc a:hover { color: var(--kck-red); }
+
+.legal-content {
+    background: white; border: 1px solid var(--kck-line);
+    border-radius: var(--r-lg); padding: 3rem 3rem 2rem;
+    box-shadow: var(--shadow-sm);
+}
+.legal-intro {
+    padding: 1.25rem 1.5rem; background: var(--kck-blue-50);
+    border-left: 4px solid var(--kck-blue); border-radius: var(--r-sm);
+    margin-bottom: 2.5rem;
+}
+.legal-intro p { margin: 0; color: var(--kck-ink); }
+
+.legal-section {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--kck-line);
+    scroll-margin-top: 80px;
+}
+.legal-section:first-of-type { border-top: 0; padding-top: 0; }
+.legal-section h2 {
+    display: flex; align-items: center; gap: 1rem;
+    font-size: 1.35rem; font-weight: 800; color: var(--kck-blue);
+    margin: 0 0 1rem;
+}
+.legal-section h2 .section-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--kck-blue), var(--kck-blue-700));
+    color: white; font-size: 0.95rem; font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+}
+.legal-section p { color: #374151; line-height: 1.75; font-size: 0.975rem; }
+.legal-section ul { color: #374151; line-height: 1.9; }
+.legal-section ul li { padding: 0.15rem 0; }
+.legal-section ul li::marker { color: var(--kck-red); }
+
+.legal-callout {
+    padding: 1rem 1.25rem; background: #fff9e0;
+    border-left: 4px solid var(--kck-gold-dark);
+    border-radius: var(--r-sm); margin: 1.25rem 0;
+    color: #5c4a00; font-size: 0.925rem;
+}
+.legal-callout strong { color: var(--kck-red); }
+
+.legal-footer {
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid var(--kck-line); text-align: center;
+}
+.legal-footer .btn + .btn { margin-left: 0.5rem; }
+
+@media (max-width: 991.98px) {
+    .legal-toc { position: static; margin-bottom: 1.5rem; }
+    .legal-content { padding: 2rem 1.5rem; }
+}
+@media print {
+    .legal-toc, .top-bar, .main-navbar, .site-footer, .embassy-disclaimer,
+    .announcement-bar, #backToTop, .legal-footer { display: none !important; }
+    .legal-content { box-shadow: none; border: 0; padding: 0; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Terms of Service</h1>
+        <p class="lead">The terms and conditions that govern your use of this community platform.</p>
+        <div class="mt-3">
+            <span class="legal-meta">
+                <i class="bi bi-calendar3"></i> Last Updated: January 1, 2026
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="legal-page py-5">
+    <div class="container">
+        <div class="row g-4">
+            <aside class="col-lg-4">
+                <div class="legal-toc">
+                    <h5><i class="bi bi-list-ul"></i> Table of Contents</h5>
+                    <ol>
+                        <li><a href="#acceptance">Acceptance of Terms</a></li>
+                        <li><a href="#nature">Nature of KCK</a></li>
+                        <li><a href="#use">Use of the Platform</a></li>
+                        <li><a href="#accounts">User Accounts</a></li>
+                        <li><a href="#submissions">User Submissions</a></li>
+                        <li><a href="#services">Liaison Services</a></li>
+                        <li><a href="#accuracy">Information Accuracy</a></li>
+                        <li><a href="#intellectual">Intellectual Property</a></li>
+                        <li><a href="#third-party">Third-Party Links</a></li>
+                        <li><a href="#disclaimer">Disclaimers</a></li>
+                        <li><a href="#liability">Limitation of Liability</a></li>
+                        <li><a href="#termination">Termination</a></li>
+                        <li><a href="#privacy">Privacy</a></li>
+                        <li><a href="#changes">Changes to Terms</a></li>
+                        <li><a href="#governing">Governing Law</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ol>
+                </div>
+            </aside>
+
+            <div class="col-lg-8">
+                <article class="legal-content">
+                    <div class="legal-intro">
+                        <p>
+                            <strong>Welcome to the Kenya Community in Korea (KCK) platform.</strong>
+                            These Terms of Service (&ldquo;Terms&rdquo;) govern your access to and use of our website,
+                            services, and features. Please read them carefully &mdash; by using this platform,
+                            you agree to these Terms.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="acceptance">
+                        <h2><span class="section-number">01</span> Acceptance of Terms</h2>
+                        <p>
+                            By accessing or using the Kenya Community in Korea (&ldquo;KCK&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;)
+                            website at <strong>kenyakorea.com</strong> (the &ldquo;Platform&rdquo;), you acknowledge that you have read,
+                            understood, and agree to be bound by these Terms of Service. If you do not agree with any part of these Terms,
+                            you must not use the Platform.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="nature">
+                        <h2><span class="section-number">02</span> Nature of KCK</h2>
+                        <p>
+                            Kenya Community in Korea is a <strong>community-led organization</strong> serving Kenyan citizens
+                            and friends of Kenya residing in or visiting the Republic of Korea. We are operated by elected
+                            community leadership and volunteers.
+                        </p>
+                        <div class="legal-callout">
+                            <strong>IMPORTANT:</strong> KCK is <strong>not the Embassy of the Republic of Kenya</strong>
+                            and is <strong>not a government agency</strong>. We do not issue passports, visas, national IDs,
+                            or any other official Kenyan government documents. Our embassy-related services are strictly
+                            <em>facilitation and coordination</em> between community members and the Kenyan Embassy in Seoul.
+                        </div>
+                    </div>
+
+                    <div class="legal-section" id="use">
+                        <h2><span class="section-number">03</span> Use of the Platform</h2>
+                        <p>You agree to use the Platform only for lawful purposes and in a manner consistent with these Terms. You agree <strong>not to</strong>:</p>
+                        <ul>
+                            <li>Submit false, inaccurate, or misleading information.</li>
+                            <li>Impersonate another person or misrepresent your identity.</li>
+                            <li>Attempt to gain unauthorized access to the Platform, its systems, or other users' accounts.</li>
+                            <li>Upload malicious software, viruses, or harmful code.</li>
+                            <li>Use automated tools (bots, scrapers) to access the Platform without permission.</li>
+                            <li>Interfere with or disrupt the Platform's operation or other users' access.</li>
+                            <li>Use the Platform to harass, abuse, or harm other members of the community.</li>
+                            <li>Post content that is unlawful, defamatory, discriminatory, or offensive.</li>
+                        </ul>
+                    </div>
+
+                    <div class="legal-section" id="accounts">
+                        <h2><span class="section-number">04</span> User Accounts</h2>
+                        <p>
+                            Some features require you to create an account. You are responsible for:
+                        </p>
+                        <ul>
+                            <li>Maintaining the confidentiality of your login credentials.</li>
+                            <li>All activities that occur under your account.</li>
+                            <li>Providing accurate, current, and complete information during registration.</li>
+                            <li>Updating your information to keep it current and accurate.</li>
+                            <li>Notifying us immediately of any unauthorized use of your account.</li>
+                        </ul>
+                        <p>We reserve the right to suspend or terminate accounts that violate these Terms or exhibit suspicious activity.</p>
+                    </div>
+
+                    <div class="legal-section" id="submissions">
+                        <h2><span class="section-number">05</span> User Submissions</h2>
+                        <p>
+                            When you submit information through the Platform &mdash; including contact forms, embassy service requests,
+                            event registrations, or document uploads &mdash; you agree that:
+                        </p>
+                        <ul>
+                            <li>The information is truthful, accurate, and complete.</li>
+                            <li>You have the legal right to provide the information and documents.</li>
+                            <li>Submitted documents are authentic and not forged or altered.</li>
+                            <li>You grant KCK permission to process and forward your information as described in our <a href="{% url 'core:privacy' %}">Privacy Policy</a> and <a href="{% url 'core:data_handling' %}">Data Handling Statement</a>.</li>
+                        </ul>
+                        <div class="legal-callout">
+                            Submitting <strong>false information</strong> may result in rejection of your request, termination of your account,
+                            and may carry legal consequences under Kenyan or Korean law.
+                        </div>
+                    </div>
+
+                    <div class="legal-section" id="services">
+                        <h2><span class="section-number">06</span> Embassy Liaison Services</h2>
+                        <p>
+                            Our embassy liaison service assists members in preparing and coordinating requests to the Kenyan Embassy in Seoul. You understand that:
+                        </p>
+                        <ul>
+                            <li>KCK <strong>does not guarantee</strong> any particular outcome from the Embassy.</li>
+                            <li>Final decisions on applications rest solely with the <strong>Embassy of Kenya</strong> and Kenyan government authorities.</li>
+                            <li>Processing times and requirements are set by the Embassy and may change without notice.</li>
+                            <li>KCK may charge a modest facilitation fee (if any), which is <em>separate</em> from any Embassy fees.</li>
+                            <li>KCK is not responsible for delays, rejections, or issues caused by the Embassy or external factors.</li>
+                        </ul>
+                    </div>
+
+                    <div class="legal-section" id="accuracy">
+                        <h2><span class="section-number">07</span> Information Accuracy</h2>
+                        <p>
+                            While we strive to provide accurate and current information, content on the Platform is provided
+                            for <strong>general informational purposes only</strong>. Embassy fees, requirements, and processing
+                            times are set by the Kenyan government and may change at any time. For authoritative information
+                            on any consular matter, please contact the Embassy of Kenya directly.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="intellectual">
+                        <h2><span class="section-number">08</span> Intellectual Property</h2>
+                        <p>
+                            All content on the Platform &mdash; including text, graphics, logos, images, photographs, and software &mdash;
+                            is the property of KCK or its content contributors, and is protected by Korean and international copyright,
+                            trademark, and intellectual property laws. You may not reproduce, distribute, modify, or create derivative
+                            works without prior written permission.
+                        </p>
+                        <p>
+                            Content you submit (testimonials, photos, feedback) remains your property, but by submitting you grant
+                            KCK a non-exclusive, royalty-free license to use, display, and share it in connection with community
+                            activities and this Platform.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="third-party">
+                        <h2><span class="section-number">09</span> Third-Party Links</h2>
+                        <p>
+                            The Platform may contain links to third-party websites (including the Embassy of Kenya, government portals,
+                            and partner organizations). These links are provided for convenience only. We do not endorse and are not
+                            responsible for the content, accuracy, or practices of external sites. Your use of third-party sites is
+                            governed by their own terms.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="disclaimer">
+                        <h2><span class="section-number">10</span> Disclaimer of Warranties</h2>
+                        <p>
+                            The Platform is provided on an <strong>&ldquo;as is&rdquo;</strong> and <strong>&ldquo;as available&rdquo;</strong>
+                            basis, without warranties of any kind, either express or implied. We do not warrant that:
+                        </p>
+                        <ul>
+                            <li>The Platform will be uninterrupted, secure, or error-free.</li>
+                            <li>Defects will be corrected in a timely manner.</li>
+                            <li>The Platform is free of viruses or other harmful components.</li>
+                            <li>Information on the Platform is accurate, complete, or current at all times.</li>
+                        </ul>
+                    </div>
+
+                    <div class="legal-section" id="liability">
+                        <h2><span class="section-number">11</span> Limitation of Liability</h2>
+                        <p>
+                            To the fullest extent permitted by law, KCK, its leaders, officers, volunteers, and affiliates
+                            shall <strong>not be liable</strong> for any indirect, incidental, consequential, special, or punitive damages
+                            arising from your use of the Platform, including (but not limited to) loss of data, missed deadlines,
+                            application rejections, or financial loss.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="termination">
+                        <h2><span class="section-number">12</span> Termination</h2>
+                        <p>
+                            We may suspend or terminate your access to the Platform at any time, with or without notice, for any
+                            violation of these Terms or for any other reason at our sole discretion. You may also delete your
+                            account at any time through your profile settings or by contacting us.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="privacy">
+                        <h2><span class="section-number">13</span> Privacy</h2>
+                        <p>
+                            Your use of the Platform is also subject to our
+                            <a href="{% url 'core:privacy' %}"><strong>Privacy Policy</strong></a> and
+                            <a href="{% url 'core:data_handling' %}"><strong>Data Handling Statement</strong></a>,
+                            which explain how we collect, use, protect, and share your personal information. Please review these
+                            documents carefully.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="changes">
+                        <h2><span class="section-number">14</span> Changes to These Terms</h2>
+                        <p>
+                            We reserve the right to modify these Terms at any time. Changes will be posted on this page with an
+                            updated revision date at the top. For material changes, we will provide notice through the Platform
+                            or by email. Continued use of the Platform after changes constitutes acceptance of the revised Terms.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="governing">
+                        <h2><span class="section-number">15</span> Governing Law</h2>
+                        <p>
+                            These Terms are governed by the laws of the <strong>Republic of Korea</strong>, without regard to
+                            conflict-of-laws principles. Any disputes arising from these Terms or your use of the Platform will
+                            be resolved in the courts of Seoul, Republic of Korea, unless otherwise required by applicable law.
+                        </p>
+                    </div>
+
+                    <div class="legal-section" id="contact">
+                        <h2><span class="section-number">16</span> Contact Us</h2>
+                        <p>If you have questions, concerns, or feedback regarding these Terms of Service, please reach out:</p>
+                        <ul>
+                            <li><strong>Email:</strong> <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></li>
+                            <li><strong>Phone:</strong> {{ SITE_PHONE }}</li>
+                            <li><strong>Contact form:</strong> <a href="{% url 'core:contact' %}">kenyakorea.com/contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="legal-footer">
+                        <p class="text-muted small mb-3">
+                            By continuing to use the Kenya Community in Korea platform, you confirm that you have read and agree to these Terms of Service.
+                        </p>
+                        <a href="{% url 'core:privacy' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-shield-lock"></i> Privacy Policy
+                        </a>
+                        <a href="{% url 'core:data_handling' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-file-earmark-lock"></i> Data Handling
+                        </a>
+                        <a href="{% url 'core:contact' %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-envelope"></i> Contact Us
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Competitions — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">LEAGUES · CUPS · TOURNAMENTS</div>
+        <h1>COMPE<span class="hl">TITIONS</span></h1>
+        <p class="tagline">Every league, cup and tournament KCK teams compete in.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+        {% if competitions %}
+        <div class="grid-2">
+            {% for comp in competitions %}
+            <a href="{% url 'sports:competition_detail' comp.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture">
+                    <div class="meta">
+                        <span class="sp-badge">{{ comp.sport.name }}</span>
+                        {% if comp.is_active %}
+                            <span class="sp-badge sp-badge-live"><span class="live-pulse"></span> ACTIVE</span>
+                        {% else %}
+                            <span class="sp-badge sp-badge-completed">ENDED</span>
+                        {% endif %}
+                    </div>
+                    <div style="padding:1.5rem 0;text-align:center;">
+                        <div style="font-size:3rem;color:var(--sp-gold,#FFD700);margin-bottom:0.5rem;">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <h3 style="font-family:Oswald,sans-serif;font-size:1.75rem;margin:0;text-transform:uppercase;">
+                            {{ comp.name }}
+                        </h3>
+                        {% if comp.season %}
+                            <div style="color:var(--sp-text-dim,#8a93a4);margin-top:0.5rem;">Season {{ comp.season }}</div>
+                        {% endif %}
+                        {% if comp.type %}
+                            <div style="margin-top:0.5rem;">
+                                <span class="sp-badge sp-badge-scheduled">{{ comp.get_type_display|default:comp.type }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="footer">
+                        {% if comp.start_date %}
+                            <span><i class="bi bi-calendar-event"></i> {{ comp.start_date|date:"M j, Y" }}</span>
+                        {% endif %}
+                        {% if comp.end_date %}
+                            <span><i class="bi bi-calendar-check"></i> {{ comp.end_date|date:"M j, Y" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-trophy"></i></div>
+            <p>No competitions scheduled yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@page { size: A4 portrait; margin: 20mm 18mm; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #1a1a1a; font-size: 11pt; line-height: 1.5; margin: 0; }
+.letterhead { border-bottom: 3px solid #0B3D91; padding-bottom: 10mm; margin-bottom: 8mm; display: flex; align-items: flex-start; justify-content: space-between; }
+.letterhead-left { display: flex; align-items: center; gap: 15px; }
+.letterhead-left img { width: 80px; }
+.org-text h1 { margin: 0; color: #C8102E; font-size: 18pt; letter-spacing: 2px; }
+.org-text .subtitle { font-size: 9pt; color: #666; margin-top: 2px; letter-spacing: 1px; }
+.letterhead-right { text-align: right; font-size: 9pt; color: #555; line-height: 1.4; }
+.flag-bar { height: 5px; display: flex; margin-bottom: 5mm; }
+.flag-bar div { flex: 1; }
+.flag-bar .black { background: #000; }
+.flag-bar .red { background: #C8102E; }
+.flag-bar .green { background: #007A33; }
+.ref-date { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 8mm; }
+.ref-date .date { text-align: right; }
+.subject { text-align: center; font-weight: bold; font-size: 13pt; color: #0B3D91; text-decoration: underline; text-underline-offset: 3px; margin-bottom: 6mm; text-transform: uppercase; }
+.salutation { margin-bottom: 4mm; font-weight: 600; }
+.body { text-align: justify; margin-bottom: 8mm; }
+.body p { margin: 0 0 4mm; }
+.closing { margin-top: 8mm; }
+.closing .regards { margin-bottom: 2mm; }
+.signature-img { max-height: 55px; margin-bottom: 2mm; }
+.sender-name { font-weight: bold; color: #0B3D91; }
+.sender-role { font-size: 10pt; color: #666; font-style: italic; }
+.footer { position: fixed; bottom: 5mm; left: 18mm; right: 18mm; border-top: 2px solid #C8102E; padding-top: 3mm; text-align: center; font-size: 8pt; color: #666; }
+.category-badge { display: inline-block; padding: 3px 10px; background: #C8102E; color: white; border-radius: 3px; font-size: 9pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 400px; opacity: 0.04; z-index: -1; }
+</style>
+</head>
+<body>
+<img src="file:///{{ logo_path }}" class="watermark" alt="">
+
+<div class="letterhead">
+    <div class="letterhead-left">
+        <img src="file:///{{ logo_path }}" alt="KCK Logo">
+        <div class="org-text">
+            <h1>KENYA COMMUNITY IN KOREA</h1>
+            <div class="subtitle">Serving Kenyans in South Korea</div>
+        </div>
+    </div>
+    <div class="letterhead-right">
+        &#9993; {{ site_email }}<br>
+        &#9742; {{ site_phone }}<br>
+        &#127760; {{ site_url }}
+    </div>
+</div>
+
+<div class="flag-bar">
+    <div class="black"></div><div class="red"></div><div class="green"></div>
+</div>
+
+<div class="ref-date">
+    <div><strong>Ref:</strong> {{ communication.reference_number }}</div>
+    <div class="date">{{ communication.published_at|default:communication.created_at|date:"F j, Y" }}</div>
+</div>
+
+<div class="subject">
+    {% if communication.category != 'general' %}
+        <span class="category-badge">{{ communication.get_category_display }}</span><br>
+    {% endif %}
+    {{ communication.subject }}
+</div>
+
+<div class="salutation">Dear Fellow Kenyans in Korea (KCK Family),</div>
+
+<div class="body">
+    {{ communication.body|linebreaks|safe }}
+</div>
+
+<div class="closing">
+    <div class="regards">Kind Regards,</div>
+    {% if signature_url %}<img src="file:///{{ signature_url }}" class="signature-img" alt="">{% endif %}
+    <div class="sender-name">{{ sender_name }}</div>
+    <div class="sender-role">{{ sender_role }}</div>
+</div>
+
+<div class="footer">
+    This is an official communication from the Kenya Community in Korea (KCK).<br>
+    Reference: {{ communication.reference_number }} &nbsp;|&nbsp; {{ site_url }}
+</div>
+</body>
+</html>

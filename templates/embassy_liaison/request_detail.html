@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Request #{{ request_obj.request_number|default:request_obj.id }} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'embassy_liaison:my_requests' %}" class="text-white">My Requests</a></li>
+                <li class="breadcrumb-item active text-white-50">#{{ request_obj.request_number|default:request_obj.id }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="h2 fw-bold mb-1">{{ request_obj.get_service_type_display }}</h1>
+                <p class="mb-2">
+                    Request <strong>#{{ request_obj.request_number|default:request_obj.id }}</strong> ·
+                    <span class="badge bg-{{ request_obj.status_badge_class }}">{{ request_obj.get_status_display }}</span>
+                </p>
+                <small class="text-white-50">Submitted {{ request_obj.created_at|date:"F j, Y \a\t g:i A" }}</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start">
+            <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
+            <div>
+                <strong class="fs-5">KCK is a liaison service.</strong><br>
+                Official decisions are made by the Kenyan Embassy. We facilitate — they approve.
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3">Request Details</h3>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Service</dt>
+                        <dd class="col-sm-8">{{ request_obj.get_service_type_display }}</dd>
+
+                        <dt class="col-sm-4">Submitted</dt>
+                        <dd class="col-sm-8">{{ request_obj.created_at|date:"F j, Y \a\t g:i A" }}</dd>
+
+                        <dt class="col-sm-4">Last Updated</dt>
+                        <dd class="col-sm-8">{{ request_obj.updated_at|date:"F j, Y \a\t g:i A" }}</dd>
+
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">{{ request_obj.full_name }}</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">{{ request_obj.email }}</dd>
+
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">{{ request_obj.phone|default:"—" }}</dd>
+
+                        {% if request_obj.passport_number %}
+                            <dt class="col-sm-4">Passport Number</dt>
+                            <dd class="col-sm-8">{{ request_obj.passport_number }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.korean_address %}
+                            <dt class="col-sm-4">Address in Korea</dt>
+                            <dd class="col-sm-8">{{ request_obj.korean_address }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.description %}
+                            <dt class="col-sm-4">Description</dt>
+                            <dd class="col-sm-8">{{ request_obj.description|linebreaks }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.additional_details %}
+                            <dt class="col-sm-4">Additional Details</dt>
+                            <dd class="col-sm-8">{{ request_obj.additional_details|linebreaks }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3"><i class="bi bi-paperclip me-2"></i>Supporting Documents</h3>
+                    {% if request_obj.documents.all %}
+                        <ul class="list-group list-group-flush">
+                            {% for doc in request_obj.documents.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                        {{ doc.title|default:doc.file.name }}
+                                    </span>
+                                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">No documents attached.</p>
+                    {% endif %}
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3"><i class="bi bi-chat-dots me-2"></i>Notes & Communication</h3>
+                    {% if notes %}
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            {% for note in notes %}
+                                <div class="border rounded p-3 {% if note.is_internal %}bg-warning-subtle{% else %}bg-light{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <strong>
+                                            {{ note.author.get_full_name|default:note.author.username }}
+                                            {% if note.is_internal %}
+                                                <span class="badge bg-warning text-dark ms-2">Internal</span>
+                                            {% endif %}
+                                        </strong>
+                                        <small class="text-muted">{{ note.created_at|date:"M j, Y g:i A" }}</small>
+                                    </div>
+                                    <div>{{ note.body|linebreaks }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No notes yet.</p>
+                    {% endif %}
+
+                    {% if note_form %}
+                        <hr>
+                        <h5 class="fw-bold mb-3">Add a note</h5>
+                        <form method="post" action="{% url 'embassy_liaison:my_request_detail' request_obj.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="add_note" value="1">
+                            {% crispy note_form %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Status Timeline</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-start mb-3">
+                            <span class="badge {% if request_obj.status == 'submitted' or request_obj.status_order >= 1 %}bg-primary{% else %}bg-secondary{% endif %} me-2">1</span>
+                            <div><strong>Submitted</strong><br><small class="text-muted">Request received by KCK</small></div>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <span class="badge {% if request_obj.status_order >= 2 %}bg-primary{% else %}bg-secondary{% endif %} me-2">2</span>
+                            <div><strong>Under Review</strong><br><small class="text-muted">KCK officer reviewing</small></div>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <span class="badge {% if request_obj.status_order >= 3 %}bg-primary{% else %}bg-secondary{% endif %} me-2">3</span>
+                            <div><strong>Forwarded to Embassy</strong><br><small class="text-muted">Sent to Embassy of Kenya</small></div>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <span class="badge {% if request_obj.status_order >= 4 %}bg-primary{% else %}bg-secondary{% endif %} me-2">4</span>
+                            <div><strong>In Progress</strong><br><small class="text-muted">Being processed by embassy</small></div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <span class="badge {% if request_obj.status == 'completed' %}bg-success{% else %}bg-secondary{% endif %} me-2">5</span>
+                            <div><strong>Completed</strong><br><small class="text-muted">Ready for collection</small></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Assignment</h5>
+                    <p class="mb-1"><strong>Assigned Officer:</strong></p>
+                    {% if request_obj.assigned_officer %}
+                        <p class="mb-0">{{ request_obj.assigned_officer.get_full_name|default:request_obj.assigned_officer.username }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">Not yet assigned</p>
+                    {% endif %}
+
+                    {% if request_obj.priority %}
+                        <hr>
+                        <p class="mb-1"><strong>Priority:</strong></p>
+                        <span class="badge bg-{{ request_obj.priority_badge_class|default:'secondary' }}">{{ request_obj.get_priority_display }}</span>
+                    {% endif %}
+
+                    {% if request_obj.embassy_reference %}
+                        <hr>
+                        <p class="mb-1"><strong>Embassy Reference:</strong></p>
+                        <p class="font-monospace small mb-0">{{ request_obj.embassy_reference }}</p>
+                    {% endif %}
+
+                    {% if request_obj.preferred_appointment_date %}
+                        <hr>
+                        <p class="mb-1"><strong>Preferred Appointment:</strong></p>
+                        <p class="mb-0">{{ request_obj.preferred_appointment_date|date:"F j, Y" }}</p>
+                    {% endif %}
+                </div>
+
+                {% if request_obj.can_cancel and not is_officer %}
+                    <form method="post" action="{% url 'embassy_liaison:request_cancel' request_obj.id %}" onsubmit="return confirm('Are you sure you want to cancel this request?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-circle me-2"></i>Cancel Request
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

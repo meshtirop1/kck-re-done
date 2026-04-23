@@ -1,0 +1,9 @@
+{% extends 'errors/_base.html' %}
+{% block title %}Bad Request — {{ SITE_NAME }}{% endblock %}
+{% block err_kicker %}Bad request{% endblock %}
+{% block err_code %}400{% endblock %}
+{% block err_title %}We couldn't process that request{% endblock %}
+{% block err_message %}
+Something about your request didn't look right to our server. Try refreshing, or use the navigation to get where you were going.
+{% endblock %}
+{% block err_icon %}bi-slash-circle{% endblock %}

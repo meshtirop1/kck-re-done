@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Apply for Visa - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Apply for a Visa</h1>
+        <p class="lead">Complete the application form below to start your visa application</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> All fields marked with * are required. Ensure all information is accurate.
+                        </div>
+                        {% crispy form %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

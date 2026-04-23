@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}My Inbox - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-3"><i class="bi bi-inbox"></i> My Inbox</h1>
+    <p class="text-muted">Official communications addressed to you.</p>
+
+    <div class="card shadow-sm">
+      <div class="list-group list-group-flush">
+        {% for delivery in page_obj %}
+          <a href="{% url 'communications:detail' delivery.communication.pk %}" class="list-group-item list-group-item-action {% if not delivery.read_at %}fw-semibold{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+              <div>
+                <span class="badge bg-secondary me-2">{{ delivery.communication.get_category_display }}</span>
+                {{ delivery.communication.subject }}
+                <div class="small text-muted">{{ delivery.communication.reference_number }}</div>
+              </div>
+              <small class="text-muted">{{ delivery.delivered_at|date:"M j, Y" }}</small>
+            </div>
+          </a>
+        {% empty %}
+          <div class="list-group-item text-center text-muted py-4">
+            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+            <p class="mb-0 mt-2">Your inbox is empty.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if public_comms %}
+      <h3 class="mt-5">Public Communications</h3>
+      <div class="row g-3 mt-1">
+        {% for comm in public_comms %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <span class="badge bg-secondary mb-2">{{ comm.get_category_display }}</span>
+                <h6 class="card-title">{{ comm.subject }}</h6>
+                <p class="small text-muted mb-2">{{ comm.reference_number }} &middot; {{ comm.published_at|date:"M j, Y" }}</p>
+                <a href="{% url 'communications:detail' comm.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if page_obj.has_other_pages %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ certificate.cert_number }} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'certificates:my_certificates' %}">My Certificates</a></li>
+                        <li class="breadcrumb-item active">{{ certificate.cert_number }}</li>
+                    </ol>
+                </nav>
+
+                <div class="card shadow border-0">
+                    <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #0B3D91 0%, #0056b3 100%);">
+                        <h2 class="mb-0 fw-bold text-uppercase" style="letter-spacing: 3px;">{{ certificate.get_cert_type_display }}</h2>
+                        <small class="text-white-50">{{ certificate.cert_number }}</small>
+                    </div>
+                    <div class="card-body p-5 text-center">
+                        <p class="text-muted mb-2 fst-italic">This certificate is proudly presented to</p>
+                        <h1 class="display-4 fw-bold mb-4" style="color: #0B3D91; border-bottom: 2px solid #C8b470; display: inline-block; padding-bottom: 10px;">
+                            {{ certificate.recipient_name }}
+                        </h1>
+                        <p class="lead text-secondary mx-auto" style="max-width: 700px;">{{ certificate.body }}</p>
+                        {% if certificate.event_title %}
+                        <p class="text-muted fst-italic mt-3">&mdash; {{ certificate.event_title }} &mdash;</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-white py-4">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <small class="text-muted text-uppercase">Status</small>
+                                <div>
+                                    {% if certificate.status == 'published' %}
+                                        <span class="badge bg-success">Published</span>
+                                    {% elif certificate.status == 'draft' %}
+                                        <span class="badge bg-secondary">Draft</span>
+                                    {% elif certificate.status == 'revoked' %}
+                                        <span class="badge bg-warning text-dark">Revoked</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">{{ certificate.get_status_display }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted text-uppercase">Date Issued</small>
+                                <div class="fw-bold">{{ certificate.issued_date|date:"F j, Y" }}</div>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted text-uppercase">Issued By</small>
+                                <div class="fw-bold">
+                                    {% if certificate.issued_by %}
+                                        {{ certificate.issued_by.user.get_full_name }}
+                                    {% else %}
+                                        {{ certificate.issued_by_name|default:"KCK Secretariat" }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    {% if certificate.pdf_file and certificate.status == 'published' %}
+                    <a href="{% url 'certificates:download' certificate.pk %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-download"></i> Download PDF
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'certificates:verify' certificate.verification_code %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-patch-check"></i> Public Verification Page
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

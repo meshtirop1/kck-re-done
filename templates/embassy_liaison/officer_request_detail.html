@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Manage Request #{{ request_obj.request_number|default:request_obj.id }} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'embassy_liaison:officer_dashboard' %}" class="text-white">Officer Portal</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'embassy_liaison:officer_request_list' %}" class="text-white">All Requests</a></li>
+                <li class="breadcrumb-item active text-white-50">#{{ request_obj.request_number|default:request_obj.id }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="h2 fw-bold mb-1">{{ request_obj.get_service_type_display }}</h1>
+                <p class="mb-2">
+                    Request <strong>#{{ request_obj.request_number|default:request_obj.id }}</strong> ·
+                    <span class="badge bg-{{ request_obj.status_badge_class }}">{{ request_obj.get_status_display }}</span>
+                    {% if request_obj.priority %}
+                        · <span class="badge bg-{{ request_obj.priority_badge_class|default:'secondary' }}">{{ request_obj.get_priority_display }}</span>
+                    {% endif %}
+                </p>
+                <small class="text-white-50">
+                    Member: {{ request_obj.full_name }} ({{ request_obj.email }}) · Submitted {{ request_obj.created_at|date:"F j, Y" }}
+                </small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start">
+            <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
+            <div>
+                <strong class="fs-5">KCK is a liaison service.</strong><br>
+                Official decisions are made by the Kenyan Embassy. We facilitate — they approve.
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3">Request Details</h3>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Service</dt>
+                        <dd class="col-sm-8">{{ request_obj.get_service_type_display }}</dd>
+
+                        <dt class="col-sm-4">Member</dt>
+                        <dd class="col-sm-8">{{ request_obj.full_name }}</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8"><a href="mailto:{{ request_obj.email }}">{{ request_obj.email }}</a></dd>
+
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">{{ request_obj.phone|default:"—" }}</dd>
+
+                        {% if request_obj.passport_number %}
+                            <dt class="col-sm-4">Passport Number</dt>
+                            <dd class="col-sm-8">{{ request_obj.passport_number }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.korean_address %}
+                            <dt class="col-sm-4">Address in Korea</dt>
+                            <dd class="col-sm-8">{{ request_obj.korean_address }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.description %}
+                            <dt class="col-sm-4">Description</dt>
+                            <dd class="col-sm-8">{{ request_obj.description|linebreaks }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.additional_details %}
+                            <dt class="col-sm-4">Additional Details</dt>
+                            <dd class="col-sm-8">{{ request_obj.additional_details|linebreaks }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Submitted</dt>
+                        <dd class="col-sm-8">{{ request_obj.created_at|date:"F j, Y g:i A" }}</dd>
+
+                        <dt class="col-sm-4">Last Updated</dt>
+                        <dd class="col-sm-8">{{ request_obj.updated_at|date:"F j, Y g:i A" }}</dd>
+
+                        {% if request_obj.embassy_reference %}
+                            <dt class="col-sm-4">Embassy Reference</dt>
+                            <dd class="col-sm-8 font-monospace">{{ request_obj.embassy_reference }}</dd>
+                        {% endif %}
+
+                        {% if request_obj.internal_notes %}
+                            <dt class="col-sm-4">Internal Notes (field)</dt>
+                            <dd class="col-sm-8 bg-warning-subtle p-2 rounded">{{ request_obj.internal_notes|linebreaks }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3"><i class="bi bi-paperclip me-2"></i>Supporting Documents</h3>
+                    {% if request_obj.documents.all %}
+                        <ul class="list-group list-group-flush">
+                            {% for doc in request_obj.documents.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                        {{ doc.title|default:doc.file.name }}
+                                    </span>
+                                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">No documents attached.</p>
+                    {% endif %}
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h3 class="fw-bold mb-3"><i class="bi bi-journal-text me-2"></i>Internal Notes & Communication</h3>
+                    {% if notes %}
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            {% for note in notes %}
+                                <div class="border rounded p-3 {% if note.is_internal %}bg-warning-subtle border-warning{% else %}bg-light{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <strong>
+                                            {{ note.author.get_full_name|default:note.author.username }}
+                                            {% if note.is_internal %}
+                                                <span class="badge bg-warning text-dark ms-2"><i class="bi bi-lock-fill me-1"></i>Internal</span>
+                                            {% else %}
+                                                <span class="badge bg-info text-dark ms-2"><i class="bi bi-eye me-1"></i>Visible to member</span>
+                                            {% endif %}
+                                        </strong>
+                                        <small class="text-muted">{{ note.created_at|date:"M j, Y g:i A" }}</small>
+                                    </div>
+                                    <div>{{ note.body|linebreaks }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No notes yet.</p>
+                    {% endif %}
+
+                    {% if note_form %}
+                        <hr>
+                        <h5 class="fw-bold mb-3">Add a note</h5>
+                        <form method="post" action="{% url 'embassy_liaison:officer_request_detail' request_obj.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_note">
+                            {% crispy note_form %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                {% if request_obj.endorsements.all %}
+                    <div class="alert alert-success">
+                        <strong><i class="bi bi-patch-check"></i> Endorsement(s) attached:</strong>
+                        <ul class="mb-0 mt-2">
+                        {% for end in request_obj.endorsements.all %}
+                            <li><a href="{% url 'endorsements:manage_detail' end.pk %}">{{ end.reference_number }}</a> — {{ end.get_endorsement_type_display }} ({{ end.get_status_display }})</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <a href="{% url 'endorsements:create_from_request' request_obj.pk %}" class="btn btn-warning w-100 mb-3">
+                    <i class="bi bi-file-earmark-text"></i> Generate Cover Note / Endorsement
+                </a>
+
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-arrow-repeat me-2 text-primary"></i>Update Status</h5>
+                    <form method="post" action="{% url 'embassy_liaison:officer_request_detail' request_obj.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_status">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Status</label>
+                            {{ status_form.status }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Embassy Reference</label>
+                            {{ status_form.embassy_reference }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Message to Member</label>
+                            {{ status_form.message_to_member }}
+                            <small class="text-muted">This will be visible to the member.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Internal Note</label>
+                            {{ status_form.internal_note }}
+                            <small class="text-muted">Only visible to officers.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle me-1"></i>Update Status
+                        </button>
+                    </form>
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-person-plus me-2 text-primary"></i>Assign Officer</h5>
+                    <form method="post" action="{% url 'embassy_liaison:officer_request_detail' request_obj.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="assign">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Officer</label>
+                            {{ assign_form.officer }}
+                        </div>
+                        <p class="small mb-3">
+                            <strong>Currently assigned:</strong>
+                            {% if request_obj.assigned_officer %}
+                                {{ request_obj.assigned_officer.get_full_name|default:request_obj.assigned_officer.username }}
+                            {% else %}
+                                <em class="text-muted">Unassigned</em>
+                            {% endif %}
+                        </p>
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-check-circle me-1"></i>Assign
+                        </button>
+                    </form>
+                </div>
+
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Info</h5>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2"><strong>Priority:</strong>
+                            {% if request_obj.priority %}
+                                <span class="badge bg-{{ request_obj.priority_badge_class|default:'secondary' }}">{{ request_obj.get_priority_display }}</span>
+                            {% else %}—{% endif %}
+                        </li>
+                        <li class="mb-2"><strong>Embassy Ref:</strong> {{ request_obj.embassy_reference|default:"—" }}</li>
+                        <li class="mb-2"><strong>Preferred Appt:</strong> {{ request_obj.preferred_appointment_date|date:"M j, Y"|default:"—" }}</li>
+                        <li class="mb-0"><strong>Member since:</strong> {{ request_obj.user.date_joined|date:"M Y"|default:"—" }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

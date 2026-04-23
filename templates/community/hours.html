@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Office Hours - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Office Hours</h1>
+        <p class="lead">When you can visit and reach us</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h4 class="mb-4"><i class="bi bi-clock text-kck-blue"></i> Weekly Hours</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Opening</th>
+                                        <th>Closing</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Monday</td><td>9:00 AM</td><td>5:00 PM</td><td><span class="badge bg-success">Open</span></td></tr>
+                                    <tr><td>Tuesday</td><td>9:00 AM</td><td>5:00 PM</td><td><span class="badge bg-success">Open</span></td></tr>
+                                    <tr><td>Wednesday</td><td>9:00 AM</td><td>5:00 PM</td><td><span class="badge bg-success">Open</span></td></tr>
+                                    <tr><td>Thursday</td><td>9:00 AM</td><td>5:00 PM</td><td><span class="badge bg-success">Open</span></td></tr>
+                                    <tr><td>Friday</td><td>9:00 AM</td><td>4:00 PM</td><td><span class="badge bg-success">Open</span></td></tr>
+                                    <tr><td>Saturday</td><td>10:00 AM</td><td>2:00 PM</td><td><span class="badge bg-warning text-dark">Limited</span></td></tr>
+                                    <tr><td>Sunday</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge bg-secondary">Closed</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mt-4 mb-0">
+                            <i class="bi bi-info-circle"></i> Hours may differ on public holidays. Check our news page for announcements.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h4 class="mb-3"><i class="bi bi-telephone text-kck-red"></i> Contact Information</h4>
+                        <ul class="list-unstyled lead">
+                            <li class="mb-2"><i class="bi bi-telephone-fill text-kck-blue"></i> (000) 000-0000</li>
+                            <li class="mb-2"><i class="bi bi-envelope-fill text-kck-blue"></i> info@example.org</li>
+                            <li class="mb-2"><i class="bi bi-geo-alt-fill text-kck-blue"></i> Main Street, Central District</li>
+                        </ul>
+
+                        <h5 class="mt-4">Appointments</h5>
+                        <p class="text-muted">For visa, passport, and travel services we recommend scheduling an appointment in advance to reduce wait times.</p>
+                        <a href="{% url 'core:contact' %}" class="btn btn-primary w-100"><i class="bi bi-calendar-check"></i> Request an Appointment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

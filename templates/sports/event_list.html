@@ -1,0 +1,78 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Events — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">GATHERINGS · TRAININGS · TOURNAMENTS</div>
+        <h1>PLANNED <span class="hl">EVENTS</span></h1>
+        <p class="tagline">Training sessions, tournaments, socials and community sports days.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+
+        {# Toggle tabs #}
+        <div style="display:flex;gap:0.5rem;margin-bottom:2rem;">
+            <a href="?when=upcoming" class="sp-btn {% if when == 'upcoming' or not when %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+                <i class="bi bi-calendar-event"></i> Upcoming
+            </a>
+            <a href="?when=past" class="sp-btn {% if when == 'past' %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+                <i class="bi bi-clock-history"></i> Past
+            </a>
+        </div>
+
+        {% if events %}
+        <div class="grid-2">
+            {% for event in events %}
+            <a href="{% url 'sports:event_detail' event.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture">
+                    <div class="meta">
+                        <span class="sp-badge">{{ event.get_event_type_display|default:event.event_type|default:"Event" }}</span>
+                        <span>{{ event.starts_at|date:"D, M j · g:i A" }}</span>
+                    </div>
+                    <div style="padding:1.5rem 0;">
+                        <h3 style="font-family:Oswald,sans-serif;font-size:1.5rem;text-transform:uppercase;margin:0 0 0.5rem;">
+                            {{ event.title }}
+                        </h3>
+                        {% if event.description %}
+                        <p style="color:var(--sp-text-dim,#8a93a4);margin:0;">
+                            {{ event.description|striptags|truncatewords:25 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <div class="footer">
+                        <span><i class="bi bi-geo-alt"></i> {{ event.venue|default:"TBA" }}</span>
+                        {% if event.ends_at %}<span><i class="bi bi-clock"></i> Until {{ event.ends_at|date:"g:i A" }}</span>{% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <nav style="display:flex;gap:0.5rem;justify-content:center;margin-top:3rem;">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if when %}&when={{ when }}{% endif %}" class="sp-btn sp-btn-ghost"><i class="bi bi-chevron-left"></i> Previous</a>
+            {% endif %}
+            <span class="sp-btn sp-btn-outline" style="pointer-events:none;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if when %}&when={{ when }}{% endif %}" class="sp-btn sp-btn-ghost">Next <i class="bi bi-chevron-right"></i></a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-calendar-x"></i></div>
+            <p>No {{ when|default:"upcoming" }} events.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

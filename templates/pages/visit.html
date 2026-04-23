@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Visit Us - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Visit Us</h1>
+        <p class="lead">Information about meeting the KCK community team in Korea.</p>
+        <div class="mt-3 d-flex justify-content-center">
+            <span class="slogan-badge">SOTE PAMOJA &middot; All Together</span>
+        </div>
+    </div>
+</section>
+
+<section class="py-3" style="background: #fff3cd; border-bottom: 2px solid #ffc107;">
+    <div class="container">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-info-circle-fill text-warning fs-4 flex-shrink-0"></i>
+            <div class="small mb-0">
+                <strong>Looking for the Kenyan Embassy?</strong>
+                KCK is a community organisation, not the Embassy. For official consular services
+                (passports, visas, notarisation) please contact the
+                <strong>Embassy of the Republic of Kenya in Seoul</strong> directly.
+                This page covers how to meet the KCK community team.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <h2 class="text-kck-blue">Community Contact</h2>
+                <p>The Kenya Community in Korea is a volunteer-run community organisation. Most of our activities happen at community events, online, and through our leaders &mdash; we don't operate a walk-in office. The best way to reach us is below.</p>
+
+                <div class="card p-4 border-0 shadow-sm mb-3">
+                    <h5><i class="bi bi-envelope-fill text-kck-red"></i> Email</h5>
+                    <p class="mb-0">{{ SITE_EMAIL }}</p>
+                </div>
+                <div class="card p-4 border-0 shadow-sm mb-3">
+                    <h5><i class="bi bi-telephone-fill text-kck-red"></i> Phone</h5>
+                    <p class="mb-0">{{ SITE_PHONE }}</p>
+                </div>
+                <div class="card p-4 border-0 shadow-sm mb-3">
+                    <h5><i class="bi bi-geo-alt-fill text-kck-red"></i> Based in</h5>
+                    <p class="mb-0">{{ SITE_ADDRESS|default:"Seoul, South Korea" }}</p>
+                </div>
+                <div class="card p-4 border-0 shadow-sm">
+                    <h5><i class="bi bi-clock-fill text-kck-red"></i> Response Hours</h5>
+                    <p class="mb-1">Monday – Friday: 9:00 AM – 8:00 PM (KST)</p>
+                    <p class="mb-0 text-muted small">We respond to emails &amp; messages within 24–48 hours during weekdays.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h2 class="text-kck-blue">Community Events &amp; Gatherings</h2>
+                <p>The best way to meet KCK in person is through our community events &mdash; cultural celebrations, gatherings, welfare meet-ups, and sports activities.</p>
+                <div class="card p-4 border-0 shadow-sm">
+                    <h5><i class="bi bi-calendar-event text-kck-red"></i> Join an Event</h5>
+                    <p>Attend any of our upcoming community events &mdash; they're open to all members of the Kenyan community in Korea.</p>
+                    <a href="{% url 'events:event_list' %}" class="btn btn-primary">
+                        <i class="bi bi-calendar-check"></i> See Upcoming Events
+                    </a>
+                </div>
+                <div class="card p-4 border-0 shadow-sm mt-3">
+                    <h5><i class="bi bi-people text-kck-red"></i> Meet Our Leaders</h5>
+                    <p>Get to know the committee members representing the community.</p>
+                    <a href="{% url 'leaders:list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-people-fill"></i> View Leadership
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <h2>How to Engage With KCK</h2>
+            <p>Several ways the Kenyan community in Korea can connect with us</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card p-4 h-100">
+                    <div class="card-icon"><i class="bi bi-person-plus text-kck-red"></i></div>
+                    <h4>Register as a Member</h4>
+                    <p>Create an account to access member-only features: embassy liaison requests, event registration, certificates, and more.</p>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-sm btn-outline-primary mt-auto">Register</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4 h-100">
+                    <div class="card-icon"><i class="bi bi-building-gear text-kck-red"></i></div>
+                    <h4>Embassy Liaison</h4>
+                    <p>Need help with a passport, visa or other consular matter? KCK can coordinate with the Kenyan Embassy on your behalf.</p>
+                    <a href="{% url 'embassy_liaison:info' %}" class="btn btn-sm btn-outline-primary mt-auto">How it works</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4 h-100">
+                    <div class="card-icon"><i class="bi bi-chat-dots text-kck-red"></i></div>
+                    <h4>Send a Message</h4>
+                    <p>General questions, feedback, or welfare concerns &mdash; we'd love to hear from you.</p>
+                    <a href="{% url 'core:contact' %}" class="btn btn-sm btn-outline-primary mt-auto">Contact Form</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h2 class="text-kck-blue">Looking for the Kenyan Embassy?</h2>
+                <p>For official government services &mdash; passport issuance, visa stamping, authentication, emergency travel documents and similar matters &mdash; you need to contact the <strong>Embassy of the Republic of Kenya in Seoul</strong>.</p>
+                <p>KCK is not the embassy and cannot issue official documents. However, we can help you prepare your paperwork and coordinate a request via our
+                    <a href="{% url 'embassy_liaison:info' %}" class="fw-semibold">Embassy Liaison service</a>.</p>
+                <div class="alert alert-light border d-flex gap-3 align-items-start mt-4">
+                    <i class="bi bi-link-45deg fs-4 text-kck-blue"></i>
+                    <div class="flex-grow-1">
+                        <strong>{{ site_settings.embassy_official_name|default:"Official Embassy of Kenya in Seoul" }}</strong><br>
+                        The official embassy has its own website and official channels for consular services.
+                        {% if site_settings.embassy_official_url %}
+                        <div class="mt-2">
+                            <a href="{{ site_settings.embassy_official_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-primary">
+                                <i class="bi bi-building"></i> Visit official embassy website <i class="bi bi-box-arrow-up-right ms-1"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

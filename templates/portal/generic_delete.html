@@ -1,0 +1,33 @@
+{% extends 'portal/portal_base.html' %}
+{% block title %}Delete {{ cfg.name }} — Admin Portal{% endblock %}
+{% block portal_content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'portal:dashboard' %}">Portal</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'portal:list' key %}">{{ cfg.name_plural }}</a></li>
+        <li class="breadcrumb-item active">Delete</li>
+    </ol>
+</nav>
+
+<div class="portal-card p-4">
+    <div class="text-center py-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+        <h3 class="fw-bold mt-3">Delete this {{ cfg.name|lower }}?</h3>
+        <p class="text-muted lead">Are you sure you want to delete:</p>
+        <div class="alert alert-danger d-inline-block fs-5">
+            <strong>{{ obj }}</strong>
+        </div>
+        <p class="text-muted small">This action cannot be undone.</p>
+
+        <form method="post" class="d-flex gap-2 justify-content-center mt-4">
+            {% csrf_token %}
+            <a href="{% url 'portal:list' key %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Yes, Delete
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

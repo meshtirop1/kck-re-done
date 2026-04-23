@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Verify Membership · {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.verify-box { max-width: 560px; margin: 0 auto; padding: 2.5rem; border-radius: 0.75rem; box-shadow: 0 14px 40px rgba(0,0,0,0.08); border: 1px solid var(--kck-line, #e2e8f0); background: white; }
+.verify-box.valid { border-top: 6px solid #16a34a; }
+.verify-box.invalid { border-top: 6px solid #dc2626; }
+.verify-icon { font-size: 4rem; }
+.valid .verify-icon { color: #16a34a; }
+.invalid .verify-icon { color: #dc2626; }
+.member-detail-row { display: flex; justify-content: space-between; padding: 0.65rem 0; border-bottom: 1px solid #e5e7eb; }
+.member-detail-row:last-child { border-bottom: none; }
+.member-detail-row .lbl { color: #64748b; font-size: 0.9rem; }
+.member-detail-row .val { font-weight: 700; color: var(--kck-ink, #0f172a); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container text-center">
+        <h1 class="display-6 fw-bold">Membership Verification</h1>
+        <p class="lead mb-0">Verifying member number <code>{{ member_number }}</code></p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="verify-box {% if valid %}valid{% else %}invalid{% endif %} text-center">
+            {% if valid %}
+                <i class="bi bi-patch-check-fill verify-icon"></i>
+                <h3 class="fw-bold mt-3 mb-1" style="color: #16a34a;">Valid Member</h3>
+                <p class="text-muted">This KCK membership card is authentic and currently active.</p>
+                <div class="text-start mt-4">
+                    <div class="member-detail-row"><span class="lbl">Member number</span><span class="val">{{ membership.member_number }}</span></div>
+                    <div class="member-detail-row"><span class="lbl">Name</span><span class="val">{{ membership.user.get_full_name|default:membership.user.username }}</span></div>
+                    <div class="member-detail-row"><span class="lbl">Tier</span><span class="val">{{ membership.tier.name }}</span></div>
+                    <div class="member-detail-row"><span class="lbl">Valid from</span><span class="val">{{ membership.period_start|date:"M j, Y" }}</span></div>
+                    <div class="member-detail-row"><span class="lbl">Valid until</span><span class="val">{{ membership.period_end|date:"M j, Y" }}</span></div>
+                    <div class="member-detail-row"><span class="lbl">Status</span><span class="val text-success">Active ({{ membership.days_remaining }} days left)</span></div>
+                </div>
+            {% else %}
+                <i class="bi bi-shield-x verify-icon"></i>
+                <h3 class="fw-bold mt-3 mb-1" style="color: #dc2626;">Not a valid active membership</h3>
+                {% if membership %}
+                    <p class="text-muted">A record exists for this number but the membership is
+                        {% if membership.status == 'expired' %}<strong>expired</strong>.{% endif %}
+                        {% if membership.status == 'rejected' %}<strong>rejected</strong>.{% endif %}
+                        {% if membership.period_end and membership.period_end < now %}The validity period ended.{% endif %}
+                    </p>
+                {% else %}
+                    <p class="text-muted">We couldn't find a KCK member with this number.</p>
+                {% endif %}
+            {% endif %}
+            <p class="small text-muted mt-4 mb-0">
+                <i class="bi bi-shield-lock"></i>
+                Verification served from <code>kenyakorea.com</code> — KCK official membership registry.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

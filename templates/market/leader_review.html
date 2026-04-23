@@ -1,0 +1,167 @@
+{% extends 'portal/portal_base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Review Application — {{ application.business_name }}{% endblock %}
+{% block dash_extra_css %}
+<style>
+.review-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; }
+@media (max-width: 992px) { .review-grid { grid-template-columns: 1fr; } }
+.info-card { background: white; border: 1px solid var(--kck-line); border-radius: var(--r-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1.25rem; }
+.applicant-header { display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--kck-line); }
+.applicant-photo { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; background: #f1f5f9; border: 2px solid var(--kck-line); }
+.applicant-header h3 { font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+.detail-row { display: flex; padding: 0.7rem 0; border-bottom: 1px solid var(--kck-line); gap: 1rem; }
+.detail-row:last-child { border-bottom: 0; }
+.detail-label { font-weight: 700; color: var(--kck-muted); min-width: 140px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.72rem; padding-top: 0.15rem; }
+.detail-value { color: var(--kck-ink); flex: 1; word-break: break-word; white-space: pre-line; }
+.review-card { position: sticky; top: 1rem; background: white; border: 2px solid var(--kck-blue); border-radius: var(--r-lg); padding: 1.5rem; box-shadow: var(--shadow-md); }
+.review-card h4 { font-weight: 800; color: var(--kck-blue); margin-bottom: 0.5rem; }
+.decision-options { display: grid; gap: 0.75rem; margin: 1rem 0; }
+.decision-option { border: 2px solid var(--kck-line); border-radius: var(--r-md); padding: 0.85rem 1rem; cursor: pointer; transition: all 0.15s ease; display: flex; gap: 0.75rem; align-items: center; }
+.decision-option:hover { border-color: var(--kck-blue); }
+.decision-option input[type="radio"] { accent-color: var(--kck-blue); }
+.decision-option.approve:hover, .decision-option.approve:has(input:checked) { border-color: #16a34a; background: #f0fdf4; }
+.decision-option.reject:hover, .decision-option.reject:has(input:checked) { border-color: var(--kck-red); background: #fef2f2; }
+.decision-label { font-weight: 700; }
+.decision-desc { font-size: 0.82rem; color: var(--kck-muted); }
+.status-pill { display: inline-block; padding: 0.3rem 0.85rem; border-radius: 999px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.status-pending { background: #fef3c7; color: #78350f; }
+.status-approved { background: #bbf7d0; color: #14532d; }
+.status-rejected { background: #fecaca; color: #7f1d1d; }
+.status-suspended { background: #e2e8f0; color: #334155; }
+</style>
+{% endblock %}
+{% block portal_content %}
+<div class="mb-3">
+    <a href="{% url 'market:leader_queue' %}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to queue
+    </a>
+</div>
+
+<div class="review-grid">
+    <div>
+        <div class="info-card">
+            <div class="applicant-header">
+                {% if application.user.profile.avatar %}
+                    <img src="{{ application.user.profile.avatar.url }}" alt="{{ application.user.username }}" class="applicant-photo">
+                {% elif application.profile_photo %}
+                    <img src="{{ application.profile_photo.url }}" alt="{{ application.business_name }}" class="applicant-photo">
+                {% else %}
+                    <div class="applicant-photo d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person" style="font-size:2.5rem; color: var(--kck-muted);"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3>{{ application.business_name }}</h3>
+                    <div class="text-muted">
+                        Submitted by
+                        <span class="fw-semibold">
+                            {{ application.user.get_full_name|default:application.user.username }}
+                        </span>
+                    </div>
+                    <div class="mt-1">
+                        <span class="status-pill status-{{ application.status }}">{{ application.status }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Username</div>
+                <div class="detail-value">@{{ application.user.username }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email</div>
+                <div class="detail-value">{{ application.user.email|default:"—" }}</div>
+            </div>
+            {% if application.whatsapp_number %}
+            <div class="detail-row">
+                <div class="detail-label">WhatsApp</div>
+                <div class="detail-value">{{ application.whatsapp_number }}</div>
+            </div>
+            {% endif %}
+            {% if application.city %}
+            <div class="detail-row">
+                <div class="detail-label">City</div>
+                <div class="detail-value">{{ application.city|title }}</div>
+            </div>
+            {% endif %}
+            {% if application.bio %}
+            <div class="detail-row">
+                <div class="detail-label">Bio</div>
+                <div class="detail-value">{{ application.bio }}</div>
+            </div>
+            {% endif %}
+            {% if application.categories_interested %}
+            <div class="detail-row">
+                <div class="detail-label">Categories</div>
+                <div class="detail-value">{{ application.categories_interested }}</div>
+            </div>
+            {% endif %}
+            {% if application.sample_products %}
+            <div class="detail-row">
+                <div class="detail-label">Sample products</div>
+                <div class="detail-value">{{ application.sample_products }}</div>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <div class="detail-label">Applied</div>
+                <div class="detail-value">{{ application.applied_at|date:"M j, Y · g:i a" }}</div>
+            </div>
+            {% if application.reviewed_at %}
+            <div class="detail-row">
+                <div class="detail-label">Last reviewed</div>
+                <div class="detail-value">
+                    {{ application.reviewed_at|date:"M j, Y · g:i a" }}
+                    {% if application.reviewed_by %}by {{ application.reviewed_by.get_full_name|default:application.reviewed_by.username }}{% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% if application.review_notes %}
+            <div class="detail-row">
+                <div class="detail-label">Previous notes</div>
+                <div class="detail-value">{{ application.review_notes }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <div class="review-card">
+            <h4><i class="bi bi-check2-square"></i> Decision</h4>
+            <p class="text-muted small mb-3">Review the application and submit your decision. The applicant will be notified.</p>
+
+            {% if form %}
+                {% crispy form %}
+            {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="decision-options">
+                    <label class="decision-option approve">
+                        <input type="radio" name="decision" value="approve" required>
+                        <div>
+                            <div class="decision-label text-success"><i class="bi bi-check-circle"></i> Approve</div>
+                            <div class="decision-desc">Grant seller access. They can list products immediately.</div>
+                        </div>
+                    </label>
+                    <label class="decision-option reject">
+                        <input type="radio" name="decision" value="reject" required>
+                        <div>
+                            <div class="decision-label text-danger"><i class="bi bi-x-circle"></i> Reject</div>
+                            <div class="decision-desc">Decline the application. They may re-apply later.</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label for="review_notes" class="form-label fw-semibold">Review notes</label>
+                    <textarea name="review_notes" id="review_notes" rows="4" class="form-control"
+                              placeholder="Optional notes (shown to the applicant)">{{ application.review_notes }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold">
+                    <i class="bi bi-send"></i> Submit Review
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

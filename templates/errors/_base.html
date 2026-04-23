@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<style>
+.err-page {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    background:
+        radial-gradient(circle at 10% 0%, rgba(255,215,0,0.08), transparent 40%),
+        radial-gradient(circle at 95% 95%, rgba(200,16,46,0.06), transparent 40%),
+        linear-gradient(180deg, #f8fafc 0%, #eef3fb 100%);
+    padding: 4rem 0;
+}
+.err-code {
+    font-size: clamp(6rem, 18vw, 12rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    background: linear-gradient(135deg, var(--kck-blue) 0%, var(--kck-gold) 70%, var(--kck-red) 120%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+}
+.err-kicker {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(200,16,46,0.1);
+    color: var(--kck-red);
+    border: 1px solid rgba(200,16,46,0.25);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+.err-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: var(--kck-ink, #0f172a);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+}
+.err-message {
+    color: var(--kck-muted, #64748b);
+    font-size: 1.05rem;
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+.err-actions .btn { padding: 0.7rem 1.4rem; font-weight: 600; }
+.err-illustration {
+    font-size: 10rem;
+    color: var(--kck-blue);
+    opacity: 0.12;
+    line-height: 1;
+}
+.err-helpful {
+    background: white;
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.04);
+}
+.err-helpful h6 {
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kck-muted, #64748b);
+    margin-bottom: 0.9rem;
+}
+.err-helpful a {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.4rem;
+    text-decoration: none;
+    color: var(--kck-ink, #0f172a);
+    font-weight: 500;
+    transition: background 0.15s;
+}
+.err-helpful a:hover { background: var(--kck-blue-50, #eef3fb); color: var(--kck-blue); }
+.err-helpful a i { color: var(--kck-blue); width: 22px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="err-page">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="err-kicker">{% block err_kicker %}Error{% endblock %}</span>
+                <div class="err-code">{% block err_code %}---{% endblock %}</div>
+                <h1 class="err-title">{% block err_title %}Something went wrong{% endblock %}</h1>
+                <p class="err-message">{% block err_message %}An unexpected error occurred. Please try again.{% endblock %}</p>
+                <div class="err-actions d-flex flex-wrap gap-2">
+                    <a href="{% url 'core:home' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-house-door"></i> Take me home
+                    </a>
+                    <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-envelope"></i> Contact support
+                    </a>
+                </div>
+
+                <div class="err-helpful">
+                    <h6><i class="bi bi-compass"></i> Popular destinations</h6>
+                    <div class="row g-1">
+                        <div class="col-md-6"><a href="{% url 'memberships:home' %}"><i class="bi bi-shield-check"></i> Membership</a></div>
+                        <div class="col-md-6"><a href="{% url 'embassy_liaison:info' %}"><i class="bi bi-building"></i> Embassy liaison</a></div>
+                        <div class="col-md-6"><a href="{% url 'events:event_list' %}"><i class="bi bi-calendar-event"></i> Events</a></div>
+                        <div class="col-md-6"><a href="{% url 'market:home' %}"><i class="bi bi-shop"></i> Kenyan Market</a></div>
+                        <div class="col-md-6"><a href="{% url 'core:discover' %}"><i class="bi bi-globe-africa"></i> Discover Kenya</a></div>
+                        <div class="col-md-6"><a href="{% url 'leaders:list' %}"><i class="bi bi-people-fill"></i> Leadership</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-end">
+                <i class="bi {% block err_icon %}bi-exclamation-diamond{% endblock %} err-illustration"></i>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

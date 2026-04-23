@@ -1,0 +1,127 @@
+{% extends 'memberships/oversight/_base.html' %}
+{% load humanize %}
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>Oversight Dashboard</h2>
+        <p class="dash-subtitle">Read-only view for the President, Vice President and Secretary. For accountability, not action.</p>
+    </div>
+    <a href="{% url 'memberships:oversight_export_csv' %}" class="btn btn-outline-primary"><i class="bi bi-download"></i> Export active members</a>
+</div>
+
+<div class="alert alert-info small"><i class="bi bi-shield-check"></i>
+    You have <strong>read-only</strong> access. Only the Treasurer can verify payments or change settings. Every action they take is logged below.</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Active members</div>
+            <div class="fs-2 fw-bold" style="color:#16a34a;">{{ stats.active }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Awaiting verification</div>
+            <div class="fs-2 fw-bold" style="color:var(--kck-red);">{{ stats.awaiting }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Pending payment</div>
+            <div class="fs-2 fw-bold" style="color:#b8860b;">{{ stats.pending }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Expired</div>
+            <div class="fs-2 fw-bold" style="color:#64748b;">{{ stats.expired }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="dash-card p-4">
+            <h6 class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Collected — active period</h6>
+            <div class="display-6 fw-bold" style="color:var(--kck-blue);">{{ stats.total_collected|intcomma }}</div>
+            <div class="small text-muted">Sum of expected amounts across currently-active memberships.</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="dash-card p-4">
+            <h6 class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Collected — lifetime</h6>
+            <div class="display-6 fw-bold" style="color:var(--kck-gold);">{{ stats.total_lifetime|intcomma }}</div>
+            <div class="small text-muted">Sum across verified+active+awaiting+expired memberships.</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="dash-card">
+            <div class="card-header"><h6><i class="bi bi-bar-chart"></i> Actions by type</h6></div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for row in action_counts %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ row.action|title }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ row.n }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted small">No activity yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="dash-card">
+            <div class="card-header"><h6><i class="bi bi-person-check"></i> Top actors</h6></div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for a in top_actors %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ a.actor__first_name|default:"" }} {{ a.actor__last_name|default:"" }} <span class="text-muted small">(@{{ a.actor__username }})</span></span>
+                        <span class="badge bg-secondary rounded-pill">{{ a.n }} actions</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted small">No actions yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="dash-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6><i class="bi bi-patch-check"></i> Recently activated members</h6>
+                <a href="{% url 'memberships:oversight_members' %}" class="btn btn-sm btn-outline-primary">See all →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_verified %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 small align-middle">
+                        <thead class="table-light">
+                            <tr><th>Member #</th><th>Name</th><th>Activated</th><th>Activated by</th><th>Valid until</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for m in recent_verified %}
+                            <tr>
+                                <td><strong>{{ m.member_number }}</strong></td>
+                                <td>{{ m.user.get_full_name|default:m.user.username }}</td>
+                                <td>{{ m.activated_at|naturaltime }}</td>
+                                <td>{{ m.verified_by|default:"system" }}</td>
+                                <td>{{ m.period_end|date:"M j, Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center py-4 text-muted small mb-0">No members activated yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

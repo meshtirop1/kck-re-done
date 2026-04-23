@@ -1,0 +1,221 @@
+{% extends 'dashboards/_base.html' %}
+{% load humanize %}
+{% block title %}Dashboard - {{ SITE_NAME }}{% endblock %}
+
+{% block sidebar_role %}Member{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'accounts:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' and 'accounts' in request.resolver_match.namespaces %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-house-door"></i></span> Dashboard
+</a>
+
+<h6>My Applications</h6>
+<a href="{% url 'services:visa_apply' %}" class="{% if 'visa' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-passport"></i></span> Visa Applications
+    {% if visa_applications|length %}<span class="badge-pill">{{ visa_applications|length }}</span>{% endif %}
+</a>
+<a href="{% url 'services:passport_apply' %}" class="{% if 'passport' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-file-earmark-person"></i></span> Passport Applications
+    {% if passport_applications|length %}<span class="badge-pill">{{ passport_applications|length }}</span>{% endif %}
+</a>
+
+<h6>Community</h6>
+<a href="{% url 'events:event_list' %}" class="{% if '/events' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-calendar-event"></i></span> Events
+    {% if event_registrations|length %}<span class="badge-pill">{{ event_registrations|length }}</span>{% endif %}
+</a>
+<a href="{% url 'embassy_liaison:service_list' %}">
+    <span class="nav-icon"><i class="bi bi-building"></i></span> Embassy Liaison
+</a>
+<a href="{% url 'market:home' %}">
+    <span class="nav-icon"><i class="bi bi-shop"></i></span> Kenyan Market
+</a>
+<a href="{% url 'memberships:home' %}" class="{% if 'membership' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-shield-check"></i></span> My Membership
+</a>
+
+<h6>Account</h6>
+<a href="{% url 'accounts:profile' %}" class="{% if 'profile' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-person-gear"></i></span> Profile
+</a>
+<a href="{% url 'accounts:password_change' %}" class="{% if 'password' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-shield-lock"></i></span> Change Password
+</a>
+<a href="{% url 'accounts:logout' %}">
+    <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span> Logout
+</a>
+<a href="{% url 'core:home' %}">
+    <span class="nav-icon"><i class="bi bi-arrow-left"></i></span> Back to Site
+</a>
+{% endblock %}
+
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>Welcome, {{ user.first_name|default:user.username }}</h2>
+        <p class="dash-subtitle">
+            {% if active_membership %}
+                <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> Active member · {{ active_membership.member_number }}</span>
+                · valid until {{ active_membership.period_end|date:"M j, Y" }}
+            {% else %}
+                <span class="badge bg-secondary">Not a member yet</span>
+            {% endif %}
+        </p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'services:visa_apply' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Visa</a>
+        <a href="{% url 'services:passport_apply' %}" class="btn btn-danger"><i class="bi bi-plus-lg"></i> New Passport</a>
+    </div>
+</div>
+
+{% if not active_membership %}
+<div class="dash-card p-4 mb-4" style="background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%); color: white; border: none;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <span class="badge" style="background: rgba(255,215,0,0.2); color: var(--kck-gold); letter-spacing:0.08em;"><i class="bi bi-stars"></i> Become a member</span>
+            <h4 class="mt-2 mb-1" style="color: white;">Unlock the full KCK experience</h4>
+            <p class="mb-0" style="color: rgba(255,255,255,0.85);">Annual membership gives you an ID card, voting rights, free endorsements, priority liaison, and welfare fund access.</p>
+        </div>
+        <a href="{% url 'memberships:home' %}" class="btn btn-warning fw-bold"><i class="bi bi-arrow-right-circle"></i> Learn more &amp; join</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Visa Applications</div>
+                    <div class="fs-2 fw-bold" style="color:var(--kck-blue);">{{ visa_applications|length }}</div>
+                </div>
+                <i class="bi bi-passport" style="font-size:2rem; color:var(--kck-blue); opacity:0.3;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Passport Applications</div>
+                    <div class="fs-2 fw-bold" style="color:var(--kck-red);">{{ passport_applications|length }}</div>
+                </div>
+                <i class="bi bi-file-earmark-person" style="font-size:2rem; color:var(--kck-red); opacity:0.3;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Event Registrations</div>
+                    <div class="fs-2 fw-bold" style="color:#b8860b;">{{ event_registrations|length }}</div>
+                </div>
+                <i class="bi bi-calendar-event" style="font-size:2rem; color:#b8860b; opacity:0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Visa Applications #}
+<div class="dash-card mb-4">
+    <div class="card-header">
+        <h5><i class="bi bi-passport text-kck-blue"></i> My Visa Applications</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if visa_applications %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Visa Type</th><th>Submitted</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for app in visa_applications %}
+                    <tr>
+                        <td>{{ app.visa_type.name }}</td>
+                        <td>{{ app.submitted_at|naturaltime }}</td>
+                        <td><span class="badge badge-status-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                        <td><a href="{% url 'services:visa_application_detail' app.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-3">No visa applications yet.</p>
+            <a href="{% url 'services:visa_apply' %}" class="btn btn-sm btn-primary">Apply Now</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Passport Applications #}
+<div class="dash-card mb-4">
+    <div class="card-header">
+        <h5><i class="bi bi-file-earmark-person text-kck-red"></i> My Passport Applications</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if passport_applications %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Type</th><th>Submitted</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for app in passport_applications %}
+                    <tr>
+                        <td>{{ app.get_type_display }}</td>
+                        <td>{{ app.submitted_at|naturaltime }}</td>
+                        <td><span class="badge badge-status-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                        <td><a href="{% url 'services:passport_application_detail' app.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-3">No passport applications yet.</p>
+            <a href="{% url 'services:passport_apply' %}" class="btn btn-sm btn-danger">Apply Now</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Event Registrations #}
+<div class="dash-card">
+    <div class="card-header">
+        <h5><i class="bi bi-calendar-event text-kck-gold"></i> My Event Registrations</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if event_registrations %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr><th>Event</th><th>Date</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for reg in event_registrations %}
+                    <tr>
+                        <td>{{ reg.event.title }}</td>
+                        <td>{{ reg.event.date|date:"M j, Y" }}</td>
+                        <td><span class="badge bg-success">{{ reg.get_status_display }}</span></td>
+                        <td><a href="{% url 'events:event_detail' reg.event.slug %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-calendar-x" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-3">No event registrations yet.</p>
+            <a href="{% url 'events:event_list' %}" class="btn btn-sm btn-primary">Browse Events</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

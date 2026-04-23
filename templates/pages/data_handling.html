@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Data Handling Statement - {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .flow-step {
+        position: relative;
+        padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+        border-radius: .75rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .flow-step .step-num {
+        position: absolute;
+        left: -18px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: #BB0000;
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+    .flow-arrow {
+        text-align: center;
+        color: #BB0000;
+        font-size: 1.5rem;
+        line-height: 1;
+        margin: .25rem 0;
+    }
+    .role-pill {
+        display: inline-block;
+        padding: .15rem .6rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 600;
+    }
+    .role-member { background: #e0f2fe; color: #075985; }
+    .role-officer { background: #fef3c7; color: #92400e; }
+    .role-chair { background: #fee2e2; color: #991b1b; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1><i class="bi bi-diagram-3"></i> Data Handling Statement</h1>
+        <p class="lead">A detailed look at how your embassy service request data moves through KCK &mdash; from submission to completion.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+
+                <div class="alert alert-info d-flex align-items-center mb-4">
+                    <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                    <div>
+                        This page complements our <a href="{% url 'core:privacy' %}" class="alert-link">Privacy Policy</a> with technical details about embassy service requests. <strong>Last Updated:</strong> April 19, 2026.
+                    </div>
+                </div>
+
+                <h2 class="text-kck-blue mt-4"><i class="bi bi-signpost-split"></i> How Your Embassy Request Data Is Handled</h2>
+                <p>When you submit a request for an embassy service through KCK (visa, passport renewal, certification, etc.), your data moves through a clearly defined pipeline. Every step is logged, access-controlled, and time-bound. Here's what happens:</p>
+
+                <!-- Visual Flow Steps -->
+                <div class="row g-4 mt-2 mb-4">
+                    <div class="col-12">
+                        <div class="flow-step">
+                            <div class="step-num">1</div>
+                            <h5 class="mb-1"><i class="bi bi-cloud-upload text-kck-red"></i> You Submit a Request</h5>
+                            <p class="mb-0 small text-muted">Form fields and any uploaded documents are transmitted over TLS/HTTPS and stored <strong>encrypted</strong> in the KCK database. A unique request ID is generated for tracking.</p>
+                        </div>
+                    </div>
+                    <div class="col-12 flow-arrow"><i class="bi bi-arrow-down-circle-fill"></i></div>
+                    <div class="col-12">
+                        <div class="flow-step">
+                            <div class="step-num">2</div>
+                            <h5 class="mb-1"><i class="bi bi-search text-kck-red"></i> KCK Officer Reviews</h5>
+                            <p class="mb-0 small text-muted">An assigned KCK officer reviews your request for completeness. <strong>Access is internal and logged</strong> &mdash; every view, edit, and comment is recorded with the officer's identity and timestamp.</p>
+                        </div>
+                    </div>
+                    <div class="col-12 flow-arrow"><i class="bi bi-arrow-down-circle-fill"></i></div>
+                    <div class="col-12">
+                        <div class="flow-step">
+                            <div class="step-num">3</div>
+                            <h5 class="mb-1"><i class="bi bi-send text-kck-red"></i> Forwarded to the Embassy</h5>
+                            <p class="mb-0 small text-muted">Only <strong>after you give explicit consent</strong>, the relevant documents and information are forwarded to the Embassy of Kenya in Seoul through secure channels. You'll see a clear record of what was forwarded, when, and to whom.</p>
+                        </div>
+                    </div>
+                    <div class="col-12 flow-arrow"><i class="bi bi-arrow-down-circle-fill"></i></div>
+                    <div class="col-12">
+                        <div class="flow-step">
+                            <div class="step-num">4</div>
+                            <h5 class="mb-1"><i class="bi bi-building-check text-kck-red"></i> Embassy Processes</h5>
+                            <p class="mb-0 small text-muted">The Embassy of Kenya handles the official processing. This step is <strong>outside KCK's control</strong> and governed by the embassy's own data practices.</p>
+                        </div>
+                    </div>
+                    <div class="col-12 flow-arrow"><i class="bi bi-arrow-down-circle-fill"></i></div>
+                    <div class="col-12">
+                        <div class="flow-step">
+                            <div class="step-num">5</div>
+                            <h5 class="mb-1"><i class="bi bi-check2-circle text-kck-red"></i> Result &amp; Collection</h5>
+                            <p class="mb-0 small text-muted">Once the embassy returns a decision or completed documents, your status is <strong>updated in your dashboard</strong>. Physical documents are collected from the embassy and securely held until handed over to you.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What Goes Where -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-arrow-left-right"></i> What Goes to the Embassy vs. Stays with KCK</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-kck-red text-white">
+                                <i class="bi bi-send-check"></i> Forwarded to Embassy
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0 small">
+                                    <li>Application forms you completed</li>
+                                    <li>Required supporting documents (passport scans, photos, etc.)</li>
+                                    <li>Your contact details needed for processing</li>
+                                    <li>KCK cover note / endorsement (if applicable)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-kck-blue text-white">
+                                <i class="bi bi-lock"></i> Stays Within KCK
+                            </div>
+                            <div class="card-body">
+                                <ul class="mb-0 small">
+                                    <li>Account credentials (password hash, session tokens)</li>
+                                    <li>Internal notes, comments, officer assignments</li>
+                                    <li>Access and audit logs</li>
+                                    <li>Event registrations and community activity</li>
+                                    <li>Newsletter preferences</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Who Can See What -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-person-lines-fill"></i> Who Can See What</h2>
+                <p>KCK operates a strict <strong>role-based access control</strong> model. Each role has clearly defined visibility:</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width:20%">Role</th>
+                                <th>Can See</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="role-pill role-member">Member</span></td>
+                                <td>Only <strong>your own</strong> requests, documents, and profile. You control your own data at all times.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="role-pill role-officer">KCK Officer</span></td>
+                                <td>Only requests <strong>assigned</strong> to them. Officers cannot browse other members' requests.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="role-pill role-chair">President / Admin</span></td>
+                                <td>All requests, for oversight and escalation. All actions are <strong>logged and auditable</strong>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Document Security -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-file-earmark-lock"></i> Document Security</h2>
+                <ul>
+                    <li><i class="bi bi-shield-check text-success"></i> Uploaded files are stored in <strong>secure, encrypted storage</strong> with access restricted to assigned officers.</li>
+                    <li><i class="bi bi-clipboard-check text-success"></i> Every document view, download, or share action is <strong>logged</strong> with user ID, timestamp, and IP.</li>
+                    <li><i class="bi bi-fingerprint text-success"></i> Files are served behind authenticated, signed URLs that expire &mdash; no public links.</li>
+                    <li><i class="bi bi-eraser text-success"></i> Documents are <strong>automatically purged</strong> after the retention period (5 years after request completion) unless you request earlier deletion.</li>
+                    <li><i class="bi bi-shield-lock text-success"></i> Backups containing documents are encrypted and held only as long as operationally necessary.</li>
+                </ul>
+
+                <!-- Your Controls -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-sliders"></i> Your Controls</h2>
+                <p>You remain in control of your data throughout its lifecycle:</p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h6><i class="bi bi-eye text-kck-red"></i> View</h6>
+                            <p class="small mb-0">Access all your requests, statuses, and uploaded documents from your dashboard at any time.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h6><i class="bi bi-x-circle text-kck-red"></i> Cancel</h6>
+                            <p class="small mb-0">Withdraw or cancel an active request before it is forwarded to the embassy.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <h6><i class="bi bi-trash text-kck-red"></i> Request Deletion</h6>
+                            <p class="small mb-0">Ask for your data to be deleted (subject to legal retention rules for completed records).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breach Notification -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-bell"></i> Breach Notification Policy</h2>
+                <div class="alert alert-warning">
+                    <h6 class="mb-2"><i class="bi bi-exclamation-octagon-fill"></i> 72-Hour Notification</h6>
+                    <p class="mb-0">In the unlikely event of a data breach that may affect your personal information, we will:</p>
+                    <ul class="mb-0 mt-2">
+                        <li>Notify affected users <strong>within 72 hours</strong> of discovery.</li>
+                        <li>Explain what happened, what data was affected, and the steps we are taking.</li>
+                        <li>Provide guidance on what you can do to protect yourself.</li>
+                        <li>Report to relevant authorities where required by law.</li>
+                    </ul>
+                </div>
+
+                <!-- Commitments & Limitations -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-journal-check"></i> KCK's Commitments and Limitations</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-success h-100">
+                            <div class="card-header bg-success text-white"><i class="bi bi-check2-all"></i> What We Commit To</div>
+                            <div class="card-body">
+                                <ul class="small mb-0">
+                                    <li>Handle your data with confidentiality and care.</li>
+                                    <li>Use your data only for the purpose you provided it.</li>
+                                    <li>Honor your rights (access, correction, deletion).</li>
+                                    <li>Log and audit every sensitive action.</li>
+                                    <li>Minimize what we collect and what we share.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-warning h-100">
+                            <div class="card-header bg-warning"><i class="bi bi-exclamation-circle"></i> What We Cannot Do</div>
+                            <div class="card-body">
+                                <ul class="small mb-0">
+                                    <li>Guarantee outcomes of embassy decisions.</li>
+                                    <li>Control the embassy's internal data handling.</li>
+                                    <li>Recover data once lawfully deleted.</li>
+                                    <li>Prevent 100% of risks inherent in online systems.</li>
+                                    <li>Act as a legal representative or government agent.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <h2 class="text-kck-blue mt-5"><i class="bi bi-envelope"></i> Questions?</h2>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <p class="mb-1">For any data handling question, contact our Data Protection Officer:</p>
+                        <p class="mb-1"><i class="bi bi-envelope"></i> <a href="mailto:dpo@kckorea.org">dpo@kckorea.org</a></p>
+                        <p class="mb-0"><i class="bi bi-envelope-at"></i> Or use our <a href="{% url 'core:contact' %}">contact form</a>.</p>
+                    </div>
+                </div>
+
+                <div class="text-center my-5">
+                    <a href="{% url 'core:privacy' %}" class="btn btn-outline-primary me-2"><i class="bi bi-shield-lock"></i> Privacy Policy</a>
+                    <a href="{% url 'core:terms' %}" class="btn btn-outline-secondary"><i class="bi bi-file-text"></i> Terms of Service</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

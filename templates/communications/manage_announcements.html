@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Manage Announcements{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="fw-bold mb-0">Manage Announcements</h1>
+      <div>
+        <a href="{% url 'communications:manage_list' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-file-earmark-text"></i> Communications
+        </a>
+        <a href="{% url 'communications:announcement_create' %}" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> New Announcement
+        </a>
+      </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+      <div class="col-md-6">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search...">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Pinned</th>
+              <th>Status</th>
+              <th>Published</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ann in page_obj %}
+              <tr>
+                <td>{{ ann.title|truncatechars:60 }}</td>
+                <td><span class="badge bg-secondary">{{ ann.get_category_display }}</span></td>
+                <td>{% if ann.is_pinned %}<i class="bi bi-pin-angle-fill text-warning"></i>{% else %}-{% endif %}</td>
+                <td>
+                  {% if ann.is_published %}
+                    <span class="badge bg-success">Published</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Draft</span>
+                  {% endif %}
+                </td>
+                <td class="small text-muted">{{ ann.published_at|date:"M j, Y"|default:"-" }}</td>
+                <td class="text-end">
+                  <a href="{% url 'communications:announcement_edit' ann.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <form method="post" action="{% url 'communications:announcement_publish' ann.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-primary" type="submit">
+                      {% if ann.is_published %}Unpublish{% else %}Publish{% endif %}
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center text-muted py-4">No announcements yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

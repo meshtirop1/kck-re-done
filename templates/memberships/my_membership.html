@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}My Membership · {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.ref-code-box { background: #fff8dc; border: 2px dashed var(--kck-gold); border-radius: 0.6rem; padding: 1rem 1.25rem; font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 800; letter-spacing: 0.08em; color: var(--kck-blue); text-align: center; position: relative; }
+.ref-code-box .copy-btn { position: absolute; right: 0.5rem; top: 0.5rem; }
+.bank-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #e5e7eb; }
+.bank-row:last-child { border-bottom: none; }
+.bank-row .label { color: #64748b; font-size: 0.9rem; }
+.bank-row .value { font-weight: 700; color: var(--kck-ink, #0f172a); font-family: 'Courier New', monospace; }
+.status-hero { padding: 2rem; border-radius: 0.75rem; margin-bottom: 1.5rem; }
+.status-hero.pending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #78350f; }
+.status-hero.awaiting { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e3a8a; }
+.status-hero.active { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #064e3b; }
+.status-hero.rejected { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; }
+.status-hero.expired { background: #e5e7eb; color: #374151; }
+.status-hero h3 { margin: 0; font-weight: 800; }
+.member-card { background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%); color: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 14px 40px rgba(11,61,145,0.3); position: relative; overflow: hidden; }
+.member-card::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background: rgba(255,215,0,0.15); border-radius:50%; }
+.member-card .card-label { font-size: 0.72rem; letter-spacing:0.1em; text-transform: uppercase; color: var(--kck-gold); font-weight:700; }
+.member-card .member-number { font-size: 1.6rem; font-weight: 800; letter-spacing: 0.04em; margin: 0.25rem 0 0.75rem; font-family: 'Courier New', monospace; }
+.member-card .member-name { font-size: 1.2rem; font-weight: 700; }
+.member-card .validity { font-size: 0.85rem; color: rgba(255,255,255,0.85); margin-top: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container text-center">
+        <h1 class="display-6 fw-bold">My Membership</h1>
+        <p class="lead mb-0">Reference code <code>{{ membership.reference_code }}</code></p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+
+                {% if membership.status == 'active' %}
+                <div class="status-hero active">
+                    <h3><i class="bi bi-patch-check-fill"></i> Active Member</h3>
+                    <p class="mb-0 mt-2">Welcome! Your membership is valid until <strong>{{ membership.period_end|date:"M j, Y" }}</strong> — {{ membership.days_remaining }} days remaining.</p>
+                </div>
+
+                <div class="member-card mb-3">
+                    <div class="card-label">KCK Member Card</div>
+                    <div class="member-number">{{ membership.member_number }}</div>
+                    <div class="member-name">{{ membership.user.get_full_name|default:membership.user.username }}</div>
+                    <div class="validity">
+                        <i class="bi bi-calendar-check"></i>
+                        Valid {{ membership.period_start|date:"M j, Y" }} → {{ membership.period_end|date:"M j, Y" }}
+                    </div>
+                </div>
+                <div class="mb-4 d-flex gap-2 flex-wrap">
+                    <a href="{% url 'memberships:member_card_pdf' membership.pk %}" class="btn btn-primary">
+                        <i class="bi bi-download"></i> Download ID card (PDF)
+                    </a>
+                    <a href="{% url 'memberships:verify' membership.member_number %}" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-qr-code-scan"></i> Public verification page
+                    </a>
+                </div>
+
+                {% elif membership.status == 'awaiting_verification' %}
+                <div class="status-hero awaiting">
+                    <h3><i class="bi bi-hourglass-split"></i> Awaiting Verification</h3>
+                    <p class="mb-0 mt-2">Thanks for submitting your payment. Our treasurer will match it against the bank statement and activate your membership — usually within a few days. You'll get an email.</p>
+                </div>
+
+                {% elif membership.status == 'pending_payment' %}
+                <div class="status-hero pending">
+                    <h3><i class="bi bi-credit-card"></i> Payment Needed</h3>
+                    <p class="mb-0 mt-2">Complete the bank transfer below, then click "I've paid" to submit your proof.</p>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-1-circle text-kck-red"></i> Send this exact amount</h5>
+                        <div class="fs-2 fw-bold" style="color: var(--kck-blue);">
+                            {{ membership.currency }} {{ membership.expected_amount|intcomma }}
+                        </div>
+                        <p class="text-muted small mb-0">The amount must match exactly. Partial payments will be rejected.</p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-2-circle text-kck-red"></i> Include this reference in your transfer description</h5>
+                        <div class="ref-code-box">
+                            <span id="refCode">{{ membership.reference_code }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary copy-btn" onclick="navigator.clipboard.writeText('{{ membership.reference_code }}'); this.innerText='Copied!'"><i class="bi bi-clipboard"></i> Copy</button>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Critical:</strong> without this code in the transfer description, the treasurer cannot match your payment.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-3-circle text-kck-red"></i> KCK Bank details</h5>
+                        {% if site_settings.bank_account_number %}
+                        <div class="bank-row"><span class="label">Bank</span><span class="value">{{ site_settings.bank_name }}</span></div>
+                        <div class="bank-row"><span class="label">Account name</span><span class="value">{{ site_settings.bank_account_name }}</span></div>
+                        <div class="bank-row"><span class="label">Account number</span><span class="value">{{ site_settings.bank_account_number }}</span></div>
+                        {% if site_settings.bank_branch %}<div class="bank-row"><span class="label">Branch</span><span class="value">{{ site_settings.bank_branch }}</span></div>{% endif %}
+                        {% if site_settings.bank_swift %}<div class="bank-row"><span class="label">SWIFT</span><span class="value">{{ site_settings.bank_swift }}</span></div>{% endif %}
+                        {% else %}
+                        <div class="alert alert-warning mb-0">Bank details have not been configured yet. Please contact the treasurer.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="{% url 'memberships:declare_payment' membership.pk %}" class="btn btn-danger btn-lg fw-bold">
+                        <i class="bi bi-4-circle"></i> I've paid — upload proof
+                    </a>
+                </div>
+
+                {% elif membership.status == 'rejected' %}
+                <div class="status-hero rejected">
+                    <h3><i class="bi bi-x-circle-fill"></i> Payment Rejected</h3>
+                    {% if membership.rejection_reason %}
+                    <p class="mb-0 mt-2"><strong>Reason:</strong> {{ membership.rejection_reason }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'memberships:declare_payment' membership.pk %}" class="btn btn-primary">Submit new proof</a>
+
+                {% elif membership.status == 'expired' %}
+                <div class="status-hero expired">
+                    <h3><i class="bi bi-hourglass-bottom"></i> Expired</h3>
+                    <p class="mb-0 mt-2">Your membership has expired. Renew to continue enjoying benefits.</p>
+                </div>
+                <a href="{% url 'memberships:apply' %}" class="btn btn-primary">Renew now</a>
+                {% endif %}
+
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> Membership details</h6>
+                        <div class="small">
+                            <div class="mb-2"><span class="text-muted">Tier:</span> <strong>{{ membership.tier.name }}</strong></div>
+                            <div class="mb-2"><span class="text-muted">Amount:</span> {{ membership.currency }} {{ membership.expected_amount|intcomma }}</div>
+                            <div class="mb-2"><span class="text-muted">Applied:</span> {{ membership.created_at|naturaltime }}</div>
+                            {% if membership.activated_at %}<div class="mb-2"><span class="text-muted">Activated:</span> {{ membership.activated_at|naturaltime }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if site_settings.treasurer_contact_email or site_settings.treasurer_contact_phone %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-2"><i class="bi bi-person-rolodex"></i> Treasurer contact</h6>
+                        <div class="small">
+                            {% if site_settings.treasurer_contact_email %}<div><i class="bi bi-envelope"></i> <a href="mailto:{{ site_settings.treasurer_contact_email }}">{{ site_settings.treasurer_contact_email }}</a></div>{% endif %}
+                            {% if site_settings.treasurer_contact_phone %}<div><i class="bi bi-telephone"></i> {{ site_settings.treasurer_contact_phone }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

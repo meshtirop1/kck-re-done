@@ -1,0 +1,143 @@
+{% extends 'memberships/treasurer/_base.html' %}
+{% load humanize %}
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>{{ membership.user.get_full_name|default:membership.user.username }}</h2>
+        <p class="dash-subtitle">Reference <code>{{ membership.reference_code }}</code>
+            {% if membership.member_number %}· Member # <strong>{{ membership.member_number }}</strong>{% endif %}</p>
+    </div>
+    <a href="{% url 'memberships:treasurer_queue' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="dash-card mb-3">
+            <div class="card-header"><h5><i class="bi bi-info-circle"></i> Membership</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        {% if membership.status == 'active' %}<span class="badge bg-success">Active</span>
+                        {% elif membership.status == 'awaiting_verification' %}<span class="badge bg-warning text-dark">Awaiting verification</span>
+                        {% elif membership.status == 'pending_payment' %}<span class="badge bg-secondary">Pending payment</span>
+                        {% elif membership.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+                        {% elif membership.status == 'expired' %}<span class="badge bg-dark">Expired</span>{% endif %}
+                    </dd>
+                    <dt class="col-sm-4">Tier</dt><dd class="col-sm-8">{{ membership.tier.name }}</dd>
+                    <dt class="col-sm-4">Expected amount</dt><dd class="col-sm-8"><strong>{{ membership.currency }} {{ membership.expected_amount|intcomma }}</strong></dd>
+                    <dt class="col-sm-4">User email</dt><dd class="col-sm-8">{{ membership.user.email }}</dd>
+                    <dt class="col-sm-4">Applied</dt><dd class="col-sm-8">{{ membership.created_at|date:"M j, Y H:i" }}</dd>
+                    {% if membership.payment_declared_at %}
+                    <dt class="col-sm-4">Payment declared</dt><dd class="col-sm-8">{{ membership.payment_declared_at|date:"M j, Y H:i" }}</dd>
+                    {% endif %}
+                    {% if membership.activated_at %}
+                    <dt class="col-sm-4">Activated</dt><dd class="col-sm-8">{{ membership.activated_at|date:"M j, Y H:i" }} by {{ membership.verified_by|default:"—" }}</dd>
+                    <dt class="col-sm-4">Valid</dt><dd class="col-sm-8">{{ membership.period_start|date:"M j, Y" }} → {{ membership.period_end|date:"M j, Y" }} ({{ membership.days_remaining }} days left)</dd>
+                    {% endif %}
+                    {% if membership.rejection_reason %}
+                    <dt class="col-sm-4 text-danger">Rejection reason</dt><dd class="col-sm-8">{{ membership.rejection_reason }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        <div class="dash-card mb-3">
+            <div class="card-header"><h5><i class="bi bi-receipt"></i> Declared payments</h5></div>
+            <div class="card-body p-0">
+                {% if payments %}
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr><th>Claimed amount</th><th>Transfer date</th><th>Declared at</th><th>Proof</th><th>Notes</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for p in payments %}
+                            <tr>
+                                <td><strong>{{ membership.currency }} {{ p.claimed_amount|intcomma }}</strong>
+                                    {% if p.claimed_amount != membership.expected_amount %}
+                                        <br><span class="badge bg-warning text-dark small">Amount mismatch</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ p.claimed_date|date:"M j, Y" }}</td>
+                                <td>{{ p.created_at|naturaltime }}</td>
+                                <td>{% if p.proof_image %}<a href="{{ p.proof_image.url }}" target="_blank"><img src="{{ p.proof_image.url }}" style="max-height:60px; border-radius:4px;"></a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                                <td class="small">{{ p.notes|default:"—"|linebreaksbr }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center py-4 mb-0 text-muted">No payments declared yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if membership.status == 'awaiting_verification' or membership.status == 'pending_payment' %}
+        <div class="dash-card">
+            <div class="card-header"><h5><i class="bi bi-shield-check"></i> Verify or reject</h5></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Action</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="action" id="act-verify" value="verify" checked>
+                            <label class="btn btn-outline-success" for="act-verify"><i class="bi bi-check-circle"></i> Verify & activate</label>
+                            <input type="radio" class="btn-check" name="action" id="act-reject" value="reject">
+                            <label class="btn btn-outline-danger" for="act-reject"><i class="bi bi-x-circle"></i> Reject</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Notes / reason</label>
+                        <textarea name="notes" class="form-control" rows="3" placeholder="Optional for verification. Required-ish for rejection — the member sees this."></textarea>
+                    </div>
+                    <button class="btn btn-primary">Submit decision</button>
+                </form>
+                <p class="small text-muted mt-3 mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    Open your bank statement and confirm a deposit of <strong>{{ membership.currency }} {{ membership.expected_amount|intcomma }}</strong>
+                    referencing <strong>{{ membership.reference_code }}</strong> exists before verifying.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="dash-card mb-3">
+            <div class="card-header"><h6><i class="bi bi-bank"></i> Bank (for reference)</h6></div>
+            <div class="card-body small">
+                <div><strong>{{ site_settings.bank_name|default:"—" }}</strong></div>
+                <div>Account: {{ site_settings.bank_account_name|default:"—" }}</div>
+                <div>Number: <code>{{ site_settings.bank_account_number|default:"—" }}</code></div>
+                <div>Branch: {{ site_settings.bank_branch|default:"—" }}</div>
+                {% if site_settings.bank_swift %}<div>SWIFT: {{ site_settings.bank_swift }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="dash-card">
+            <div class="card-header"><h6><i class="bi bi-journal-text"></i> Audit log for this membership</h6></div>
+            <div class="card-body p-0">
+                {% if logs %}
+                <ul class="list-group list-group-flush small">
+                    {% for log in logs %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-light text-dark">{{ log.get_action_display }}</span>
+                            <small class="text-muted">{{ log.created_at|naturaltime }}</small>
+                        </div>
+                        <div class="text-muted">by {{ log.actor|default:"system" }}</div>
+                        <div class="small">{{ log.description }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-center py-3 mb-0 text-muted small">No log entries.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

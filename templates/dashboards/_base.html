@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<style>
+.dash-wrap { background: #f4f6fa; min-height: calc(100vh - 200px); }
+.dash-sidebar {
+    background: linear-gradient(180deg, var(--kck-blue) 0%, #072a66 100%);
+    color: white;
+    min-height: 100%;
+    padding: 1.25rem 0 2rem;
+    position: sticky;
+    top: 0;
+}
+.dash-sidebar .sidebar-brand {
+    padding: 0 1.25rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 0.75rem;
+}
+.dash-sidebar .sidebar-brand .who {
+    font-weight: 700; font-size: 1rem; color: white; letter-spacing: -0.01em;
+    display: block; margin-bottom: 0.1rem;
+}
+.dash-sidebar .sidebar-brand .role {
+    font-size: 0.7rem; color: var(--kck-gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;
+}
+.dash-sidebar h6 {
+    color: var(--kck-gold);
+    letter-spacing: 0.12em;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    padding: 0.75rem 1.25rem 0.35rem;
+    margin: 0.5rem 0 0;
+    font-weight: 700;
+}
+.dash-sidebar a {
+    color: rgba(255,255,255,0.82);
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 1.25rem;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    font-size: 0.92rem; font-weight: 500;
+}
+.dash-sidebar a:hover { background: rgba(255,255,255,0.06); color: white; }
+.dash-sidebar a.active {
+    background: rgba(255,215,0,0.1);
+    color: var(--kck-gold);
+    border-left-color: var(--kck-gold);
+    font-weight: 600;
+}
+.dash-sidebar .nav-icon { font-size: 1.05rem; width: 22px; text-align: center; }
+.dash-sidebar .badge-pill { margin-left: auto; background: var(--kck-red); color: white; font-size: 0.68rem; padding: 0.2rem 0.5rem; border-radius: 999px; }
+
+.dash-content { padding: 2rem 2rem 3rem; }
+.dash-header {
+    background: white;
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.6rem;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.dash-header h2 { font-weight: 800; font-size: 1.5rem; margin: 0; letter-spacing: -0.02em; color: var(--kck-ink, #0f172a); }
+.dash-header .dash-subtitle { color: var(--kck-muted, #64748b); font-size: 0.9rem; margin: 0.15rem 0 0; }
+
+.dash-card {
+    background: white;
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.6rem;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+}
+.dash-card .card-header { background: white; border-bottom: 1px solid var(--kck-line, #e2e8f0); padding: 0.9rem 1.2rem; }
+.dash-card .card-header h5, .dash-card .card-header h6 { margin: 0; font-weight: 700; }
+
+/* Mobile toggle */
+@media (max-width: 991.98px) {
+    .dash-sidebar {
+        position: fixed; top: 0; left: -280px;
+        width: 260px; height: 100vh;
+        z-index: 1040; transition: left 0.25s ease;
+        overflow-y: auto;
+    }
+    .dash-sidebar.open { left: 0; }
+    .dash-content { padding: 1rem; }
+    .dash-mobile-toggle {
+        position: fixed; bottom: 1.25rem; left: 1.25rem; z-index: 1041;
+        background: var(--kck-blue); color: white; border: none;
+        width: 48px; height: 48px; border-radius: 50%;
+        box-shadow: 0 6px 18px rgba(11,61,145,0.35);
+        font-size: 1.2rem;
+    }
+    .dash-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.4); z-index: 1039;
+    }
+    .dash-overlay.show { display: block; }
+}
+@media (min-width: 992px) {
+    .dash-mobile-toggle, .dash-overlay { display: none; }
+}
+</style>
+{% block dash_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="dash-wrap">
+<div class="container-fluid">
+<div class="row g-0">
+    <aside class="col-lg-2 col-md-3 dash-sidebar" id="dashSidebar">
+        <div class="sidebar-brand">
+            <span class="who">{{ user.get_full_name|default:user.username }}</span>
+            <span class="role">{% block sidebar_role %}Member{% endblock %}</span>
+        </div>
+        {% block sidebar_nav %}{% endblock %}
+    </aside>
+    <div class="dash-overlay" id="dashOverlay"></div>
+    <main class="col-lg-10 col-md-9 dash-content">
+        {% block dash_content %}{% endblock %}
+    </main>
+</div>
+</div>
+</div>
+
+<button class="dash-mobile-toggle d-lg-none" id="dashSidebarToggle" aria-label="Toggle sidebar">
+    <i class="bi bi-list"></i>
+</button>
+
+<script>
+(function(){
+    var btn = document.getElementById('dashSidebarToggle');
+    var sb = document.getElementById('dashSidebar');
+    var ov = document.getElementById('dashOverlay');
+    if (!btn || !sb || !ov) return;
+    function close(){ sb.classList.remove('open'); ov.classList.remove('show'); }
+    btn.addEventListener('click', function(){
+        sb.classList.toggle('open');
+        ov.classList.toggle('show');
+    });
+    ov.addEventListener('click', close);
+})();
+</script>
+{% endblock %}

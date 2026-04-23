@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Our History - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Our History</h1>
+        <p class="lead">A proud legacy of service, culture, and community</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8 mx-auto">
+                <article>
+                    <h3>Our Founding</h3>
+                    <p class="lead">Our community was established by dedicated founders who sought to create a welcoming home for fellow members, preserve cultural heritage, and provide vital services to those building new lives.</p>
+                    <p>From those humble beginnings around a shared kitchen table, we grew into an organized institution with a strong mission. Early volunteers worked tirelessly to register members, gather resources, and host the first cultural gatherings that brought families together.</p>
+
+                    <h3 class="mt-5">Years of Growth</h3>
+                    <p>Through dedication and partnership with community leaders, our organization steadily expanded. We added new programs to support immigration and travel services, cultural education, youth mentorship, and family wellbeing. Membership grew year after year, reaching households across the region.</p>
+                    <p>Each new decade brought fresh challenges and opportunities. We adapted to changing needs by investing in better facilities, trained staff, and digital tools that make our services accessible to more people than ever before.</p>
+
+                    <h3 class="mt-5">Key Milestones</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Official registration and launch of member services</li>
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Opening of our first dedicated community center</li>
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Launch of visa, passport, and travel assistance programs</li>
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Inaugural annual cultural festival celebrating heritage</li>
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Partnerships with international and local institutions</li>
+                        <li class="list-group-item"><i class="bi bi-check-circle text-kck-red"></i> Modernization of online services and member portal</li>
+                    </ul>
+
+                    <h3 class="mt-5">Looking Forward</h3>
+                    <p>Today, we continue to honor the vision of our founders by serving with integrity, expanding access to support, and nurturing the bonds that make our community strong. Our history is the foundation for every step we take into the future.</p>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <h3>Be part of our continuing story</h3>
+        <p class="lead">Join events, volunteer, and help shape our next chapter</p>
+        <a href="{% url 'events:event_list' %}" class="btn btn-light btn-lg">See Upcoming Events</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Apply to Sell — Kenyan Market · KCK{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container text-center">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
+             style="background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); color: var(--kck-gold); font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">
+            <i class="bi bi-shop"></i> Seller Application
+        </div>
+        <h1 class="fw-bold">Apply to become a seller</h1>
+        <p class="lead">List your Kenyan products to the KCK community</p>
+    </div>
+</section>
+
+<div class="apply-wrap">
+    <div class="requirements-box">
+        <h5><i class="bi bi-check2-circle"></i> Seller requirements</h5>
+        <ul>
+            <li>Active KCK member in good standing</li>
+            <li>Authentic Kenyan products or services</li>
+            <li>Valid WhatsApp number for buyer contact</li>
+            <li>Respond to buyer messages promptly (within 24 hours)</li>
+            <li>Accurate product descriptions and photos</li>
+            <li>Fair, transparent pricing — no hidden fees</li>
+            <li>Honor your own delivery and return terms</li>
+            <li>Comply with Korean import/sales regulations</li>
+        </ul>
+    </div>
+
+    <div class="form-card">
+        <h4 class="fw-bold mb-3"><i class="bi bi-pencil-square"></i> Your application</h4>
+        <p class="text-muted mb-4">
+            Tell us about your shop. Our community leaders will review your application and respond within 3–5 days.
+        </p>
+        {% crispy form %}
+    </div>
+</div>
+{% endblock %}

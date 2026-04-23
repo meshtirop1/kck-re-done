@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% block title %}{{ leader.user.get_full_name|default:leader.user.username }} · {{ leader.get_role_display }} — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.ldr-hero {
+    position: relative;
+    padding: 3.5rem 0 5rem;
+    background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%);
+    color: white;
+    overflow: hidden;
+}
+.ldr-hero::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 450px; height: 450px;
+    background: radial-gradient(circle, rgba(255,215,0,0.12), transparent 65%);
+    border-radius: 50%;
+}
+.ldr-hero::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, transparent, var(--kck-gold), transparent);
+}
+.ldr-hero .eyebrow {
+    display: inline-block;
+    padding: 0.3rem 0.85rem;
+    background: rgba(255,215,0,0.18);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: var(--kck-gold);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+}
+.ldr-hero h1 {
+    color: white;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin-bottom: 0.35rem;
+    position: relative; z-index: 2;
+}
+.ldr-hero .role-line { color: rgba(255,255,255,0.88); font-size: 1.1rem; margin: 0; position: relative; z-index: 2; }
+.ldr-hero .breadcrumb-bar { font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; position: relative; z-index: 2; }
+.ldr-hero .breadcrumb-bar a { color: var(--kck-gold); text-decoration: none; }
+.ldr-hero .breadcrumb-bar a:hover { text-decoration: underline; }
+
+.ldr-content-wrap { margin-top: -3.5rem; position: relative; z-index: 3; }
+.ldr-photo-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 24px 60px -10px rgba(11,61,145,0.25);
+    border: 1px solid var(--kck-line, #e2e8f0);
+    text-align: center;
+}
+.ldr-photo {
+    width: 100%;
+    max-width: 260px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 8px 24px rgba(11,61,145,0.2), 0 0 0 1px var(--kck-line, #e2e8f0);
+    margin: 0 auto;
+    display: block;
+}
+.ldr-photo-fallback {
+    width: 100%;
+    max-width: 260px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%);
+    color: var(--kck-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 auto;
+    border: 5px solid white;
+    box-shadow: 0 8px 24px rgba(11,61,145,0.2);
+}
+
+.ldr-role-pill {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+}
+.ldr-role-pill.president { background: linear-gradient(135deg, var(--kck-gold), #ffa500); color: #1a1a1a; box-shadow: 0 3px 12px rgba(255,165,0,0.35); }
+.ldr-role-pill.vice_president { background: #fde68a; color: #78350f; }
+.ldr-role-pill.secretary { background: var(--kck-blue); color: white; }
+.ldr-role-pill.treasurer { background: #16a34a; color: white; }
+.ldr-role-pill.welfare { background: #7c3aed; color: white; }
+.ldr-role-pill.committee { background: #64748b; color: white; }
+
+.ldr-contact { border-top: 1px solid var(--kck-line, #e2e8f0); margin-top: 1.5rem; padding-top: 1.25rem; }
+.ldr-contact .ldr-contact-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0;
+    font-size: 0.95rem;
+}
+.ldr-contact .ldr-contact-row i { color: var(--kck-red); width: 20px; font-size: 1rem; }
+.ldr-contact a { color: var(--kck-ink, #0f172a); text-decoration: none; font-weight: 500; word-break: break-all; }
+.ldr-contact a:hover { color: var(--kck-blue); }
+
+.ldr-main-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.08);
+    border: 1px solid var(--kck-line, #e2e8f0);
+}
+.ldr-main-card h2 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+    color: var(--kck-ink, #0f172a);
+}
+.ldr-main-card .title-line {
+    color: var(--kck-muted, #64748b);
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+}
+.ldr-section-title {
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kck-muted, #64748b);
+    margin: 2rem 0 0.85rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--kck-gold);
+    display: inline-block;
+}
+.ldr-bio { color: #374151; line-height: 1.8; font-size: 1.02rem; white-space: pre-line; }
+.ldr-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.ldr-stat {
+    background: linear-gradient(135deg, var(--kck-blue-50, #eef3fb), white);
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.7rem;
+    padding: 1rem 1.2rem;
+}
+.ldr-stat .stat-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kck-muted, #64748b);
+}
+.ldr-stat .stat-value { font-weight: 700; color: var(--kck-ink, #0f172a); margin-top: 0.2rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="ldr-hero">
+    <div class="container">
+        <div class="breadcrumb-bar">
+            <a href="{% url 'core:home' %}">Home</a>
+            <i class="bi bi-chevron-right mx-1"></i>
+            <a href="{% url 'leaders:list' %}">Leadership</a>
+            <i class="bi bi-chevron-right mx-1"></i>
+            <span>{{ leader.user.get_full_name|default:leader.user.username }}</span>
+        </div>
+        <span class="eyebrow"><i class="bi bi-shield-fill-check"></i> Elected Officer</span>
+        <h1>{{ leader.user.get_full_name|default:leader.user.username }}</h1>
+        <p class="role-line">
+            {{ leader.get_role_display }}{% if leader.title %} · {{ leader.title }}{% endif %}
+        </p>
+    </div>
+</section>
+
+<section class="ldr-content-wrap">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="ldr-photo-card">
+                    {% if leader.photo %}
+                        <img src="{{ leader.photo.url }}" alt="{{ leader.user.get_full_name|default:leader.user.username }}" class="ldr-photo" loading="lazy">
+                    {% else %}
+                        <div class="ldr-photo-fallback">
+                            {{ leader.user.first_name|slice:":1"|upper }}{{ leader.user.last_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <span class="ldr-role-pill {{ leader.role }}">{{ leader.get_role_display }}</span>
+
+                    {% if leader.email_official or leader.phone_official %}
+                    <div class="ldr-contact text-start">
+                        <div class="ldr-section-title mb-2" style="margin-top: 0;">Official Contact</div>
+                        {% if leader.email_official %}
+                        <div class="ldr-contact-row"><i class="bi bi-envelope-fill"></i><a href="mailto:{{ leader.email_official }}">{{ leader.email_official }}</a></div>
+                        {% endif %}
+                        {% if leader.phone_official %}
+                        <div class="ldr-contact-row"><i class="bi bi-telephone-fill"></i><a href="tel:{{ leader.phone_official }}">{{ leader.phone_official }}</a></div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-3 text-center">
+                    <a href="{% url 'leaders:list' %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to all leaders
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="ldr-main-card">
+                    <h2>{{ leader.user.get_full_name|default:leader.user.username }}</h2>
+                    {% if leader.title %}
+                        <div class="title-line">{{ leader.title }}</div>
+                    {% endif %}
+
+                    <div class="ldr-section-title">Biography</div>
+                    {% if leader.bio %}
+                        <div class="ldr-bio">{{ leader.bio }}</div>
+                    {% else %}
+                        <p class="text-muted"><em>Biography coming soon.</em></p>
+                    {% endif %}
+
+                    {% if leader.appointed_at or leader.term_ends %}
+                    <div class="ldr-section-title">Service Period</div>
+                    <div class="ldr-stats">
+                        {% if leader.appointed_at %}
+                        <div class="ldr-stat">
+                            <div class="stat-label"><i class="bi bi-calendar-plus"></i> Appointed</div>
+                            <div class="stat-value">{{ leader.appointed_at|date:"F j, Y" }}</div>
+                        </div>
+                        {% endif %}
+                        {% if leader.term_ends %}
+                        <div class="ldr-stat">
+                            <div class="stat-label"><i class="bi bi-calendar-check"></i> Term Ends</div>
+                            <div class="stat-value">{{ leader.term_ends|date:"F j, Y" }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

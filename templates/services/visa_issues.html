@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Common Visa Issues - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Common Visa Issues</h1>
+        <p class="lead">Troubleshoot common problems and find resolutions</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-clock-history"></i></div>
+                    <h5>Processing Delays</h5>
+                    <p class="text-muted small">Applications may take longer than the standard processing time during peak seasons or if additional verification is needed.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Check your application status online</li>
+                        <li>Ensure all documents were submitted correctly</li>
+                        <li>Contact the embassy if processing exceeds stated timeframe</li>
+                        <li>Respond promptly to any requests for additional information</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-x-octagon"></i></div>
+                    <h5>Application Rejections</h5>
+                    <p class="text-muted small">Visas can be rejected due to incomplete documentation, ineligibility, or failure to meet specific requirements.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Review the rejection notice for specific reasons</li>
+                        <li>Gather missing or corrected documentation</li>
+                        <li>Consult with our team before reapplying</li>
+                        <li>Submit an appeal if you believe the decision was incorrect</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-credit-card-2-back"></i></div>
+                    <h5>Payment Errors</h5>
+                    <p class="text-muted small">Payment processing issues can occur due to card declines, incorrect amounts, or technical errors during submission.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Verify your payment method has sufficient funds</li>
+                        <li>Check transaction records for duplicate charges</li>
+                        <li>Retain payment confirmation receipts</li>
+                        <li>Contact support with the reference number</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-file-earmark-excel"></i></div>
+                    <h5>Document Verification Issues</h5>
+                    <p class="text-muted small">Documents may be flagged for illegibility, expiration, or missing authentication stamps.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Resubmit clear, high-resolution scans</li>
+                        <li>Ensure documents are currently valid</li>
+                        <li>Obtain proper notarization where required</li>
+                        <li>Translate non-English documents officially</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-person-exclamation"></i></div>
+                    <h5>Identity Verification Problems</h5>
+                    <p class="text-muted small">Mismatched names, dates, or biographic details between your passport and application form can halt processing.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Double-check all entries match your passport exactly</li>
+                        <li>Submit a name-change affidavit if applicable</li>
+                        <li>Provide supporting identity documents</li>
+                        <li>Request an amendment through the embassy</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 p-4">
+                    <div class="display-5 text-kck-red mb-3"><i class="bi bi-wifi-off"></i></div>
+                    <h5>Portal Access Issues</h5>
+                    <p class="text-muted small">Login failures, session timeouts, and form submission errors can disrupt your online application experience.</p>
+                    <h6 class="mt-3 text-kck-blue">Resolution Steps:</h6>
+                    <ul class="small">
+                        <li>Clear your browser cache and cookies</li>
+                        <li>Try a different browser or device</li>
+                        <li>Reset your password if login fails</li>
+                        <li>Contact technical support for persistent issues</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Need More Help?</h2>
+        <p class="lead">Our team is ready to assist with any visa issue</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">Contact Support</a>
+    </div>
+</section>
+{% endblock %}

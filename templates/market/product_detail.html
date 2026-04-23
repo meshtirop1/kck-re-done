@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}{{ product.name }} — Kenyan Market · KCK{% endblock %}
+{% block extra_css %}
+<style>
+.product-detail-wrap { padding: 2rem 0; }
+.product-image-main { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: var(--r-lg); box-shadow: var(--shadow-lg); background: #f1f5f9; }
+.product-title { font-size: 2rem; font-weight: 800; color: var(--kck-ink); letter-spacing: -0.025em; line-height: 1.15; }
+.product-price-big { font-size: 2.25rem; font-weight: 800; color: var(--kck-red); margin: 0.5rem 0 1rem; }
+.cat-badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(11,61,145,0.08); color: var(--kck-blue); border-radius: 999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+.whatsapp-btn { background: #25D366; color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.75rem; width: 100%; justify-content: center; text-decoration: none; transition: all 0.2s ease; border: none; }
+.whatsapp-btn:hover { background: #1ebe57; color: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.35); }
+.meta-line { color: var(--kck-muted); font-size: 0.85rem; margin-top: 1rem; }
+.product-desc { color: var(--kck-ink); line-height: 1.7; white-space: pre-line; }
+.notice-box { background: #fffbeb; border-left: 4px solid var(--kck-gold); padding: 1rem 1.25rem; border-radius: var(--r-sm); margin: 1.5rem 0; color: #78350f; }
+.breadcrumb-wrap { padding: 1rem 0; border-bottom: 1px solid var(--kck-line); background: var(--kck-surface); }
+.seller-link { color: var(--kck-blue); font-weight: 600; text-decoration: none; }
+.seller-link:hover { text-decoration: underline; }
+.related-grid .product-card { border: 1px solid var(--kck-line); border-radius: var(--r-lg); overflow: hidden; transition: all 0.25s ease; height: 100%; background: white; }
+.related-grid .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--kck-red); }
+.related-grid .product-img { aspect-ratio: 1/1; object-fit: cover; width: 100%; background: #f1f5f9; }
+.related-grid .product-body { padding: 0.85rem; }
+.related-grid .product-name { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.2rem; color: var(--kck-ink); }
+.related-grid .product-price { font-weight: 800; color: var(--kck-red); font-size: 1.05rem; }
+.delivery-badge { display: inline-block; padding: 0.35rem 0.85rem; background: #dcfce7; color: #14532d; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-right: 0.5rem; }
+.city-pill { display: inline-block; padding: 0.35rem 0.85rem; background: #f1f5f9; color: var(--kck-ink); border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="breadcrumb-wrap">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" style="font-size:0.9rem;">
+                <li class="breadcrumb-item"><a href="{% url 'market:home' %}" class="text-decoration-none">Market</a></li>
+                {% if product.category %}
+                <li class="breadcrumb-item"><a href="{% url 'market:category_detail' product.category.slug %}" class="text-decoration-none">{{ product.category.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active">{{ product.name|truncatechars:40 }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="product-detail-wrap">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main">
+            </div>
+            <div class="col-lg-6">
+                {% if product.category %}
+                    <span class="cat-badge">{{ product.category.icon }} {{ product.category.name }}</span>
+                {% endif %}
+                <h1 class="product-title mt-2">{{ product.name }}</h1>
+                <div class="product-price-big">{{ product.price_display }}</div>
+
+                <div class="mb-3">
+                    {% if product.free_delivery_korea %}
+                        <span class="delivery-badge"><i class="bi bi-truck"></i> Free delivery in Korea</span>
+                    {% elif product.delivery_option %}
+                        <span class="delivery-badge"><i class="bi bi-box-seam"></i> {{ product.delivery_option }}</span>
+                    {% endif %}
+                    {% if product.city %}
+                        <span class="city-pill"><i class="bi bi-geo-alt-fill"></i> {{ product.city|title }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="product-desc mb-4">{{ product.description|linebreaksbr }}</div>
+
+                <a href="{{ product.whatsapp_chat_url }}" target="_blank" rel="noopener" class="whatsapp-btn">
+                    <i class="bi bi-whatsapp" style="font-size:1.5rem;"></i>
+                    Chat with {{ product.seller.business_name }}
+                </a>
+
+                <div class="mt-3">
+                    <a href="{% url 'market:seller_detail' product.seller.slug %}" class="seller-link">
+                        <i class="bi bi-shop"></i> View seller profile &rarr;
+                    </a>
+                </div>
+
+                <div class="meta-line">
+                    <i class="bi bi-eye"></i> Views: {{ product.views_count|intcomma }} &middot;
+                    Listed {{ product.created_at|date:"M j, Y" }}
+                </div>
+
+                <div class="notice-box">
+                    <strong><i class="bi bi-shield-exclamation"></i> Buyer tip:</strong>
+                    Always meet in public places or arrange safe delivery. KCK Market is a listing service — we don't process payments.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if other_by_seller %}
+<section class="section-alt py-4">
+    <div class="container">
+        <h3 class="fw-bold mb-3"><i class="bi bi-shop"></i> More from {{ product.seller.business_name }}</h3>
+        <div class="row g-3 related-grid">
+            {% for p in other_by_seller %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'market:product_detail' p.slug %}" class="text-decoration-none">
+                    <div class="product-card">
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-img">
+                        <div class="product-body">
+                            <div class="product-name">{{ p.name|truncatechars:35 }}</div>
+                            <div class="product-price">{{ p.price_display }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if related %}
+<section class="py-4">
+    <div class="container">
+        <h3 class="fw-bold mb-3"><i class="bi bi-grid"></i> Related products</h3>
+        <div class="row g-3 related-grid">
+            {% for p in related %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'market:product_detail' p.slug %}" class="text-decoration-none">
+                    <div class="product-card">
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-img">
+                        <div class="product-body">
+                            <div class="product-name">{{ p.name|truncatechars:35 }}</div>
+                            <div class="product-price">{{ p.price_display }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

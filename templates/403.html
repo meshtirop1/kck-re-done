@@ -1,0 +1,10 @@
+{% extends 'errors/_base.html' %}
+{% block title %}Access Denied — {{ SITE_NAME }}{% endblock %}
+{% block err_kicker %}Access denied{% endblock %}
+{% block err_code %}403{% endblock %}
+{% block err_title %}You don't have permission to view this page{% endblock %}
+{% block err_message %}
+This area is restricted to specific roles — members, leaders, or administrators.
+If you think you should have access, please sign in with the correct account or contact a KCK officer.
+{% endblock %}
+{% block err_icon %}bi-shield-lock{% endblock %}

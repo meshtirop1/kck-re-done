@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Application — Kenyan Market · KCK{% endblock %}
+{% block extra_css %}
+<style>
+.app-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+.status-card { border-radius: var(--r-lg); padding: 2rem; margin-bottom: 2rem; text-align: center; box-shadow: var(--shadow-md); border: 1px solid var(--kck-line); }
+.status-card .status-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.status-card h3 { font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.status-pending { background: #fffbeb; border-left: 6px solid var(--kck-gold); color: #78350f; }
+.status-pending .status-icon { color: #b45309; }
+.status-approved { background: #dcfce7; border-left: 6px solid #16a34a; color: #14532d; }
+.status-approved .status-icon { color: #16a34a; }
+.status-rejected { background: #fee2e2; border-left: 6px solid var(--kck-red); color: #7f1d1d; }
+.status-rejected .status-icon { color: var(--kck-red); }
+.status-suspended { background: #f1f5f9; border-left: 6px solid #64748b; color: #334155; }
+.status-suspended .status-icon { color: #64748b; }
+.big-badge { display: inline-block; padding: 0.5rem 1.25rem; border-radius: 999px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.9rem; margin-bottom: 0.75rem; }
+.badge-pending { background: #fef3c7; color: #78350f; }
+.badge-approved { background: #bbf7d0; color: #14532d; }
+.badge-rejected { background: #fecaca; color: #7f1d1d; }
+.badge-suspended { background: #e2e8f0; color: #334155; }
+.details-card { background: white; border: 1px solid var(--kck-line); border-radius: var(--r-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+.detail-row { display: flex; padding: 0.85rem 0; border-bottom: 1px solid var(--kck-line); gap: 1rem; }
+.detail-row:last-child { border-bottom: 0; }
+.detail-label { font-weight: 700; color: var(--kck-muted); min-width: 180px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.78rem; padding-top: 0.1rem; }
+.detail-value { color: var(--kck-ink); flex: 1; word-break: break-word; }
+.review-notes { background: #f8fafc; border-left: 4px solid var(--kck-muted); padding: 1rem 1.25rem; border-radius: var(--r-sm); margin-top: 1rem; color: var(--kck-ink); white-space: pre-line; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container text-center">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
+             style="background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); color: var(--kck-gold); font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">
+            <i class="bi bi-shop"></i> Seller Application
+        </div>
+        <h1 class="fw-bold">{{ application.business_name }}</h1>
+        <p class="lead">Your seller application status</p>
+    </div>
+</section>
+
+<div class="app-wrap">
+    {% if application.status == 'pending' %}
+    <div class="status-card status-pending">
+        <div class="status-icon"><i class="bi bi-hourglass-split"></i></div>
+        <span class="big-badge badge-pending">Pending review</span>
+        <h3>Your application is under review</h3>
+        <p class="mb-0">Our community leaders are reviewing your application. You'll be notified within 3–5 days.</p>
+    </div>
+    {% elif application.status == 'approved' %}
+    <div class="status-card status-approved">
+        <div class="status-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <span class="big-badge badge-approved">Approved</span>
+        <h3>Welcome to the Kenyan Market!</h3>
+        <p class="mb-3">You can now list products and start selling to the KCK community.</p>
+        <a href="{% url 'market:dashboard' %}" class="btn btn-success btn-lg fw-bold">
+            <i class="bi bi-shop"></i> Go to Seller Dashboard
+        </a>
+    </div>
+    {% elif application.status == 'rejected' %}
+    <div class="status-card status-rejected">
+        <div class="status-icon"><i class="bi bi-x-circle-fill"></i></div>
+        <span class="big-badge badge-rejected">Not approved</span>
+        <h3>Your application was not approved</h3>
+        <p>Please review the reviewer's notes below. You may update your application and re-apply.</p>
+        {% if application.review_notes %}
+        <div class="review-notes text-start">
+            <strong>Reviewer notes:</strong><br>
+            {{ application.review_notes }}
+        </div>
+        {% endif %}
+    </div>
+    {% elif application.status == 'suspended' %}
+    <div class="status-card status-suspended">
+        <div class="status-icon"><i class="bi bi-pause-circle-fill"></i></div>
+        <span class="big-badge badge-suspended">Suspended</span>
+        <h3>Your seller account is suspended</h3>
+        {% if application.review_notes %}
+        <div class="review-notes text-start">
+            <strong>Reason:</strong><br>
+            {{ application.review_notes }}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="details-card">
+        <h4 class="fw-bold mb-3"><i class="bi bi-info-circle"></i> Application details</h4>
+
+        <div class="detail-row">
+            <div class="detail-label">Business name</div>
+            <div class="detail-value">{{ application.business_name }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Applicant</div>
+            <div class="detail-value">{{ application.user.get_full_name|default:application.user.username }}</div>
+        </div>
+        {% if application.bio %}
+        <div class="detail-row">
+            <div class="detail-label">Bio</div>
+            <div class="detail-value" style="white-space:pre-line;">{{ application.bio }}</div>
+        </div>
+        {% endif %}
+        {% if application.whatsapp_number %}
+        <div class="detail-row">
+            <div class="detail-label">WhatsApp</div>
+            <div class="detail-value">{{ application.whatsapp_number }}</div>
+        </div>
+        {% endif %}
+        {% if application.city %}
+        <div class="detail-row">
+            <div class="detail-label">City</div>
+            <div class="detail-value">{{ application.city|title }}</div>
+        </div>
+        {% endif %}
+        {% if application.categories_interested %}
+        <div class="detail-row">
+            <div class="detail-label">Categories</div>
+            <div class="detail-value">{{ application.categories_interested }}</div>
+        </div>
+        {% endif %}
+        <div class="detail-row">
+            <div class="detail-label">Applied</div>
+            <div class="detail-value">{{ application.applied_at|date:"M j, Y · g:i a" }}</div>
+        </div>
+        {% if application.reviewed_at %}
+        <div class="detail-row">
+            <div class="detail-label">Reviewed</div>
+            <div class="detail-value">{{ application.reviewed_at|date:"M j, Y · g:i a" }}{% if application.reviewed_by %} by {{ application.reviewed_by.get_full_name|default:application.reviewed_by.username }}{% endif %}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

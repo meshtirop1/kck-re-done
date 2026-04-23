@@ -1,0 +1,129 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Fixtures & Results — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">SCHEDULE · RESULTS</div>
+        <h1>FIXTURES & <span class="hl">RESULTS</span></h1>
+        <p class="tagline">All upcoming matches, live games and past results.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+
+        {# Filter tabs #}
+        <div class="sp-filters" style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin-bottom:2rem;">
+            <a href="?status=upcoming{% if selected_sport %}&sport={{ selected_sport }}{% endif %}"
+               class="sp-btn {% if status == 'upcoming' or not status %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+               <i class="bi bi-calendar-event"></i> Upcoming
+            </a>
+            <a href="?status=results{% if selected_sport %}&sport={{ selected_sport }}{% endif %}"
+               class="sp-btn {% if status == 'results' %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+               <i class="bi bi-trophy"></i> Results
+            </a>
+            <a href="?status=live{% if selected_sport %}&sport={{ selected_sport }}{% endif %}"
+               class="sp-btn {% if status == 'live' %}sp-btn-danger{% else %}sp-btn-ghost{% endif %}">
+               <span class="live-pulse"></span> Live
+            </a>
+            <a href="?status=all{% if selected_sport %}&sport={{ selected_sport }}{% endif %}"
+               class="sp-btn {% if status == 'all' %}sp-btn-primary{% else %}sp-btn-ghost{% endif %}">
+               All
+            </a>
+
+            <form method="get" style="margin-left:auto;display:flex;gap:0.5rem;align-items:center;">
+                {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+                <label for="sport-filter" style="color:var(--sp-text-dim,#8a93a4);font-size:0.9rem;">Sport:</label>
+                <select name="sport" id="sport-filter" onchange="this.form.submit()" class="sp-select" style="background:var(--sp-card,#1a2230);color:var(--sp-text,#fff);border:1px solid var(--sp-border,#2a3550);border-radius:8px;padding:0.5rem 1rem;">
+                    <option value="">All Sports</option>
+                    {% for sport in sports %}
+                        <option value="{{ sport.slug }}" {% if selected_sport == sport.slug %}selected{% endif %}>{{ sport.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        {% if fixtures %}
+        <div class="grid-2">
+            {% for fixture in fixtures %}
+            <a href="{% url 'sports:fixture_detail' fixture.pk %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture {% if fixture.status == 'live' %}live{% endif %}">
+                    <div class="meta">
+                        {% if fixture.status == 'live' %}
+                            <span class="sp-badge sp-badge-live"><span class="live-pulse"></span> LIVE</span>
+                        {% elif fixture.status == 'completed' %}
+                            <span class="sp-badge sp-badge-completed">FT</span>
+                        {% elif fixture.status == 'postponed' %}
+                            <span class="sp-badge sp-badge-postponed">POSTPONED</span>
+                        {% elif fixture.status == 'cancelled' %}
+                            <span class="sp-badge sp-badge-cancelled">CANCELLED</span>
+                        {% else %}
+                            <span class="sp-badge sp-badge-scheduled">{{ fixture.kickoff|date:"D, M j" }}</span>
+                        {% endif %}
+                        <span><i class="bi bi-clock"></i> {{ fixture.kickoff|date:"g:i A" }}</span>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            {% if fixture.home_team.logo %}
+                                <img src="{{ fixture.home_team.logo.url }}" class="team-logo" alt="{{ fixture.home_team.name }}">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.home_team.short_name|default:fixture.home_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.home_team.name }}</div>
+                        </div>
+                        {% if fixture.status == 'completed' or fixture.status == 'live' %}
+                        <div class="score">
+                            <span {% if fixture.home_score > fixture.away_score %}class="won"{% endif %}>{{ fixture.home_score|default:0 }}</span>
+                            <span class="sep">-</span>
+                            <span {% if fixture.away_score > fixture.home_score %}class="won"{% endif %}>{{ fixture.away_score|default:0 }}</span>
+                        </div>
+                        {% else %}
+                        <div class="vs">VS</div>
+                        {% endif %}
+                        <div class="team">
+                            {% if fixture.away_team.logo %}
+                                <img src="{{ fixture.away_team.logo.url }}" class="team-logo" alt="{{ fixture.away_team.name }}">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.away_team.short_name|default:fixture.away_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.away_team.name }}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <span><i class="bi bi-trophy"></i> {{ fixture.competition.name }}</span>
+                        <span><i class="bi bi-geo-alt"></i> {{ fixture.venue|default:"TBA" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if is_paginated %}
+        <nav class="sp-pagination" style="display:flex;gap:0.5rem;justify-content:center;margin-top:3rem;">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if status %}&status={{ status }}{% endif %}{% if selected_sport %}&sport={{ selected_sport }}{% endif %}" class="sp-btn sp-btn-ghost"><i class="bi bi-chevron-left"></i> Previous</a>
+            {% endif %}
+            <span class="sp-btn sp-btn-outline" style="pointer-events:none;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if status %}&status={{ status }}{% endif %}{% if selected_sport %}&sport={{ selected_sport }}{% endif %}" class="sp-btn sp-btn-ghost">Next <i class="bi bi-chevron-right"></i></a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-calendar-x"></i></div>
+            <p>No fixtures match your filters.</p>
+            <a href="{% url 'sports:fixture_list' %}" class="sp-btn sp-btn-primary" style="margin-top:1rem;">Clear Filters</a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Ambassador of Kenya to Korea - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Ambassador of Kenya to Korea</h1>
+        <p class="lead">The official representative of Kenya to the Republic of Korea.</p>
+    </div>
+</section>
+
+<section class="py-3" style="background: #fff3cd; border-bottom: 2px solid #ffc107;">
+    <div class="container">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-info-circle-fill text-warning fs-4 flex-shrink-0"></i>
+            <div class="small mb-0">
+                <strong>KCK is a community organisation &mdash; not the Kenyan Embassy.</strong>
+                The Ambassador of Kenya is appointed by the Government of Kenya and serves at the
+                <strong>Embassy of the Republic of Kenya in Seoul</strong>, which is a separate entity from
+                KCK. This page shares general information only. For official matters please contact the
+                embassy directly.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        {% if ambassador %}
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5">
+                {% if ambassador.photo %}
+                    <img src="{{ ambassador.photo.url }}" alt="{{ ambassador.name }}" class="img-fluid rounded shadow">
+                {% else %}
+                    <div class="bg-light rounded shadow text-center py-5">
+                        <i class="bi bi-person-circle text-kck-blue" style="font-size:10rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-7">
+                <span class="badge bg-warning text-dark mb-2">Government of Kenya &middot; Not KCK</span>
+                <h2 class="text-kck-blue">{{ ambassador.name }}</h2>
+                <p class="lead text-kck-red">{{ ambassador.title|default:"Ambassador of the Republic of Kenya to the Republic of Korea" }}</p>
+                {% if ambassador.bio %}
+                    <div>{{ ambassador.bio|safe }}</div>
+                {% endif %}
+                <p class="text-muted small mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    For official engagement, please contact the {{ site_settings.embassy_official_name|default:"Embassy of Kenya in Seoul" }} through their official channels.
+                    {% if site_settings.embassy_official_url %}
+                        <a href="{{ site_settings.embassy_official_url }}" target="_blank" rel="noopener" class="fw-semibold">Visit embassy website <i class="bi bi-box-arrow-up-right"></i></a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        {% if ambassador.message %}
+        <div class="row mt-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="card p-5 border-0 shadow-sm">
+                    <h3 class="text-kck-blue">Message Shared with the Community</h3>
+                    <div>{{ ambassador.message|safe }}</div>
+                    <p class="text-muted small mt-3 mb-0"><em>This message has been shared with the Kenyan community in Korea via KCK.</em></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-12 text-center">
+                <div class="bg-light rounded shadow py-5">
+                    <i class="bi bi-person-circle text-kck-blue" style="font-size:6rem;"></i>
+                    <h2 class="text-kck-blue mt-3">About the Ambassador of Kenya to Korea</h2>
+                    <p class="lead text-muted">
+                        The Ambassador is the senior representative of the Republic of Kenya in the Republic of Korea, appointed by the Government of Kenya.
+                    </p>
+                    <p class="text-muted col-lg-8 mx-auto">
+                        The Ambassador leads the Embassy of Kenya in Seoul, represents Kenya in diplomatic engagements with the Korean government, and oversees official consular services for Kenyan citizens residing in or visiting Korea.
+                    </p>
+                    <p class="text-muted col-lg-8 mx-auto">
+                        <strong>KCK (Kenya Community in Korea)</strong> is a community organisation &mdash; separate from the embassy &mdash; that supports the diaspora community with events, welfare, and embassy-liaison assistance. For official current Ambassador details, please consult the
+                        <strong>Embassy of the Republic of Kenya in Seoul</strong> or the Ministry of Foreign Affairs of Kenya.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">KCK Community</span>
+            <h2>Meet Our Community Leadership</h2>
+            <p>KCK is run by elected community leaders &mdash; not by embassy officials.</p>
+        </div>
+        <div class="text-center">
+            <a href="{% url 'leaders:list' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-people-fill"></i> View KCK Leadership
+            </a>
+            <a href="{% url 'core:about' %}" class="btn btn-outline-primary btn-lg ms-2">
+                <i class="bi bi-info-circle"></i> About KCK
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+<div class="top-bar d-none d-md-block">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <span><i class="bi bi-envelope"></i> {{ SITE_EMAIL }}</span>
+            <span class="d-none d-lg-inline"><i class="bi bi-telephone"></i> {{ SITE_PHONE }}</span>
+            <span class="topbar-slogan d-none d-lg-inline">
+                <i class="bi bi-stars"></i> {{ SLOGAN|title }}
+            </span>
+        </div>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}" class="me-3"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="{% url 'embassy_liaison:my_requests' %}" class="me-3"><i class="bi bi-file-earmark-text"></i> My Requests</a>
+                <a href="{% url 'certificates:my_certificates' %}" class="me-3"><i class="bi bi-award"></i> My Certificates</a>
+                <a href="{% url 'endorsements:my_endorsements' %}" class="me-3"><i class="bi bi-file-earmark-text"></i> My Endorsements</a>
+                {% if user.leader_role or user.is_superuser or user.is_admin or user.is_staff %}
+                    <a href="{% url 'portal:dashboard' %}" class="me-3 text-warning fw-bold"><i class="bi bi-shield-lock"></i> Admin Portal</a>
+                    {% if user.leader_profile %}
+                        <a href="{% url 'embassy_liaison:officer_dashboard' %}" class="me-3 text-warning"><i class="bi bi-briefcase"></i> Embassy Officer</a>
+                    {% endif %}
+                {% endif %}
+                {% if user.is_superuser or user.is_admin %}
+                    <a href="/django-admin/" class="me-3"><i class="bi bi-gear"></i> Django Admin</a>
+                {% endif %}
+                <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link text-white p-0 border-0" style="font-size: 0.875rem;"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="me-3"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                <a href="{% url 'accounts:register' %}"><i class="bi bi-person-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

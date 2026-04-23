@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Embassy Services — KCK Liaison | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}KCK helps Kenyans in Korea access embassy services through guidance, document review, and appointment coordination.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3">Embassy Services — Through Your Community</h1>
+        <p class="lead mb-0">KCK helps Kenyans in Korea access embassy services through guidance, document review, and appointment coordination.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">How It Works</h2>
+            <p class="text-muted">A simple 4-step process from request to collection.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card h-100 p-4 text-center">
+                    <div class="display-6 text-primary mb-3"><i class="bi bi-pencil-square"></i></div>
+                    <h5 class="fw-bold">1. Submit Your Request</h5>
+                    <p class="text-muted small mb-0">Fill in our online form with your details and upload supporting documents.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card h-100 p-4 text-center">
+                    <div class="display-6 text-primary mb-3"><i class="bi bi-clipboard-check"></i></div>
+                    <h5 class="fw-bold">2. KCK Review</h5>
+                    <p class="text-muted small mb-0">A KCK officer reviews your request within 1-3 business days.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card h-100 p-4 text-center">
+                    <div class="display-6 text-primary mb-3"><i class="bi bi-send-check"></i></div>
+                    <h5 class="fw-bold">3. Forward to Embassy</h5>
+                    <p class="text-muted small mb-0">Once verified, we forward your request to the Kenyan Embassy in Seoul.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card h-100 p-4 text-center">
+                    <div class="display-6 text-primary mb-3"><i class="bi bi-bag-check"></i></div>
+                    <h5 class="fw-bold">4. Track & Collect</h5>
+                    <p class="text-muted small mb-0">Track progress in your dashboard and collect your document once ready.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-alt py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Services We Can Help With</h2>
+            <p class="text-muted">Guidance and liaison for the following embassy-related services.</p>
+        </div>
+        <div class="row g-4">
+            {% if guides %}
+                {% for guide in guides %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card h-100 p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="fs-3 text-primary me-3">
+                                    <i class="bi {{ guide.icon|default:'bi-file-earmark-text' }}"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">{{ guide.title }}</h5>
+                            </div>
+                            <p class="text-muted small">{{ guide.description|truncatewords:25 }}</p>
+                            <a href="{% url 'embassy_liaison:service_detail' guide.service_type %}" class="btn btn-sm btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for key, label in SERVICE_TYPE_CHOICES %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card h-100 p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="fs-3 text-primary me-3"><i class="bi bi-file-earmark-text"></i></div>
+                                <h5 class="fw-bold mb-0">{{ label }}</h5>
+                            </div>
+                            <p class="text-muted small">Community liaison support for {{ label|lower }} requests.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'embassy_liaison:service_list' %}" class="btn btn-outline-primary">View All Services</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="alert alert-warning border-0 shadow-sm">
+            <h4 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Important Reminders</h4>
+            <ul class="mb-3">
+                <li><strong>KCK is NOT the embassy.</strong> We are a community liaison.</li>
+                <li>All official approvals and document issuance come from the <strong>{{ site_settings.embassy_official_name|default:"Embassy of Kenya" }}</strong>.</li>
+                <li>We never guarantee outcomes; processing depends on the embassy.</li>
+                <li>Your data is handled per our <a href="/privacy/">Privacy Policy</a>.</li>
+            </ul>
+            {% if site_settings.embassy_official_url %}
+            <a href="{{ site_settings.embassy_official_url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                <i class="bi bi-building"></i> Visit the official embassy website <i class="bi bi-box-arrow-up-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="cta-section py-5 text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to begin?</h2>
+        <p class="lead mb-4">Start a new service request and our officers will guide you through every step.</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'embassy_liaison:request_create' %}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-plus-circle me-2"></i>Start a New Request
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}?next={% url 'embassy_liaison:request_create' %}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign in to Start a New Request
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

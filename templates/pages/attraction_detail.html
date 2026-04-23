@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ attraction.title }} — Discover Kenya - {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.attr-hero {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: flex-end;
+    color: white;
+    {% if attraction.image %}
+    background:
+        linear-gradient(180deg, rgba(11,61,145,0.25) 0%, rgba(7,42,102,0.85) 100%),
+        url('{{ attraction.image.url }}') center/cover no-repeat;
+    {% else %}
+    background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%);
+    {% endif %}
+    padding: 3rem 0 2.5rem;
+}
+.attr-hero .eyebrow {
+    display: inline-block;
+    padding: 0.3rem 0.85rem;
+    background: rgba(255,215,0,0.2);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: var(--kck-gold);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+}
+.attr-hero h1 {
+    color: white;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.attr-hero .hero-sub {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.9);
+    max-width: 760px;
+}
+.attr-hero .featured-chip {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    background: var(--kck-red);
+    color: white;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+}
+
+.attr-body { padding: 3rem 0; }
+.attr-body .content-block {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #374151;
+}
+.attr-body .content-block p { margin-bottom: 1.1rem; }
+
+.attr-sidebar {
+    background: var(--kck-blue-50, #eef3fb);
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+.attr-sidebar h5 {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kck-blue);
+    margin-bottom: 1rem;
+}
+.attr-sidebar .icon-row {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+.attr-sidebar .icon-row:last-child { border-bottom: none; }
+.attr-sidebar .icon-row i { color: var(--kck-red); font-size: 1.1rem; margin-top: 0.15rem; }
+
+.related-section { background: #f8fafc; padding: 3rem 0; }
+.related-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+.related-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+    color: inherit;
+}
+.related-card .related-img {
+    aspect-ratio: 16/9;
+    background: var(--kck-blue-50, #eef3fb);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.related-card .related-img img { width: 100%; height: 100%; object-fit: cover; }
+.related-card .related-img i { font-size: 2.5rem; color: var(--kck-blue); opacity: 0.35; }
+.related-card .related-body { padding: 1rem 1.2rem; }
+.related-card .related-title { font-weight: 700; margin-bottom: 0.25rem; }
+.related-card .related-desc { font-size: 0.88rem; color: #64748b; }
+
+.breadcrumb-trail {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.8rem;
+}
+.breadcrumb-trail a { color: var(--kck-gold); text-decoration: none; }
+.breadcrumb-trail a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="attr-hero">
+    <div class="container">
+        <div class="breadcrumb-trail">
+            <a href="{% url 'core:home' %}">Home</a>
+            <i class="bi bi-chevron-right mx-1"></i>
+            <a href="{% url 'core:discover' %}">Discover Kenya</a>
+            <i class="bi bi-chevron-right mx-1"></i>
+            <span>{{ attraction.title }}</span>
+        </div>
+        <span class="eyebrow"><i class="bi {{ attraction.icon|default:'bi-geo-alt' }}"></i> Top Attraction</span>
+        <h1>
+            {{ attraction.title }}
+            {% if attraction.featured %}<span class="featured-chip"><i class="bi bi-star-fill"></i> Featured</span>{% endif %}
+        </h1>
+        <p class="hero-sub mb-0">{{ attraction.short_description }}</p>
+    </div>
+</section>
+
+<section class="attr-body">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                {% if attraction.description %}
+                    <div class="content-block">
+                        {{ attraction.description|linebreaks }}
+                    </div>
+                {% else %}
+                    <div class="content-block">
+                        <p>{{ attraction.short_description }}</p>
+                        <p class="text-muted small"><em>More details about this attraction will be added soon.</em></p>
+                    </div>
+                {% endif %}
+
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    <a href="{% url 'core:discover' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> Back to Discover Kenya
+                    </a>
+                    <a href="{% url 'embassy_liaison:info' %}" class="btn btn-primary">
+                        <i class="bi bi-passport"></i> Plan your trip — Visa info
+                    </a>
+                </div>
+            </div>
+            <aside class="col-lg-4">
+                <div class="attr-sidebar">
+                    <h5><i class="bi bi-info-circle"></i> At a glance</h5>
+                    <div class="icon-row">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div>
+                            <div class="fw-semibold">Location</div>
+                            <div class="small text-muted">Kenya</div>
+                        </div>
+                    </div>
+                    <div class="icon-row">
+                        <i class="bi {{ attraction.icon|default:'bi-compass' }}"></i>
+                        <div>
+                            <div class="fw-semibold">Category</div>
+                            <div class="small text-muted">Top Attraction</div>
+                        </div>
+                    </div>
+                    {% if attraction.featured %}
+                    <div class="icon-row">
+                        <i class="bi bi-star-fill"></i>
+                        <div>
+                            <div class="fw-semibold">Featured</div>
+                            <div class="small text-muted">Recommended destination</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="attr-sidebar mt-3">
+                    <h5><i class="bi bi-lightbulb"></i> Travel tips</h5>
+                    <p class="small mb-2">Planning a trip to Kenya? Check visa requirements and travel essentials before you go.</p>
+                    <a href="{% url 'core:discover' %}#travel-essentials" class="btn btn-sm btn-outline-primary w-100">
+                        Travel essentials
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+{% if related %}
+<section class="related-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h3 class="fw-bold mb-0">More to explore</h3>
+            <a href="{% url 'core:discover' %}" class="btn btn-outline-primary btn-sm">View all attractions</a>
+        </div>
+        <div class="row g-3">
+            {% for r in related %}
+            <div class="col-md-4">
+                <a href="{% url 'core:attraction_detail' r.slug %}" class="related-card">
+                    <div class="related-img">
+                        {% if r.image %}
+                            <img src="{{ r.image.url }}" alt="{{ r.title }}" loading="lazy">
+                        {% else %}
+                            <i class="bi {{ r.icon|default:'bi-geo-alt' }}"></i>
+                        {% endif %}
+                    </div>
+                    <div class="related-body">
+                        <div class="related-title">{{ r.title }}</div>
+                        <div class="related-desc">{{ r.short_description|truncatechars:90 }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

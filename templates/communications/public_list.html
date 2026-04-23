@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Official Communications - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Official Communications</h1>
+    <p class="text-muted">Letters and notices issued by KCK leadership.</p>
+
+    <form method="get" class="row g-2 mb-4">
+      <div class="col-md-5">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search communications...">
+      </div>
+      <div class="col-md-4">
+        <select name="category" class="form-select">
+          <option value="">All categories</option>
+          {% for value, label in categories %}
+            <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+
+    <div class="row g-4">
+      {% for comm in page_obj %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            {% if comm.cover_image %}
+              <img src="{{ comm.cover_image.url }}" class="card-img-top" alt="{{ comm.subject }}" style="height: 180px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+              <span class="badge bg-secondary mb-2">{{ comm.get_category_display }}</span>
+              <h5 class="card-title">{{ comm.subject }}</h5>
+              <p class="text-muted small mb-1">Ref: {{ comm.reference_number }}</p>
+              <p class="text-muted small">{{ comm.published_at|date:"F j, Y" }}</p>
+              <a href="{% url 'communications:detail' comm.pk %}" class="btn btn-outline-primary btn-sm">Read more</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info">No communications available.</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

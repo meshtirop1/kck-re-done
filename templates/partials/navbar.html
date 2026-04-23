@@ -1,0 +1,80 @@
+<nav class="navbar navbar-expand-lg main-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'core:home' %}">
+            {% load static %}
+            <img src="{% if site_settings.logo %}{{ site_settings.logo.url }}{% else %}{% static 'images/kck-logo.png' %}{% endif %}" alt="{{ SITE_NAME }}" class="brand-logo">
+            <div class="brand-text">
+                <span class="brand-name">{{ SITE_SHORT_NAME }}</span>
+                <small class="brand-slogan">{{ SLOGAN|title }}</small>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">About</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Leadership</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'core:presidents_message' %}"><i class="bi bi-chat-quote"></i> President's Message</a></li>
+                        <li><a class="dropdown-item" href="{% url 'leaders:list' %}"><i class="bi bi-people"></i> All Leaders</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Official</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item fw-bold" href="{% url 'embassy_liaison:info' %}"><i class="bi bi-building-gear"></i> Embassy Services (Liaison)</a></li>
+                        <li><a class="dropdown-item" href="{% url 'embassy_liaison:service_list' %}">Service Types</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'communications:public_list' %}"><i class="bi bi-envelope-paper"></i> Official Letters</a></li>
+                        <li><a class="dropdown-item" href="{% url 'communications:announcements' %}"><i class="bi bi-megaphone"></i> Announcements</a></li>
+                        <li><a class="dropdown-item" href="{% url 'certificates:verify_home' %}"><i class="bi bi-patch-check"></i> Verify Certificate</a></li>
+                        <li><a class="dropdown-item" href="{% url 'endorsements:verify_home' %}"><i class="bi bi-file-earmark-check"></i> Verify Endorsement</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Events</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'events:event_list' %}">All Events</a></li>
+                        <li><a class="dropdown-item" href="{% url 'events:calendar' %}">Calendar</a></li>
+                        <li><a class="dropdown-item" href="{% url 'events:highlights' %}">Highlights</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Community</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'community:index' %}">Overview</a></li>
+                        <li><a class="dropdown-item" href="{% url 'community:news_list' %}">News</a></li>
+                        <li><a class="dropdown-item" href="{% url 'community:testimonials' %}">Testimonials</a></li>
+                        <li><a class="dropdown-item" href="{% url 'community:mission' %}">Mission</a></li>
+                        <li><a class="dropdown-item" href="{% url 'community:history' %}">History</a></li>
+                        <li><a class="dropdown-item" href="{% url 'community:location' %}">Location</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Info</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'services:visa_types' %}">Visa Info</a></li>
+                        <li><a class="dropdown-item" href="{% url 'services:passport_request' %}">Passport Info</a></li>
+                        <li><a class="dropdown-item" href="{% url 'core:discover' %}">Discover Kenya</a></li>
+                        <li><a class="dropdown-item" href="{% url 'services:faqs' %}">FAQs</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'core:contact' %}">Contact</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link text-warning fw-bold" href="{% url 'embassy_liaison:request_create' %}">
+                        <i class="bi bi-file-earmark-plus"></i> Request Service
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="d-flex" action="{% url 'core:search' %}" method="get" role="search">
+                <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+                <button class="btn btn-sm btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+    </div>
+</nav>

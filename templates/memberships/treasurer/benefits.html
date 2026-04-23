@@ -1,0 +1,36 @@
+{% extends 'memberships/treasurer/_base.html' %}
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>Membership Benefits</h2>
+        <p class="dash-subtitle">What members get for their annual fee. Drag-style via sort order.</p>
+    </div>
+    <a href="{% url 'memberships:treasurer_benefit_new' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add benefit</a>
+</div>
+<div class="dash-card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>Icon</th><th>Title</th><th>Description</th><th>Sort</th><th>Active</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for b in benefits %}
+                <tr>
+                    <td><i class="bi {{ b.icon }} fs-4 text-kck-blue"></i></td>
+                    <td class="fw-semibold">{{ b.title }}</td>
+                    <td class="small text-muted">{{ b.description|truncatechars:100 }}</td>
+                    <td>{{ b.sort_order }}</td>
+                    <td>{% if b.active %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
+                    <td>
+                        <a href="{% url 'memberships:treasurer_benefit_edit' b.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'memberships:treasurer_benefit_delete' b.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No benefits added yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

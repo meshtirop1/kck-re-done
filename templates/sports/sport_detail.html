@@ -1,0 +1,162 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}{{ sport.name }} — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <a href="{% url 'sports:sport_list' %}" class="sp-btn sp-btn-ghost" style="margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> All Sports
+        </a>
+        <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;">
+            <div style="font-size:5rem;color:var(--sp-green,#00E676);">
+                {% if sport.icon %}<i class="bi {{ sport.icon }}"></i>{% else %}<i class="bi bi-trophy"></i>{% endif %}
+            </div>
+            <div>
+                <div class="sp-eyebrow">SPORT</div>
+                <h1>{{ sport.name|upper }}</h1>
+                {% if sport.description %}
+                <p class="tagline" style="max-width:600px;">{{ sport.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Teams in this sport #}
+{% if teams %}
+<section class="section-sp">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>TEAMS</h2>
+        </div>
+        <div class="grid-3">
+            {% for team in teams %}
+            <a href="{% url 'sports:team_detail' team.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-team-card" style="--team-color: {{ team.color_primary|default:'#00E676' }};">
+                    <div class="team-banner" style="background: linear-gradient(135deg, {{ team.color_primary|default:'#00E676' }}, {{ team.color_secondary|default:'#1a2230' }});">
+                        {% if team.logo %}
+                            <img src="{{ team.logo.url }}" class="team-logo-lg" alt="{{ team.name }}">
+                        {% else %}
+                            <div class="team-logo-lg">{{ team.short_name|default:team.name|slice:":2"|upper }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="team-body">
+                        <div class="team-name">{{ team.name }}</div>
+                        <div class="team-sport">{{ team.sport.name }}</div>
+                        <div class="team-stats">
+                            <div><strong>{{ team.wins|default:0 }}</strong><span>W</span></div>
+                            <div><strong>{{ team.draws|default:0 }}</strong><span>D</span></div>
+                            <div><strong>{{ team.losses|default:0 }}</strong><span>L</span></div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Upcoming fixtures #}
+{% if upcoming_fixtures %}
+<section class="section-sp section-alt">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>UPCOMING FIXTURES</h2>
+        </div>
+        <div class="grid-2">
+            {% for fixture in upcoming_fixtures %}
+            <a href="{% url 'sports:fixture_detail' fixture.pk %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture">
+                    <div class="meta">
+                        <span class="sp-badge sp-badge-scheduled">{{ fixture.kickoff|date:"D, M j" }}</span>
+                        <span><i class="bi bi-clock"></i> {{ fixture.kickoff|date:"g:i A" }}</span>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            {% if fixture.home_team.logo %}
+                                <img src="{{ fixture.home_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.home_team.short_name|default:fixture.home_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.home_team.name }}</div>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="team">
+                            {% if fixture.away_team.logo %}
+                                <img src="{{ fixture.away_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.away_team.short_name|default:fixture.away_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.away_team.name }}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <span><i class="bi bi-trophy"></i> {{ fixture.competition.name }}</span>
+                        <span><i class="bi bi-geo-alt"></i> {{ fixture.venue|default:"TBA" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Recent results #}
+{% if recent_results %}
+<section class="section-sp">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>RECENT RESULTS</h2>
+        </div>
+        <div class="grid-2">
+            {% for fixture in recent_results %}
+            <a href="{% url 'sports:fixture_detail' fixture.pk %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture">
+                    <div class="meta">
+                        <span class="sp-badge sp-badge-completed">FT</span>
+                        <span>{{ fixture.kickoff|date:"D, M j" }}</span>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            {% if fixture.home_team.logo %}
+                                <img src="{{ fixture.home_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.home_team.short_name|default:fixture.home_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.home_team.name }}</div>
+                        </div>
+                        <div class="score">
+                            <span {% if fixture.home_score > fixture.away_score %}class="won"{% endif %}>{{ fixture.home_score|default:0 }}</span>
+                            <span class="sep">-</span>
+                            <span {% if fixture.away_score > fixture.home_score %}class="won"{% endif %}>{{ fixture.away_score|default:0 }}</span>
+                        </div>
+                        <div class="team">
+                            {% if fixture.away_team.logo %}
+                                <img src="{{ fixture.away_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.away_team.short_name|default:fixture.away_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.away_team.name }}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <span><i class="bi bi-trophy"></i> {{ fixture.competition.name }}</span>
+                        <span><i class="bi bi-geo-alt"></i> {{ fixture.venue|default:"TBA" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

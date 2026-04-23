@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kck-django",
+      "runtimeExecutable": "C:\\dev\\kck-cloned\\rpeet\\.claude\\worktrees\\youthful-cartwright\\kck_brir_django\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["manage.py", "runserver", "127.0.0.1:8765"],
+      "port": 8765
+    }
+  ]
+}

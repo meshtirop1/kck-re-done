@@ -1,0 +1,43 @@
+{% extends 'portal/portal_base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}{% if endorsement %}Edit Endorsement {{ endorsement.reference_number }}{% else %}Create New Endorsement{% endif %} - {{ SITE_NAME }}{% endblock %}
+{% block portal_content %}
+<div class="portal-header">
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item"><a href="{% url 'endorsements:manage_list' %}">Endorsements</a></li>
+            <li class="breadcrumb-item active">{% if endorsement %}Edit{% else %}New{% endif %}</li>
+        </ol>
+    </nav>
+    <h1 class="h3 fw-bold mb-0" style="color: #0B3D91;">
+        <i class="bi bi-file-earmark-plus me-2"></i>
+        {% if endorsement %}
+            Edit Endorsement {{ endorsement.reference_number }}
+        {% else %}
+            Create New Endorsement
+        {% endif %}
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-10">
+        <div class="portal-card">
+            <div class="card-body p-4">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <div class="portal-card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb me-1 text-warning"></i>Tips</h6>
+                <ul class="small text-muted mb-0 ps-3">
+                    <li>Use a clear, specific subject line.</li>
+                    <li>Drafts can be edited until published.</li>
+                    <li>Once issued, only revoke — not edit.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

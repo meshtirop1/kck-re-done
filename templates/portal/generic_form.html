@@ -1,0 +1,31 @@
+{% extends 'portal/portal_base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}{{ action }} {{ cfg.name }} — Admin Portal{% endblock %}
+{% block portal_content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'portal:dashboard' %}">Portal</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'portal:list' key %}">{{ cfg.name_plural }}</a></li>
+        <li class="breadcrumb-item active">{{ action }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">{{ cfg.icon }} {{ action }} {{ cfg.name }}</h2>
+    <a href="{% url 'portal:list' key %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Back to list
+    </a>
+</div>
+
+<div class="portal-card p-4">
+    {% crispy form %}
+</div>
+
+{% if obj %}
+<div class="mt-3 text-end">
+    <a href="{% url 'portal:delete' key obj.pk %}" class="btn btn-sm btn-outline-danger">
+        <i class="bi bi-trash"></i> Delete this {{ cfg.name|lower }}
+    </a>
+</div>
+{% endif %}
+{% endblock %}

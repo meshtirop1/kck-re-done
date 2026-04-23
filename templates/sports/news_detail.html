@@ -1,0 +1,91 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} — KCK Sports{% endblock %}
+
+{% block content %}
+
+{# Article hero with cover image #}
+<section style="position:relative;min-height:480px;display:flex;align-items:flex-end;padding:3rem 0 4rem;overflow:hidden;
+    {% if article.cover_image %}
+        background: linear-gradient(to bottom, rgba(10,14,20,0.3) 0%, rgba(10,14,20,0.85) 70%, rgba(10,14,20,1) 100%), url('{{ article.cover_image.url }}') center/cover no-repeat;
+    {% else %}
+        background: linear-gradient(135deg, #1a2230, #0a0e14);
+    {% endif %}">
+    <div class="container-sp" style="position:relative;z-index:2;max-width:900px;">
+        <a href="{% url 'sports:news_list' %}" class="sp-btn sp-btn-ghost" style="margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> All News
+        </a>
+        <div class="sp-eyebrow">
+            {% if article.related_sport %}{{ article.related_sport.name|upper }}{% else %}NEWS{% endif %}
+        </div>
+        <h1 style="font-family:Oswald,sans-serif;font-size:3rem;font-weight:700;color:#fff;margin:0.5rem 0;line-height:1.1;">
+            {{ article.title }}
+        </h1>
+        <div style="display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;color:rgba(255,255,255,0.9);font-family:Inter,sans-serif;font-size:0.95rem;">
+            <span><i class="bi bi-calendar"></i> {{ article.published_at|date:"F j, Y" }}</span>
+            {% if article.author %}<span><i class="bi bi-person"></i> {{ article.author }}</span>{% endif %}
+            {% if article.related_team %}
+                <span><i class="bi bi-people"></i>
+                    <a href="{% url 'sports:team_detail' article.related_team.slug %}" style="color:inherit;">{{ article.related_team.name }}</a>
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{# Content #}
+<section class="section-sp">
+    <div class="container-sp" style="max-width:780px;">
+        <article style="color:var(--sp-text,#fff);line-height:1.8;font-family:Inter,sans-serif;font-size:1.05rem;">
+            {{ article.content|safe }}
+        </article>
+
+        {% if article.tags.all %}
+        <div style="margin-top:2rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+            {% for tag in article.tags.all %}
+                <span class="sp-badge sp-badge-scheduled">#{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{# Related articles #}
+{% if related_articles %}
+<section class="section-sp section-alt">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>RELATED ARTICLES</h2>
+        </div>
+        <div class="grid-3">
+            {% for other in related_articles %}
+            <a href="{% url 'sports:news_detail' other.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-news-card">
+                    <div class="cover">
+                        {% if other.cover_image %}
+                            <img src="{{ other.cover_image.url }}" alt="{{ other.title }}">
+                        {% else %}
+                            <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;color:var(--sp-green,#00E676);background:var(--sp-card,#1a2230);">
+                                <i class="bi bi-newspaper"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="body">
+                        <div class="meta">
+                            <span>{{ other.published_at|date:"M j, Y" }}</span>
+                            {% if other.related_sport %}<span>{{ other.related_sport.name }}</span>{% endif %}
+                        </div>
+                        <h3>{{ other.title }}</h3>
+                        <p>{{ other.excerpt|default:other.content|striptags|truncatewords:20 }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

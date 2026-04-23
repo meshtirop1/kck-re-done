@@ -1,0 +1,163 @@
+{% extends 'dashboards/_base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Seller Dashboard — Kenyan Market · KCK{% endblock %}
+
+{% block dash_extra_css %}
+<style>
+.stat-card { background: white; border: 1px solid var(--kck-line, #e2e8f0); border-radius: 0.6rem; padding: 1.25rem; text-align: center; height: 100%; box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+.stat-card .stat-num { font-size: 2rem; font-weight: 800; color: var(--kck-blue); letter-spacing: -0.02em; }
+.stat-card .stat-label { font-size: 0.72rem; font-weight: 700; color: var(--kck-muted, #64748b); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+.product-card-admin { background: white; border: 1px solid var(--kck-line, #e2e8f0); border-radius: 0.6rem; overflow: hidden; transition: box-shadow 0.2s ease; height: 100%; }
+.product-card-admin:hover { box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
+.product-card-admin .product-img { aspect-ratio: 1/1; object-fit: cover; width: 100%; background: #f1f5f9; }
+.product-card-admin .product-body { padding: 0.9rem; }
+.product-card-admin .product-name { font-weight: 700; font-size: 0.98rem; margin-bottom: 0.25rem; color: var(--kck-ink, #0f172a); }
+.product-card-admin .product-price { font-weight: 800; color: var(--kck-red); }
+.product-card-admin .actions-bar { padding: 0.5rem 0.9rem; background: #f8fafc; border-top: 1px solid var(--kck-line, #e2e8f0); display: flex; gap: 0.4rem; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+.empty-state { background: white; border: 2px dashed var(--kck-line, #e2e8f0); border-radius: 0.6rem; padding: 3rem 2rem; text-align: center; color: var(--kck-muted, #64748b); }
+.empty-state i { font-size: 3.5rem; opacity: 0.3; }
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.35rem; }
+.status-dot.on { background: #16a34a; }
+.status-dot.off { background: #94a3b8; }
+</style>
+{% endblock %}
+
+{% block sidebar_role %}Seller · {{ seller.business_name|truncatechars:22 }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'market:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' and 'market' in request.resolver_match.namespaces %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-speedometer2"></i></span> Dashboard
+</a>
+
+<h6>Shop</h6>
+<a href="{% url 'market:product_create' %}" class="{% if 'products/new' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-plus-circle"></i></span> Add Product
+</a>
+<a href="{% url 'market:seller_detail' seller.slug %}">
+    <span class="nav-icon"><i class="bi bi-eye"></i></span> View Public Shop
+</a>
+<a href="{% url 'market:my_application' %}">
+    <span class="nav-icon"><i class="bi bi-file-text"></i></span> My Application
+</a>
+
+<h6>Browse Market</h6>
+<a href="{% url 'market:home' %}">
+    <span class="nav-icon"><i class="bi bi-shop"></i></span> Market Home
+</a>
+
+<h6>Account</h6>
+<a href="{% url 'accounts:dashboard' %}">
+    <span class="nav-icon"><i class="bi bi-person-circle"></i></span> Member Dashboard
+</a>
+<a href="{% url 'accounts:profile' %}">
+    <span class="nav-icon"><i class="bi bi-person-gear"></i></span> Profile
+</a>
+<a href="{% url 'accounts:logout' %}">
+    <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span> Logout
+</a>
+<a href="{% url 'core:home' %}">
+    <span class="nav-icon"><i class="bi bi-arrow-left"></i></span> Back to Site
+</a>
+{% endblock %}
+
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2"
+             style="background: rgba(11,61,145,0.08); color: var(--kck-blue); font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">
+            <i class="bi bi-shop"></i> Seller Dashboard
+        </div>
+        <h2>{{ seller.business_name }}</h2>
+        <p class="dash-subtitle">Welcome back, {{ user.get_full_name|default:user.username }}. Manage your shop below.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'market:product_create' %}" class="btn btn-warning fw-bold">
+            <i class="bi bi-plus-circle"></i> Add Product
+        </a>
+        <a href="{% url 'market:seller_detail' seller.slug %}" class="btn btn-outline-primary">
+            <i class="bi bi-eye"></i> View shop
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-num">{{ total_products|default:0 }}</div>
+            <div class="stat-label">Total products</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-num">{{ available_count|default:0 }}</div>
+            <div class="stat-label">Available</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-num">{{ total_views|default:0|intcomma }}</div>
+            <div class="stat-label">Total views</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-num">{{ seller.applied_at|date:"M Y" }}</div>
+            <div class="stat-label">Seller since</div>
+        </div>
+    </div>
+</div>
+
+<h4 class="fw-bold mb-3"><i class="bi bi-grid"></i> Your products</h4>
+
+{% if products %}
+<div class="row g-3">
+    {% for p in products %}
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="product-card-admin">
+            <a href="{% url 'market:product_detail' p.slug %}" class="text-decoration-none">
+                <img src="{{ p.image.url }}" alt="{{ p.name }}" class="product-img">
+            </a>
+            <div class="product-body">
+                <div class="product-name">{{ p.name|truncatechars:35 }}</div>
+                <div class="product-price">{{ p.price_display }}</div>
+                <div class="small text-muted mt-1">
+                    <span class="status-dot {% if p.is_available %}on{% else %}off{% endif %}"></span>
+                    {% if p.is_available %}Available{% else %}Hidden{% endif %}
+                    &middot; <i class="bi bi-eye"></i> {{ p.views_count|intcomma }}
+                </div>
+            </div>
+            <div class="actions-bar">
+                <a href="{% url 'market:product_edit' p.slug %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                <form method="post" action="{% url 'market:product_toggle' p.slug %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-toggle-{% if p.is_available %}on{% else %}off{% endif %}"></i>
+                        {% if p.is_available %}Hide{% else %}Show{% endif %}
+                    </button>
+                </form>
+                <form method="post" action="{% url 'market:product_delete' p.slug %}" class="d-inline"
+                      onsubmit="return confirm('Delete this product? This cannot be undone.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-bag-plus"></i>
+    <h4 class="mt-3 fw-bold">No products yet</h4>
+    <p class="mb-3">Add your first product to start selling to the KCK community.</p>
+    <a href="{% url 'market:product_create' %}" class="btn btn-primary btn-lg fw-bold">
+        <i class="bi bi-plus-circle"></i> Add your first product
+    </a>
+</div>
+{% endif %}
+{% endblock %}

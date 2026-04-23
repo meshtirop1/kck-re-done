@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}{{ endorsement.subject }} - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'endorsements:my_endorsements' %}" class="text-white">My Endorsements</a></li>
+                <li class="breadcrumb-item active text-white-50">{{ endorsement.reference_number }}</li>
+            </ol>
+        </nav>
+        <h1 class="h2 fw-bold mb-1">{{ endorsement.subject }}</h1>
+        <p class="mb-0">
+            <span class="badge bg-{{ endorsement.status_badge_class }} fs-6">{{ endorsement.get_status_display }}</span>
+            <span class="ms-2">{{ endorsement.get_endorsement_type_display }}</span>
+        </p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="feature-card p-4">
+                    <h3 class="fw-bold mb-3" style="color: #0B3D91;">Endorsement Details</h3>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Reference Number</dt>
+                        <dd class="col-sm-8"><code>{{ endorsement.reference_number }}</code></dd>
+
+                        <dt class="col-sm-4">Type</dt>
+                        <dd class="col-sm-8">{{ endorsement.get_endorsement_type_display }}</dd>
+
+                        <dt class="col-sm-4">Subject</dt>
+                        <dd class="col-sm-8">{{ endorsement.subject }}</dd>
+
+                        {% if endorsement.addressed_to %}
+                        <dt class="col-sm-4">Addressed To</dt>
+                        <dd class="col-sm-8">{{ endorsement.addressed_to }}</dd>
+                        {% endif %}
+
+                        {% if endorsement.purpose %}
+                        <dt class="col-sm-4">Purpose</dt>
+                        <dd class="col-sm-8">{{ endorsement.purpose|linebreaks }}</dd>
+                        {% endif %}
+
+                        {% if endorsement.body %}
+                        <dt class="col-sm-4">Body</dt>
+                        <dd class="col-sm-8">{{ endorsement.body|linebreaks }}</dd>
+                        {% endif %}
+
+                        {% if endorsement.member_standing %}
+                        <dt class="col-sm-4">Member Standing</dt>
+                        <dd class="col-sm-8">{{ endorsement.member_standing }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Issued On</dt>
+                        <dd class="col-sm-8">{{ endorsement.issued_at|date:"F j, Y"|default:"Not yet issued" }}</dd>
+
+                        {% if endorsement.valid_until %}
+                        <dt class="col-sm-4">Valid Until</dt>
+                        <dd class="col-sm-8">{{ endorsement.valid_until|date:"F j, Y" }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Summary</h5>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2"><strong>Reference:</strong><br><code>{{ endorsement.reference_number }}</code></li>
+                        <li class="mb-2"><strong>Status:</strong> <span class="badge bg-{{ endorsement.status_badge_class }}">{{ endorsement.get_status_display }}</span></li>
+                        <li class="mb-2"><strong>Issued:</strong> {{ endorsement.issued_at|date:"M j, Y"|default:"—" }}</li>
+                        {% if endorsement.valid_until %}
+                        <li class="mb-2"><strong>Valid until:</strong> {{ endorsement.valid_until|date:"M j, Y" }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                {% if endorsement.status == 'issued' %}
+                <div class="feature-card p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-download me-2 text-primary"></i>Download</h5>
+                    <a href="{% url 'endorsements:download' endorsement.pk %}" class="btn btn-primary w-100">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+                    </a>
+                    <small class="text-muted d-block mt-2">Official signed and stamped copy.</small>
+                </div>
+
+                <div class="feature-card p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-shield-check me-2 text-primary"></i>Verification</h5>
+                    <p class="small mb-2">Anyone can verify this endorsement at:</p>
+                    <a href="{% url 'endorsements:verify' endorsement.verification_code %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-patch-check me-1"></i>Verify Link
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

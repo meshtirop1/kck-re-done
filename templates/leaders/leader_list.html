@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Our Leadership — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.leaders-hero {
+    position: relative;
+    padding: 4.5rem 0 3rem;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255,215,0,0.10), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(200,16,46,0.06), transparent 50%),
+        linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%);
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+.leaders-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, transparent, var(--kck-gold), transparent);
+}
+.leaders-hero h1 {
+    color: white;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin-bottom: 0.5rem;
+}
+.leaders-hero .lead { color: rgba(255,255,255,0.9); font-size: 1.1rem; }
+.leaders-hero .eyebrow {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    background: rgba(255,215,0,0.2);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: var(--kck-gold);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.leaders-group-title {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 3rem 0 1.75rem;
+}
+.leaders-group-title::before, .leaders-group-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--kck-line, #e2e8f0) 30%, var(--kck-line, #e2e8f0) 70%, transparent);
+}
+.leaders-group-title h3 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 1.4rem;
+    margin: 0;
+    color: var(--kck-blue);
+    white-space: nowrap;
+}
+
+.leader-card {
+    background: white;
+    border: 1px solid var(--kck-line, #e2e8f0);
+    border-radius: 1rem;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+}
+.leader-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px -10px rgba(11,61,145,0.25);
+    border-color: rgba(11,61,145,0.3);
+}
+.leader-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, var(--kck-blue) 0%, var(--kck-gold) 50%, var(--kck-red) 100%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.leader-card:hover::before { opacity: 1; }
+
+.leader-photo-wrap {
+    position: relative;
+    padding: 2rem 1.5rem 0;
+    text-align: center;
+}
+.leader-photo {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 8px 24px rgba(11,61,145,0.18), 0 0 0 1px var(--kck-line, #e2e8f0);
+    background: linear-gradient(135deg, #eef3fb, #fff8dc);
+}
+.leader-photo-fallback {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 100%);
+    color: var(--kck-gold);
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    box-shadow: 0 8px 24px rgba(11,61,145,0.18), 0 0 0 1px var(--kck-line, #e2e8f0);
+    border: 4px solid white;
+}
+.leader-initials { font-size: 2.5rem; }
+
+.leader-role-pill {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.85rem;
+}
+.leader-role-pill.president { background: linear-gradient(135deg, var(--kck-gold), #ffa500); color: #1a1a1a; box-shadow: 0 3px 10px rgba(255,165,0,0.3); }
+.leader-role-pill.vice_president { background: #fde68a; color: #78350f; }
+.leader-role-pill.secretary { background: var(--kck-blue); color: white; }
+.leader-role-pill.treasurer { background: #16a34a; color: white; }
+.leader-role-pill.welfare { background: #7c3aed; color: white; }
+.leader-role-pill.committee { background: #64748b; color: white; }
+
+.leader-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.leader-name {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--kck-ink, #0f172a);
+    letter-spacing: -0.015em;
+    margin: 0.6rem 0 0.25rem;
+}
+.leader-title {
+    color: var(--kck-muted, #64748b);
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+.leader-bio {
+    color: #4b5563;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+.leader-card-footer {
+    padding: 0.9rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid var(--kck-line, #e2e8f0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+.leader-card-footer .contact-icons a {
+    color: var(--kck-muted, #64748b);
+    text-decoration: none;
+    font-size: 1.05rem;
+    margin-right: 0.4rem;
+    transition: color 0.15s;
+}
+.leader-card-footer .contact-icons a:hover { color: var(--kck-blue); }
+.leader-card-footer .btn-profile {
+    background: var(--kck-blue);
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.leader-card-footer .btn-profile:hover { background: #072a66; color: white; }
+
+.leaders-empty {
+    text-align: center;
+    padding: 5rem 1rem;
+    background: #f8fafc;
+    border: 2px dashed var(--kck-line, #e2e8f0);
+    border-radius: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="leaders-hero">
+    <div class="container">
+        <span class="eyebrow"><i class="bi bi-people-fill"></i> Elected Officers</span>
+        <h1>Our Leadership</h1>
+        <p class="lead mb-0">Meet the committee serving the Kenyan community in Korea.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        {% if grouped_leaders %}
+            {% for role_key, group in grouped_leaders.items %}
+            <div class="leaders-group-title">
+                <h3>{{ group.label }}</h3>
+            </div>
+            <div class="row g-4 justify-content-center">
+                {% for leader in group.leaders %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="leader-card">
+                        <div class="leader-photo-wrap">
+                            {% if leader.photo %}
+                                <img src="{{ leader.photo.url }}" alt="{{ leader.user.get_full_name|default:leader.user.username }}" class="leader-photo" loading="lazy">
+                            {% else %}
+                                <div class="leader-photo-fallback">
+                                    <span class="leader-initials">{{ leader.user.first_name|slice:":1"|upper }}{{ leader.user.last_name|slice:":1"|upper }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="leader-body">
+                            <span class="leader-role-pill {{ leader.role }}">{{ leader.get_role_display }}</span>
+                            <div class="leader-name">{{ leader.user.get_full_name|default:leader.user.username }}</div>
+                            {% if leader.title %}
+                                <div class="leader-title">{{ leader.title }}</div>
+                            {% endif %}
+                            {% if leader.bio %}
+                                <p class="leader-bio">{{ leader.bio|truncatewords:24 }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="leader-card-footer">
+                            <div class="contact-icons">
+                                {% if leader.email_official %}<a href="mailto:{{ leader.email_official }}" title="Email"><i class="bi bi-envelope-fill"></i></a>{% endif %}
+                                {% if leader.phone_official %}<a href="tel:{{ leader.phone_official }}" title="Phone"><i class="bi bi-telephone-fill"></i></a>{% endif %}
+                            </div>
+                            <a href="{% url 'leaders:detail' leader.pk %}" class="btn-profile">
+                                View profile <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="leaders-empty">
+                <i class="bi bi-people text-muted" style="font-size: 4rem; opacity: 0.4;"></i>
+                <h4 class="mt-3 text-muted">Leadership profiles will be published soon.</h4>
+                <p class="text-muted small mb-0">Check back as we introduce the elected officers of KCK.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

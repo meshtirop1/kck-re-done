@@ -1,0 +1,24 @@
+{
+    "name": "Kenya Community in Korea",
+    "short_name": "KCK",
+    "description": "Kenya Community in Korea — Sote Pamoja. Embassy liaison, community events, and support for Kenyans in South Korea.",
+    "icons": [
+        {
+            "src": "/static/images/android-chrome-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/android-chrome-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "theme_color": "#0B3D91",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/"
+}

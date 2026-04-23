@@ -1,0 +1,66 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Sports News — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">STORIES · UPDATES · REPORTS</div>
+        <h1>SPORTS <span class="hl">NEWS</span></h1>
+        <p class="tagline">Latest stories, match reports and updates from KCK Sports.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+        {% if articles %}
+        <div class="grid-3">
+            {% for article in articles %}
+            <a href="{% url 'sports:news_detail' article.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-news-card">
+                    <div class="cover">
+                        {% if article.cover_image %}
+                            <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
+                        {% else %}
+                            <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;color:var(--sp-green,#00E676);background:var(--sp-card,#1a2230);">
+                                <i class="bi bi-newspaper"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="body">
+                        <div class="meta">
+                            <span>{{ article.published_at|date:"M j, Y" }}</span>
+                            {% if article.related_sport %}<span>{{ article.related_sport.name }}</span>{% endif %}
+                        </div>
+                        <h3>{{ article.title }}</h3>
+                        <p>{{ article.excerpt|default:article.content|striptags|truncatewords:20 }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <nav style="display:flex;gap:0.5rem;justify-content:center;margin-top:3rem;">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="sp-btn sp-btn-ghost"><i class="bi bi-chevron-left"></i> Previous</a>
+            {% endif %}
+            <span class="sp-btn sp-btn-outline" style="pointer-events:none;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="sp-btn sp-btn-ghost">Next <i class="bi bi-chevron-right"></i></a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-newspaper"></i></div>
+            <p>No news articles yet. Check back soon.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

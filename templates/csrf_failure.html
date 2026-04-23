@@ -1,0 +1,10 @@
+{% extends 'errors/_base.html' %}
+{% block title %}Session Expired — {{ SITE_NAME }}{% endblock %}
+{% block err_kicker %}Session expired{% endblock %}
+{% block err_code %}CSRF{% endblock %}
+{% block err_title %}Your session expired or the form was tampered with{% endblock %}
+{% block err_message %}
+For your security, we couldn't process the form. This usually happens when a tab has been open too long.
+Please go back, refresh, and try again.
+{% endblock %}
+{% block err_icon %}bi-shield-exclamation{% endblock %}

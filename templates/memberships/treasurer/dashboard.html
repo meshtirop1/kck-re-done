@@ -1,0 +1,148 @@
+{% extends 'memberships/treasurer/_base.html' %}
+{% load humanize %}
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>Treasurer Dashboard</h2>
+        <p class="dash-subtitle">Verify payments, manage fees & bank details, review the audit log.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'memberships:treasurer_queue' %}?status=awaiting_verification" class="btn btn-primary">
+            <i class="bi bi-hourglass-split"></i> Pending queue
+            {% if stats.awaiting %}<span class="badge bg-light text-dark ms-1">{{ stats.awaiting }}</span>{% endif %}
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Awaiting verification</div>
+            <div class="fs-2 fw-bold" style="color:var(--kck-red);">{{ stats.awaiting }}</div>
+            <div class="small text-muted">Declared, needs review</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Active members</div>
+            <div class="fs-2 fw-bold" style="color:#16a34a;">{{ stats.active }}</div>
+            <div class="small text-muted">Currently valid</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Expiring in 30 days</div>
+            <div class="fs-2 fw-bold" style="color:#b8860b;">{{ stats.expiring_30d }}</div>
+            <div class="small text-muted">Send reminders soon</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="dash-card p-3">
+            <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing:0.08em;">Total collected (active)</div>
+            <div class="fs-2 fw-bold" style="color:var(--kck-blue);">{{ stats.total_collected|intcomma }}</div>
+            <div class="small text-muted">Expected amount sum</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="dash-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-hourglass-split"></i> Awaiting verification</h5>
+                <a href="{% url 'memberships:treasurer_queue' %}?status=awaiting_verification" class="btn btn-sm btn-outline-primary">See all →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if queue %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ref</th>
+                                <th>Member</th>
+                                <th>Amount</th>
+                                <th>Declared</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in queue %}
+                            <tr>
+                                <td><code>{{ m.reference_code }}</code></td>
+                                <td>
+                                    <div class="fw-semibold">{{ m.user.get_full_name|default:m.user.username }}</div>
+                                    <div class="small text-muted">{{ m.user.email }}</div>
+                                </td>
+                                <td>{{ m.currency }} {{ m.expected_amount|intcomma }}</td>
+                                <td>{{ m.payment_declared_at|naturaltime|default:"—" }}</td>
+                                <td><a href="{% url 'memberships:treasurer_detail' m.pk %}" class="btn btn-sm btn-primary">Review</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-check-all" style="font-size:2.5rem; opacity:0.3;"></i>
+                    <p class="mt-2 mb-0">Nothing awaiting verification. All caught up!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="dash-card mb-3">
+            <div class="card-header"><h6><i class="bi bi-shield-check"></i> Recently verified</h6></div>
+            <div class="card-body p-0">
+                {% if recent_verified %}
+                <ul class="list-group list-group-flush">
+                    {% for m in recent_verified %}
+                    <li class="list-group-item small">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'memberships:treasurer_detail' m.pk %}" class="fw-semibold">{{ m.member_number }}</a>
+                                <div class="text-muted">{{ m.user.get_full_name|default:m.user.username }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted">by {{ m.verified_by|default:"system" }}</div>
+                                <div class="text-muted">{{ m.activated_at|naturaltime }}</div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-center py-4 mb-0 text-muted small">No activations yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dash-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6><i class="bi bi-journal-text"></i> Recent activity</h6>
+                <a href="{% url 'memberships:treasurer_audit_log' %}" class="small">View full log →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_logs %}
+                <ul class="list-group list-group-flush small">
+                    {% for log in recent_logs %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-light text-dark">{{ log.get_action_display }}</span>
+                                {% if log.membership %}<a href="{% url 'memberships:treasurer_detail' log.membership.pk %}">{{ log.membership.reference_code }}</a>{% endif %}
+                                <div class="text-muted">{{ log.description|truncatechars:80 }}</div>
+                            </div>
+                            <small class="text-muted">{{ log.created_at|naturaltime }}</small>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-center py-3 mb-0 text-muted small">No activity yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

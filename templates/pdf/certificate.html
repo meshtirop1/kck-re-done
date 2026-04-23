@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate - {{ cert_number }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: "Georgia", "Times New Roman", serif;
+            color: #222;
+            text-align: center;
+        }
+        .border-frame {
+            border: 3px solid #003366;
+            padding: 30px;
+            min-height: 500px;
+            position: relative;
+        }
+        .flag-bar {
+            display: flex;
+            height: 8px;
+            margin-bottom: 20px;
+        }
+        .bar-black { flex: 1; background: #000000; }
+        .bar-red   { flex: 1; background: #CC0000; }
+        .bar-blue { flex: 1; background: #003366; }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 5px;
+        }
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.06;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .watermark img {
+            width: 400px;
+            height: 400px;
+        }
+        .org-name {
+            font-size: 22pt;
+            color: #003366;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        .cert-label {
+            font-size: 28pt;
+            color: #CC0000;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .cert-type {
+            font-size: 16pt;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .presented-to {
+            font-size: 12pt;
+            color: #888;
+            margin-top: 20px;
+        }
+        .recipient-name {
+            font-size: 26pt;
+            color: #000;
+            font-weight: bold;
+            margin: 10px 0;
+            border-bottom: 2px solid #003366;
+            display: inline-block;
+            padding: 0 40px 5px;
+        }
+        .body-text {
+            font-size: 12pt;
+            color: #444;
+            max-width: 600px;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding: 0 60px;
+        }
+        .sig-block {
+            text-align: center;
+            width: 200px;
+        }
+        .sig-line {
+            border-top: 1px solid #333;
+            margin-top: 40px;
+            padding-top: 5px;
+        }
+        .sig-name {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .sig-title {
+            font-size: 10pt;
+            color: #666;
+        }
+        .meta-info {
+            margin-top: 20px;
+            font-size: 9pt;
+            color: #999;
+        }
+        .verification {
+            font-size: 9pt;
+            color: #003366;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Faded Watermark Logo -->
+    <div class="watermark">
+        <img src="file:///C:/kck/backend/media/branding/kck-logo.png" alt="">
+    </div>
+
+    <div class="border-frame">
+        <div class="flag-bar">
+            <div class="bar-black"></div>
+            <div class="bar-red"></div>
+            <div class="bar-blue"></div>
+        </div>
+
+        <img src="file:///C:/kck/backend/media/branding/kck-logo.png" alt="KCK" class="logo">
+        <div class="org-name">KENYA COMMUNITY IN KOREA</div>
+        <div style="font-size: 10pt; color: #666; margin-bottom: 10px;">Inform • Unite • Progress</div>
+
+        <div class="cert-label">Certificate</div>
+        <div class="cert-type">of {{ cert_type }}</div>
+
+        <div class="presented-to">This certificate is proudly presented to</div>
+        <div class="recipient-name">{{ recipient_name }}</div>
+
+        <div class="body-text">
+            {{ body|safe }}
+        </div>
+
+        <div class="signature-section">
+            <div class="sig-block">
+                <div class="sig-line">
+                    <div class="sig-name">{{ issued_by }}</div>
+                    <div class="sig-title">{{ issued_by_title }}</div>
+                </div>
+            </div>
+            <div class="sig-block">
+                <div class="sig-line">
+                    <div class="sig-name">Official Stamp</div>
+                    <div class="sig-title">KCK</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="meta-info">
+            Issued on {{ issued_at }} | Ref: {{ cert_number }}
+        </div>
+        <div class="verification">
+            Verify at: {{ verification_url }}
+        </div>
+
+        <div class="flag-bar" style="margin-top: 15px;">
+            <div class="bar-black"></div>
+            <div class="bar-red"></div>
+            <div class="bar-blue"></div>
+        </div>
+    </div>
+</body>
+</html>

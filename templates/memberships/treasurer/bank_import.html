@@ -1,0 +1,83 @@
+{% extends 'memberships/treasurer/_base.html' %}
+{% load humanize %}
+{% block dash_content %}
+<div class="dash-header">
+    <div>
+        <h2>Bank Statement Import</h2>
+        <p class="dash-subtitle">Upload a CSV from your bank. The system auto-matches transactions to membership references.</p>
+    </div>
+</div>
+
+<div class="dash-card p-4 mb-3" style="max-width: 780px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="preview">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Bank statement CSV</label>
+            <input type="file" name="csv_file" accept=".csv" class="form-control" required>
+            <small class="form-text text-muted d-block mt-1">
+                Accepted columns (case-insensitive, any order): <code>date</code>, <code>amount</code> (or credit/deposit/value), <code>description</code> (or details/memo/narration).
+            </small>
+        </div>
+        <button class="btn btn-primary"><i class="bi bi-file-earmark-spreadsheet"></i> Upload & preview</button>
+    </form>
+</div>
+
+{% if preview %}
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="confirm">
+    <div class="dash-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="bi bi-check2-square"></i> Review matches — {{ preview|length }} rows parsed</h5>
+            <button class="btn btn-success"><i class="bi bi-check-all"></i> Verify checked memberships</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle small">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:40px"><input type="checkbox" onclick="document.querySelectorAll('.row-check:not(:disabled)').forEach(c=>c.checked=this.checked)"></th>
+                        <th>Date</th>
+                        <th>Amount (CSV)</th>
+                        <th>Description</th>
+                        <th>Match</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in preview %}
+                    <tr class="{% if r.match and r.amount_ok %}table-success{% elif r.match %}table-warning{% endif %}">
+                        <td>
+                            {% if r.match and r.match.status != 'active' %}
+                            <input type="checkbox" name="verify_membership" value="{{ r.match.pk }}" class="row-check" {% if r.amount_ok %}checked{% endif %}>
+                            {% else %}
+                            <input type="checkbox" disabled class="row-check">
+                            {% endif %}
+                        </td>
+                        <td>{{ r.date|default:"—" }}</td>
+                        <td><strong>{{ r.amount }}</strong></td>
+                        <td class="text-muted">{{ r.desc|truncatechars:80 }}</td>
+                        <td>
+                            {% if r.match %}
+                                <a href="{% url 'memberships:treasurer_detail' r.match.pk %}">{{ r.match.reference_code }}</a><br>
+                                <small class="text-muted">{{ r.match.user.get_full_name|default:r.match.user.username }}</small>
+                                <br><small>Expected: {{ r.match.currency }} {{ r.match.expected_amount|intcomma }}</small>
+                            {% else %}
+                                <span class="text-muted">No match</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if r.match and r.match.status == 'active' %}<span class="badge bg-success">Already active</span>
+                            {% elif r.match and r.amount_ok %}<span class="badge bg-success">Match OK</span>
+                            {% elif r.match %}<span class="badge bg-warning text-dark">Amount mismatch</span>
+                            {% else %}<span class="badge bg-secondary">No ref found</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

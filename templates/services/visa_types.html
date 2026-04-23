@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Visa Types - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Visa Types</h1>
+        <p class="lead">Find the right visa for your journey to Kenya</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            {% for visa in visa_types %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card visa-card p-4 h-100">
+                    <div class="visa-icon text-kck-blue mb-2">{{ visa.icon }}</div>
+                    <h4 class="mb-2">{{ visa.name }}</h4>
+                    <p class="text-muted">{{ visa.description }}</p>
+                    <ul class="list-unstyled small mt-3">
+                        <li><strong>Processing:</strong> {{ visa.processing_time }}</li>
+                    </ul>
+                    {% if visa.requirements %}
+                    <h6 class="mt-3">Requirements:</h6>
+                    <ul class="small">
+                        {% for req in visa.requirements %}<li>{{ req }}</li>{% endfor %}
+                    </ul>
+                    {% endif %}
+                    <a href="{% url 'services:visa_type_detail' visa.slug %}" class="btn btn-outline-primary btn-sm mt-auto">View Details</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No visa types available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'services:visa_apply' %}" class="btn btn-danger btn-lg">Apply for Visa <i class="bi bi-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+{% endblock %}

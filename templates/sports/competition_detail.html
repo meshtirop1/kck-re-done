@@ -1,0 +1,150 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}{{ competition.name }} — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <a href="{% url 'sports:competition_list' %}" class="sp-btn sp-btn-ghost" style="margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> All Competitions
+        </a>
+        <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;">
+            <div style="font-size:5rem;color:var(--sp-gold,#FFD700);">
+                <i class="bi bi-trophy-fill"></i>
+            </div>
+            <div>
+                <div class="sp-eyebrow">{{ competition.sport.name|upper }} · {% if competition.season %}SEASON {{ competition.season }}{% endif %}</div>
+                <h1>{{ competition.name|upper }}</h1>
+                {% if competition.description %}
+                <p class="tagline" style="max-width:700px;">{{ competition.description }}</p>
+                {% endif %}
+                <div style="display:flex;gap:1.5rem;margin-top:1rem;flex-wrap:wrap;color:var(--sp-text-dim,#8a93a4);">
+                    {% if competition.start_date %}<span><i class="bi bi-calendar-event"></i> {{ competition.start_date|date:"M j, Y" }}</span>{% endif %}
+                    {% if competition.end_date %}<span><i class="bi bi-calendar-check"></i> {{ competition.end_date|date:"M j, Y" }}</span>{% endif %}
+                    {% if competition.is_active %}
+                        <span class="sp-badge sp-badge-live"><span class="live-pulse"></span> ACTIVE</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Standings #}
+{% if standings %}
+<section class="section-sp">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>STANDINGS</h2>
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="sp-standings">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style="text-align:left;">TEAM</th>
+                    <th>P</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>GF</th>
+                    <th>GA</th>
+                    <th>GD</th>
+                    <th>PTS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in standings %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td style="text-align:left;">
+                        <a href="{% url 'sports:team_detail' row.team.slug %}" style="display:flex;align-items:center;gap:0.5rem;color:inherit;text-decoration:none;">
+                            {% if row.team.logo %}
+                                <img src="{{ row.team.logo.url }}" alt="" style="width:24px;height:24px;border-radius:50%;">
+                            {% else %}
+                                <div style="width:24px;height:24px;border-radius:50%;background:{{ row.team.color_primary|default:'#00E676' }};color:#000;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;">{{ row.team.short_name|default:row.team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <span>{{ row.team.name }}</span>
+                        </a>
+                    </td>
+                    <td>{{ row.played|default:0 }}</td>
+                    <td>{{ row.wins|default:0 }}</td>
+                    <td>{{ row.draws|default:0 }}</td>
+                    <td>{{ row.losses|default:0 }}</td>
+                    <td>{{ row.goals_for|default:0 }}</td>
+                    <td>{{ row.goals_against|default:0 }}</td>
+                    <td>{{ row.goal_difference|default:0 }}</td>
+                    <td><strong style="color:var(--sp-green,#00E676);">{{ row.points|default:0 }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Fixtures #}
+{% if fixtures %}
+<section class="section-sp section-alt">
+    <div class="container-sp">
+        <div class="sp-section-head">
+            <div class="accent-bar"></div>
+            <h2>FIXTURES</h2>
+        </div>
+        <div class="grid-2">
+            {% for fixture in fixtures %}
+            <a href="{% url 'sports:fixture_detail' fixture.pk %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-fixture {% if fixture.status == 'live' %}live{% endif %}">
+                    <div class="meta">
+                        {% if fixture.status == 'live' %}
+                            <span class="sp-badge sp-badge-live"><span class="live-pulse"></span> LIVE</span>
+                        {% elif fixture.status == 'completed' %}
+                            <span class="sp-badge sp-badge-completed">FT</span>
+                        {% else %}
+                            <span class="sp-badge sp-badge-scheduled">{{ fixture.kickoff|date:"D, M j" }}</span>
+                        {% endif %}
+                        <span><i class="bi bi-clock"></i> {{ fixture.kickoff|date:"g:i A" }}</span>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            {% if fixture.home_team.logo %}
+                                <img src="{{ fixture.home_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.home_team.short_name|default:fixture.home_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.home_team.name }}</div>
+                        </div>
+                        {% if fixture.status == 'completed' or fixture.status == 'live' %}
+                        <div class="score">
+                            <span {% if fixture.home_score > fixture.away_score %}class="won"{% endif %}>{{ fixture.home_score|default:0 }}</span>
+                            <span class="sep">-</span>
+                            <span {% if fixture.away_score > fixture.home_score %}class="won"{% endif %}>{{ fixture.away_score|default:0 }}</span>
+                        </div>
+                        {% else %}
+                        <div class="vs">VS</div>
+                        {% endif %}
+                        <div class="team">
+                            {% if fixture.away_team.logo %}
+                                <img src="{{ fixture.away_team.logo.url }}" class="team-logo" alt="">
+                            {% else %}
+                                <div class="team-logo">{{ fixture.away_team.short_name|default:fixture.away_team.name|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="team-name">{{ fixture.away_team.name }}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <span><i class="bi bi-geo-alt"></i> {{ fixture.venue|default:"TBA" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

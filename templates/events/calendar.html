@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Event Calendar - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Event Calendar</h1>
+        <p class="lead">Browse our upcoming events by month</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Upcoming Events</h3>
+            <div class="btn-group" role="group">
+                <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary"><i class="bi bi-grid"></i> Grid View</a>
+                <a href="{% url 'events:calendar' %}" class="btn btn-primary active"><i class="bi bi-calendar3"></i> Calendar</a>
+            </div>
+        </div>
+
+        {% if events_by_month %}
+            {% for month, month_events in events_by_month.items %}
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-header bg-kck-blue text-white">
+                    <h4 class="mb-0"><i class="bi bi-calendar3"></i> {{ month }}</h4>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for event in month_events %}
+                    <a href="{% url 'events:event_detail' event.slug %}" class="list-group-item list-group-item-action">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <div class="event-date-badge">
+                                    <div class="fw-bold fs-4">{{ event.date|date:"j" }}</div>
+                                    <div class="small text-uppercase">{{ event.date|date:"D" }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="mb-1">{{ event.title }}</h5>
+                                <p class="text-muted small mb-1">{{ event.description|truncatewords:20 }}</p>
+                                <div class="small text-muted">
+                                    <i class="bi bi-geo-alt"></i> {{ event.location }}
+                                    <span class="mx-2">|</span>
+                                    <i class="bi bi-clock"></i> {{ event.date|date:"g:i a" }}
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-md-end">
+                                {% if event.capacity %}
+                                <div class="small text-muted mb-2"><i class="bi bi-people"></i> {{ event.registration_count }}/{{ event.capacity }}</div>
+                                {% endif %}
+                                <span class="btn btn-sm btn-outline-primary">View Details <i class="bi bi-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x text-muted" style="font-size:3rem;"></i>
+            <p class="text-muted mt-3">No upcoming events scheduled. Please check back later.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

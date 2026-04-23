@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Events - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Community Events</h1>
+        <p class="lead">Join our upcoming events and cultural celebrations</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <h3 class="mb-4">Upcoming Events</h3>
+        {% if events %}
+        <div class="row g-4">
+            {% for event in events %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card event-card h-100">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                    {% else %}
+                        <div class="bg-kck-blue text-white text-center py-5">
+                            <i class="bi bi-calendar-event" style="font-size:3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <span class="event-date-badge small mb-2">{{ event.date|date:"M j, Y" }}</span>
+                        <h5>{{ event.title }}</h5>
+                        <p class="text-muted small">{{ event.description|truncatewords:18 }}</p>
+                        <div class="small text-muted mb-3">
+                            <div><i class="bi bi-geo-alt"></i> {{ event.location }}</div>
+                            <div><i class="bi bi-clock"></i> {{ event.date|date:"g:i a" }}</div>
+                            {% if event.capacity %}
+                            <div><i class="bi bi-people"></i> {{ event.registration_count }}/{{ event.capacity }} registered</div>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary mt-auto">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if events.has_other_pages %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if events.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ events.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                {% for num in events.paginator.page_range %}
+                    <li class="page-item {% if num == events.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endfor %}
+                {% if events.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ events.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x text-muted" style="font-size:3rem;"></i>
+            <p class="text-muted mt-3">No upcoming events at the moment. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if past_events %}
+<section class="section-alt">
+    <div class="container">
+        <h3 class="mb-4">Past Events</h3>
+        <div class="row g-4">
+            {% for event in past_events %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card event-card h-100">
+                    {% if event.image %}<img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">{% endif %}
+                    <div class="card-body">
+                        <small class="text-muted">{{ event.date|date:"M j, Y" }}</small>
+                        <h6 class="mt-2">{{ event.title }}</h6>
+                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'portal/portal_base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Generate Cover Note - {{ SITE_NAME }}{% endblock %}
+{% block portal_content %}
+<div class="portal-header">
+    <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item"><a href="{% url 'embassy_liaison:officer_request_list' %}">Embassy Requests</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'embassy_liaison:officer_request_detail' svc_request.pk %}">#{{ svc_request.request_number|default:svc_request.id }}</a></li>
+            <li class="breadcrumb-item active">Generate Cover Note</li>
+        </ol>
+    </nav>
+    <h1 class="h3 fw-bold mb-0" style="color: #0B3D91;">
+        <i class="bi bi-file-earmark-text me-2"></i>Generate Cover Note / Endorsement
+    </h1>
+    <p class="text-muted small mb-0 mt-1">Quick-generate an endorsement from the embassy service request below.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="portal-card mb-3">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3" style="color: #0B3D91;"><i class="bi bi-info-circle me-1"></i>Request Context</h5>
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-5">Requester</dt>
+                    <dd class="col-sm-7">{{ req.full_name }}</dd>
+
+                    <dt class="col-sm-5">Email</dt>
+                    <dd class="col-sm-7"><a href="mailto:{{ req.email }}">{{ req.email }}</a></dd>
+
+                    <dt class="col-sm-5">Service Type</dt>
+                    <dd class="col-sm-7"><span class="badge bg-light text-dark">{{ req.get_service_type_display }}</span></dd>
+
+                    <dt class="col-sm-5">Reference</dt>
+                    <dd class="col-sm-7"><code>#{{ svc_request.request_number|default:svc_request.id }}</code></dd>
+
+                    <dt class="col-sm-5">Status</dt>
+                    <dd class="col-sm-7"><span class="badge bg-{{ req.status_badge_class }}">{{ req.get_status_display }}</span></dd>
+
+                    <dt class="col-sm-5">Submitted</dt>
+                    <dd class="col-sm-7">{{ req.created_at|date:"M j, Y" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="portal-card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2"><i class="bi bi-eye me-1 text-primary"></i>Preview — Auto-filled Fields</h6>
+                <ul class="small mb-0 ps-3 text-muted">
+                    <li><strong>Member:</strong> {{ req.full_name }}</li>
+                    <li><strong>Addressed to:</strong> Kenyan Embassy, Seoul</li>
+                    <li><strong>Related to:</strong> {{ req.get_service_type_display }}</li>
+                    <li><strong>Linked request:</strong> #{{ svc_request.request_number|default:svc_request.id }}</li>
+                </ul>
+                <small class="text-muted d-block mt-2">Review and adjust fields in the form before saving.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="portal-card">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3" style="color: #0B3D91;">Endorsement Details</h5>
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ announcement.title }} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container" style="max-width: 860px;">
+    <a href="{% url 'communications:announcements' %}" class="text-decoration-none mb-3 d-inline-block">
+      <i class="bi bi-arrow-left"></i> Back to announcements
+    </a>
+
+    <article class="card shadow-sm">
+      {% if announcement.cover_image %}
+        <img src="{{ announcement.cover_image.url }}" class="card-img-top" alt="{{ announcement.title }}" style="max-height: 420px; object-fit: cover;">
+      {% endif %}
+      <div class="card-body p-4 p-md-5">
+        <span class="badge bg-primary mb-2">{{ announcement.get_category_display }}</span>
+        {% if announcement.is_pinned %}<span class="badge bg-warning text-dark mb-2"><i class="bi bi-pin-angle"></i> Pinned</span>{% endif %}
+        <h1 class="fw-bold">{{ announcement.title }}</h1>
+        <p class="text-muted">
+          {% if announcement.author %}By {{ announcement.author.get_full_name|default:announcement.author.username }} &middot; {% endif %}
+          {{ announcement.published_at|date:"F j, Y" }}
+        </p>
+
+        {% if announcement.excerpt %}
+          <p class="lead">{{ announcement.excerpt }}</p>
+        {% endif %}
+
+        <hr>
+        <div style="white-space: pre-line; line-height: 1.8; font-size: 1.05rem;">{{ announcement.body }}</div>
+      </div>
+    </article>
+
+    {% if related %}
+      <h3 class="mt-5 mb-3">Related announcements</h3>
+      <div class="row g-3">
+        {% for rel in related %}
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <span class="badge bg-secondary mb-2">{{ rel.get_category_display }}</span>
+                <h6 class="card-title">{{ rel.title|truncatechars:60 }}</h6>
+                <a href="{% url 'communications:announcement_detail' rel.slug %}" class="stretched-link small">Read &rarr;</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

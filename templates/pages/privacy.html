@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Privacy Policy - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1><i class="bi bi-shield-lock"></i> Privacy Policy</h1>
+        <p class="lead">How the Kenya Community in Korea (KCK) collects, uses, and protects your personal information.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+
+                <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                    <div>
+                        <strong>Last Updated:</strong> April 19, 2026 &middot;
+                        <strong>Effective Date:</strong> April 19, 2026
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-bookmark-check text-kck-red"></i> At a Glance</h5>
+                        <p class="mb-0">Your privacy matters to us. This policy explains, in plain language, what we collect, why we collect it, who we share it with, how long we keep it, and the rights you have over your data. If anything is unclear, please <a href="{% url 'core:contact' %}">contact us</a>.</p>
+                    </div>
+                </div>
+
+                <!-- Table of Contents -->
+                <div class="card bg-light border-0 mb-5">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-list-ul"></i> Contents</h5>
+                        <ol class="mb-0">
+                            <li><a href="#who-we-are">Who We Are</a></li>
+                            <li><a href="#data-we-collect">What Data We Collect</a></li>
+                            <li><a href="#how-we-use">How We Use Your Data</a></li>
+                            <li><a href="#data-sharing">Data Sharing</a></li>
+                            <li><a href="#storage-security">Storage &amp; Security</a></li>
+                            <li><a href="#your-rights">Your Rights</a></li>
+                            <li><a href="#cookies">Cookies &amp; Tracking</a></li>
+                            <li><a href="#retention">Data Retention</a></li>
+                            <li><a href="#international-transfers">International Transfers</a></li>
+                            <li><a href="#children">Children's Privacy</a></li>
+                            <li><a href="#changes">Changes to This Policy</a></li>
+                            <li><a href="#contact">Contact the Data Protection Officer</a></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <h2 id="who-we-are" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">1</span> Who We Are</h2>
+                <p>The <strong>Kenya Community in Korea (KCK)</strong> is a voluntary, non-profit community organization that supports Kenyan citizens living, studying, and working in the Republic of Korea. We facilitate cultural events, peer support, and liaison services between our members and the Embassy of the Republic of Kenya in Seoul.</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>Important:</strong> KCK is <u>not</u> the Embassy of Kenya and is not a government agency. We are a community organization that assists members in communicating with the embassy but do not issue visas, passports, or official documents ourselves. Any official decisions are made by the embassy.
+                </div>
+
+                <h2 id="data-we-collect" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">2</span> What Data We Collect</h2>
+                <p>We only collect the data necessary to serve you. Categories include:</p>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6><i class="bi bi-person-badge text-kck-red"></i> Account Information</h6>
+                                <ul class="small mb-0">
+                                    <li>Full name</li>
+                                    <li>Email address &amp; phone number</li>
+                                    <li>Residence in Korea (city/area)</li>
+                                    <li>Password (stored as a one-way hash)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6><i class="bi bi-file-earmark-text text-kck-red"></i> Application &amp; Request Data</h6>
+                                <ul class="small mb-0">
+                                    <li>Service/request type (visa, passport, certification, etc.)</li>
+                                    <li>Reason and details of your request</li>
+                                    <li>Status updates and notes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6><i class="bi bi-paperclip text-kck-red"></i> Supporting Documents</h6>
+                                <ul class="small mb-0">
+                                    <li>Passport scans or ID copies</li>
+                                    <li>Visa/ARC documents</li>
+                                    <li>Supporting letters and photos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6><i class="bi bi-hdd-network text-kck-red"></i> Device &amp; Session Information</h6>
+                                <ul class="small mb-0">
+                                    <li>IP address and approximate location</li>
+                                    <li>Browser and device type</li>
+                                    <li>Login timestamps and session tokens</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 id="how-we-use" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">3</span> How We Use Your Data</h2>
+                <p>Your personal information is used only for the purposes described below:</p>
+                <ul>
+                    <li><strong>Facilitating embassy requests</strong> &mdash; preparing, reviewing, and (with your consent) forwarding your applications to the Embassy of Kenya in Seoul.</li>
+                    <li><strong>Community events</strong> &mdash; managing event registrations, attendance, and follow-ups for cultural and community gatherings.</li>
+                    <li><strong>Communications</strong> &mdash; sending you service status updates, newsletters (only if you opt in), and important announcements.</li>
+                    <li><strong>Legitimate interests</strong> &mdash; securing our platform, preventing abuse, maintaining records, and improving our services.</li>
+                    <li><strong>Legal compliance</strong> &mdash; meeting applicable obligations under Korean and Kenyan law.</li>
+                </ul>
+
+                <h2 id="data-sharing" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">4</span> Data Sharing</h2>
+                <p>We treat your data as confidential. We share your information only in the limited circumstances described here:</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Recipient</th>
+                                <th>When</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Embassy of Kenya (Seoul)</strong></td>
+                                <td>Only with your explicit consent per request</td>
+                                <td>To process official consular services you've requested</td>
+                            </tr>
+                            <tr>
+                                <td><strong>KCK Officers / President</strong></td>
+                                <td>Strictly on a need-to-know basis</td>
+                                <td>To review, assign, and follow up on your request</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Service providers</strong></td>
+                                <td>Under strict confidentiality</td>
+                                <td>Secure hosting, email delivery, backup storage</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Legal authorities</strong></td>
+                                <td>Where legally required</td>
+                                <td>To respond to valid legal requests</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-success">
+                    <i class="bi bi-shield-check"></i> <strong>We never sell your personal data.</strong> We do not share your information with advertisers, data brokers, or marketing partners.
+                </div>
+
+                <h2 id="storage-security" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">5</span> Storage &amp; Security</h2>
+                <ul>
+                    <li><strong>Location:</strong> Your data is primarily stored on servers located in the Republic of Korea.</li>
+                    <li><strong>Encryption:</strong> Traffic to and from our website is protected by TLS/HTTPS. Sensitive fields and uploaded documents are encrypted at rest.</li>
+                    <li><strong>Access controls:</strong> Role-based access ensures only authorized KCK officers can view data relevant to their duties. All access is logged.</li>
+                    <li><strong>Backups:</strong> Encrypted backups are taken regularly and held only for as long as necessary.</li>
+                    <li><strong>Account security:</strong> Passwords are stored as salted, one-way hashes &mdash; no one at KCK can see your password.</li>
+                </ul>
+                <p>No online system is ever 100% secure. We work continuously to reduce risk, but we cannot guarantee absolute security of information transmitted over the internet.</p>
+
+                <h2 id="your-rights" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">6</span> Your Rights</h2>
+                <p>Subject to applicable law, you may exercise the following rights over your personal data:</p>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-eye text-kck-red"></i> <strong>Access</strong> &mdash; request a copy of data we hold about you.</div></div>
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-pencil-square text-kck-red"></i> <strong>Rectification</strong> &mdash; correct inaccurate information.</div></div>
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-trash text-kck-red"></i> <strong>Erasure</strong> &mdash; request deletion (subject to legal retention rules).</div></div>
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-box-arrow-up text-kck-red"></i> <strong>Portability</strong> &mdash; receive your data in a portable format.</div></div>
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-hand-index text-kck-red"></i> <strong>Objection</strong> &mdash; object to specific processing activities.</div></div>
+                    <div class="col-md-6"><div class="p-3 border rounded"><i class="bi bi-arrow-counterclockwise text-kck-red"></i> <strong>Withdraw consent</strong> &mdash; for any processing based on consent.</div></div>
+                </div>
+                <p class="mt-3">To exercise any right, contact our Data Protection Officer (see section 12). We will respond within 30 days.</p>
+
+                <h2 id="cookies" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">7</span> Cookies &amp; Tracking</h2>
+                <p>We use a minimal set of cookies required to keep our website working:</p>
+                <ul>
+                    <li><strong>Session cookies</strong> &mdash; to keep you signed in and maintain form state.</li>
+                    <li><strong>CSRF cookies</strong> &mdash; to protect against cross-site request forgery.</li>
+                </ul>
+                <p><strong>We do not use third-party advertising or cross-site tracking cookies.</strong> We do not run Google Analytics or other behavioral tracking scripts.</p>
+
+                <h2 id="retention" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">8</span> Data Retention</h2>
+                <p>We only keep data for as long as necessary:</p>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Data Type</th><th>Retention Period</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Account data</td><td>While the account is active, plus <strong>2 years</strong> after inactivity, then deleted.</td></tr>
+                            <tr><td>Request &amp; application records</td><td><strong>7 years</strong> for record-keeping and legal compliance.</td></tr>
+                            <tr><td>Uploaded supporting documents</td><td><strong>5 years</strong> after request completion, then purged.</td></tr>
+                            <tr><td>Session &amp; device logs</td><td><strong>90 days</strong> rolling window.</td></tr>
+                            <tr><td>Newsletter subscription</td><td>Until you unsubscribe.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="international-transfers" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">9</span> International Transfers</h2>
+                <p>When you request official embassy services, some of your data (such as application forms and identity documents) may be transferred to the <strong>Embassy of the Republic of Kenya</strong>. Because the embassy is an extension of the Kenyan Government, this may involve onward transfer to <strong>Kenya</strong>. We always obtain your explicit consent before forwarding any data to the embassy.</p>
+
+                <h2 id="children" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">10</span> Children's Privacy</h2>
+                <p>Our services are <strong>not intended for children under 16</strong>. We do not knowingly collect personal information from children under 16 without verifiable parental or guardian consent. If you believe a child has provided us with personal information, please contact us so we can delete it.</p>
+
+                <h2 id="changes" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">11</span> Changes to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time. When we make <strong>material changes</strong>, we will:</p>
+                <ul>
+                    <li>Update the "Last Updated" date at the top of this page.</li>
+                    <li>Post a notice on our homepage for at least 30 days.</li>
+                    <li>Notify registered members via email where appropriate.</li>
+                </ul>
+
+                <h2 id="contact" class="text-kck-blue mt-5"><span class="badge bg-kck-red me-2">12</span> Contact the Data Protection Officer</h2>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <p class="mb-2"><strong>Data Protection Officer, Kenya Community in Korea</strong></p>
+                        <p class="mb-1"><i class="bi bi-envelope"></i> <a href="mailto:dpo@kckorea.org">dpo@kckorea.org</a></p>
+                        <p class="mb-1"><i class="bi bi-envelope-at"></i> General inquiries: <a href="{% url 'core:contact' %}">Contact Form</a></p>
+                        <p class="mb-0"><i class="bi bi-geo-alt"></i> {{ SITE_ADDRESS|default:"Seoul, Republic of Korea" }}</p>
+                    </div>
+                </div>
+
+                <div class="text-center my-5">
+                    <a href="{% url 'core:data_handling' %}" class="btn btn-outline-primary me-2"><i class="bi bi-diagram-3"></i> See Data Handling Details</a>
+                    <a href="{% url 'core:terms' %}" class="btn btn-outline-secondary"><i class="bi bi-file-text"></i> Terms of Service</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

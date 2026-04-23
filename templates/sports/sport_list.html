@@ -1,0 +1,41 @@
+{% extends 'sports/sports_base.html' %}
+{% load static %}
+
+{% block title %}Sports — KCK Sports{% endblock %}
+
+{% block content %}
+
+<section class="sp-hero" style="padding:3rem 0;">
+    <div class="container-sp">
+        <div class="sp-eyebrow">DISCIPLINES</div>
+        <h1>ALL <span class="hl">SPORTS</span></h1>
+        <p class="tagline">Every sport we play, every team we field.</p>
+    </div>
+</section>
+
+<section class="section-sp">
+    <div class="container-sp">
+        {% if sports %}
+        <div class="grid-4">
+            {% for sport in sports %}
+            <a href="{% url 'sports:sport_detail' sport.slug %}" style="text-decoration:none;color:inherit;">
+                <div class="sp-category">
+                    <div class="icon">
+                        {% if sport.icon %}<i class="bi {{ sport.icon }}"></i>{% else %}<i class="bi bi-trophy"></i>{% endif %}
+                    </div>
+                    <div class="name">{{ sport.name }}</div>
+                    <div class="count">{{ sport.team_count|default:sport.teams.count }} teams</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sp-empty">
+            <div class="icon"><i class="bi bi-trophy"></i></div>
+            <p>No sports available yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

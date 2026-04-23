@@ -1,0 +1,10 @@
+{% extends 'errors/_base.html' %}
+{% block title %}Server Error — {{ SITE_NAME }}{% endblock %}
+{% block err_kicker %}Something broke on our end{% endblock %}
+{% block err_code %}500{% endblock %}
+{% block err_title %}We're sorry — something went wrong{% endblock %}
+{% block err_message %}
+An unexpected error occurred on our servers. Our team has been notified and is looking into it.
+Please try again in a moment, or return home.
+{% endblock %}
+{% block err_icon %}bi-exclamation-triangle{% endblock %}

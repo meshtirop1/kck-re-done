@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}{{ site_settings.membership_page_title|default:"KCK Membership" }} · {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.mem-hero { background: linear-gradient(135deg, var(--kck-blue) 0%, #072a66 55%, #b8860b 110%); color: white; padding: 4.5rem 0 3.5rem; text-align: center; position: relative; overflow: hidden; }
+.mem-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at 20% 30%, rgba(255,215,0,0.2), transparent 50%); pointer-events:none; }
+.mem-hero .eyebrow { display:inline-block; padding:0.35rem 0.95rem; border-radius:999px; background:rgba(255,215,0,0.2); border:1px solid rgba(255,215,0,0.4); color:var(--kck-gold); font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom: 1rem; }
+.mem-hero h1 { color:white; font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; letter-spacing:-0.025em; margin-bottom: 0.8rem; }
+.mem-hero p.lead { color: rgba(255,255,255,0.92); max-width: 760px; margin: 0 auto 1.5rem; }
+.fee-display { display:inline-block; background:white; color:var(--kck-blue); padding: 1.25rem 2rem; border-radius: 0.75rem; box-shadow: 0 14px 40px rgba(0,0,0,0.18); margin-top: 0.5rem; }
+.fee-display .fee-label { font-size:0.72rem; letter-spacing:0.1em; font-weight:700; text-transform:uppercase; color: var(--kck-muted, #64748b); }
+.fee-display .fee-num { font-size: 2.3rem; font-weight: 800; letter-spacing:-0.02em; }
+.fee-display .fee-per { color: var(--kck-muted, #64748b); }
+
+.benefit-card { background: white; border: 1px solid var(--kck-line, #e2e8f0); border-radius: 0.7rem; padding: 1.5rem; height: 100%; box-shadow: 0 1px 3px rgba(15,23,42,0.04); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.benefit-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(15,23,42,0.08); }
+.benefit-card .b-icon { width:48px; height:48px; border-radius:0.6rem; background: linear-gradient(135deg, var(--kck-blue) 0%, var(--kck-gold) 100%); color: white; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom: 1rem; }
+.benefit-card h5 { font-weight: 700; margin-bottom: 0.35rem; color: var(--kck-ink, #0f172a); }
+.benefit-card p { color: #4b5563; font-size: 0.95rem; margin: 0; }
+
+.how-step { padding: 1.25rem; border-radius: 0.75rem; background: #f8fafc; border:1px solid var(--kck-line, #e2e8f0); height: 100%; }
+.how-step .step-num { display:inline-block; width:32px; height:32px; line-height:32px; text-align:center; border-radius:50%; background: var(--kck-red); color:white; font-weight:800; margin-bottom:0.8rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="mem-hero">
+    <div class="container position-relative">
+        <span class="eyebrow"><i class="bi bi-shield-fill-check"></i> Annual Membership</span>
+        <h1>{{ site_settings.membership_page_title|default:"KCK Membership" }}</h1>
+        <p class="lead">{{ site_settings.membership_page_intro }}</p>
+        {% if tier %}
+        <div class="fee-display">
+            <div class="fee-label">{{ tier.name }}</div>
+            <div><span class="fee-num">{{ tier.currency }} {{ tier.annual_amount|intcomma }}</span> <span class="fee-per">/ year</span></div>
+        </div>
+        {% endif %}
+        <div class="mt-4">
+            {% if current_membership %}
+                <a href="{% url 'memberships:my_membership' current_membership.pk %}" class="btn btn-warning btn-lg fw-bold">
+                    <i class="bi bi-person-badge"></i> View my membership
+                </a>
+            {% elif user.is_authenticated %}
+                <a href="{% url 'memberships:apply' %}" class="btn btn-warning btn-lg fw-bold">
+                    <i class="bi bi-arrow-right-circle"></i> Become a member
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}?next={% url 'memberships:apply' %}" class="btn btn-warning btn-lg fw-bold">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign in to become a member
+                </a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg ms-2">Create account</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% if benefits %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow" style="color: var(--kck-blue); letter-spacing:0.1em; font-size:0.72rem; font-weight:700; text-transform:uppercase;">What you get</span>
+            <h2 class="fw-bold mt-2">Benefits of membership</h2>
+            <p class="text-muted">Everything included in your annual membership.</p>
+        </div>
+        <div class="row g-3">
+            {% for b in benefits %}
+            <div class="col-md-6 col-lg-4">
+                <div class="benefit-card">
+                    <div class="b-icon"><i class="bi {{ b.icon }}"></i></div>
+                    <h5>{{ b.title }}</h5>
+                    {% if b.description %}<p>{{ b.description }}</p>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="py-5" style="background: #f8fafc;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">How it works</h2>
+            <p class="text-muted">Four simple steps from signup to active membership.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-3">
+                <div class="how-step">
+                    <span class="step-num">1</span>
+                    <h6 class="fw-bold">Sign in & apply</h6>
+                    <p class="small text-muted mb-0">One click to create your application. We generate a unique reference code for you.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="how-step">
+                    <span class="step-num">2</span>
+                    <h6 class="fw-bold">Transfer the fee</h6>
+                    <p class="small text-muted mb-0">Send the annual fee to the KCK bank account — include your reference code in the transfer description.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="how-step">
+                    <span class="step-num">3</span>
+                    <h6 class="fw-bold">Declare payment</h6>
+                    <p class="small text-muted mb-0">Come back and click "I've paid". Upload your receipt so the treasurer can match it.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="how-step">
+                    <span class="step-num">4</span>
+                    <h6 class="fw-bold">Get your member number</h6>
+                    <p class="small text-muted mb-0">The treasurer verifies against the bank statement. You're issued a member number & valid for 12 months.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <div class="alert alert-warning d-inline-block text-start" style="max-width: 720px;">
+            <i class="bi bi-shield-exclamation"></i>
+            <strong>Anti-fraud note:</strong> Benefits activate only after the treasurer confirms the payment against the KCK bank statement.
+            Every action is audit-logged. Membership auto-expires after 12 months — renew to continue.
+        </div>
+    </div>
+</section>
+{% endblock %}

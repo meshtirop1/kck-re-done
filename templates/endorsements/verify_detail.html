@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Endorsement {{ endorsement.reference_number }} - Verified - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1><i class="bi bi-patch-check-fill"></i> Endorsement Verification</h1>
+        <p class="lead">Authenticity check for KCK-issued endorsement</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="verification-banner">
+                    <i class="bi bi-patch-check-fill check-icon"></i>
+                    <h2 class="fw-bold mb-2">&check; Verified</h2>
+                    <p class="lead mb-0">This endorsement was officially issued by the Kenyan Community in Korea (KCK).</p>
+                </div>
+
+                <div class="cert-details-card mt-4">
+                    <h3 class="fw-bold mb-3" style="color: #0B3D91;">
+                        <i class="bi bi-file-earmark-text me-2"></i>Endorsement Details
+                    </h3>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Reference Number</dt>
+                        <dd class="col-sm-8 cert-number-display">{{ endorsement.reference_number }}</dd>
+
+                        <dt class="col-sm-4">Endorsement Type</dt>
+                        <dd class="col-sm-8">{{ endorsement.get_endorsement_type_display }}</dd>
+
+                        <dt class="col-sm-4">Issued To</dt>
+                        <dd class="col-sm-8">{{ endorsement.member_full_name }}</dd>
+
+                        <dt class="col-sm-4">Subject</dt>
+                        <dd class="col-sm-8">{{ endorsement.subject }}</dd>
+
+                        {% if endorsement.addressed_to %}
+                        <dt class="col-sm-4">Addressed To</dt>
+                        <dd class="col-sm-8">{{ endorsement.addressed_to }}</dd>
+                        {% endif %}
+
+                        {% if endorsement.purpose %}
+                        <dt class="col-sm-4">Purpose</dt>
+                        <dd class="col-sm-8">{{ endorsement.purpose }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Issued On</dt>
+                        <dd class="col-sm-8">{{ endorsement.issued_at|date:"F j, Y"|default:"Not yet issued" }}</dd>
+
+                        {% if endorsement.issued_by %}
+                        <dt class="col-sm-4">Issued By</dt>
+                        <dd class="col-sm-8">{{ endorsement.issued_by.user.get_full_name|default:endorsement.issued_by.user.username }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8"><span class="badge bg-{{ endorsement.status_badge_class }} fs-6">{{ endorsement.get_status_display }}</span></dd>
+
+                        {% if endorsement.valid_until %}
+                        <dt class="col-sm-4">Valid Until</dt>
+                        <dd class="col-sm-8">{{ endorsement.valid_until|date:"F j, Y" }}</dd>
+                        {% endif %}
+
+                        {% if endorsement.verification_code %}
+                        <dt class="col-sm-4">Verification Code</dt>
+                        <dd class="col-sm-8 font-monospace small">{{ endorsement.verification_code }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                {% if can_download %}
+                <div class="mt-4 text-center">
+                    <a href="{% url 'endorsements:download' endorsement.pk %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-download me-2"></i>Download PDF
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'endorsements:verify_home' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Verify Another Endorsement
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

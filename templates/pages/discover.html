@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ site_settings.discover_hero_title|default:"Discover Kenya" }} - {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hero with optional background image */
+{% if site_settings.discover_hero_image %}
+.discover-hero {
+    background:
+        linear-gradient(135deg, rgba(11,61,145,0.55) 0%, rgba(7,42,102,0.65) 100%),
+        url('{{ site_settings.discover_hero_image.url }}') center/cover no-repeat !important;
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+}
+{% endif %}
+.attraction-card {
+    border: 1px solid var(--kck-line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: white;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s var(--ease);
+    height: 100%;
+    display: flex; flex-direction: column;
+}
+.attraction-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--kck-red);
+}
+.attraction-card .card-img-wrap {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--kck-blue-50), var(--kck-gold-50));
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+.attraction-card .card-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s var(--ease);
+}
+.attraction-card:hover .card-img-wrap img { transform: scale(1.06); }
+.attraction-card .card-icon-fallback {
+    font-size: 4rem;
+    color: var(--kck-blue);
+    opacity: 0.4;
+}
+.attraction-card .card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+.attraction-card h4 {
+    color: var(--kck-blue);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+.attraction-card p { color: #4b5563; flex: 1; }
+.featured-ribbon {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--kck-red); color: white;
+    padding: 0.35rem 0.9rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 16px rgba(200,16,46,0.3);
+}
+.essential-card {
+    background: white; border: 1px solid var(--kck-line);
+    border-radius: var(--r-lg); padding: 1.75rem 1.25rem;
+    text-align: center; height: 100%;
+    box-shadow: var(--shadow-sm); transition: all 0.25s var(--ease);
+}
+.essential-card:hover {
+    transform: translateY(-3px); box-shadow: var(--shadow-md);
+    border-color: var(--kck-red);
+}
+.essential-card i { font-size: 2.75rem; color: var(--kck-red); margin-bottom: 1rem; display: block; }
+.essential-card h5 { font-weight: 700; color: var(--kck-blue); margin-bottom: 0.5rem; }
+.essential-card .value { color: #4b5563; font-size: 0.95rem; margin: 0; }
+.discover-intro-img {
+    border-radius: var(--r-lg);
+    box-shadow: 0 12px 30px rgba(11,61,145,0.12);
+    width: 100%;
+}
+.discover-intro-placeholder {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--kck-blue-50), var(--kck-gold-50));
+    border-radius: var(--r-lg);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--kck-blue); opacity: 0.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero discover-hero">
+    <div class="container">
+        <h1>{{ site_settings.discover_hero_title|default:"Discover Kenya" }}</h1>
+        <p class="lead">{{ site_settings.discover_hero_subtitle }}</p>
+    </div>
+</section>
+
+{# Karibu Kenya intro #}
+<section>
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                <h2 class="text-kck-blue">{{ site_settings.discover_intro_title|default:"Karibu Kenya" }}</h2>
+                <div>{{ site_settings.discover_intro_text|linebreaks }}</div>
+            </div>
+            <div class="col-lg-6">
+                {% if site_settings.discover_intro_image %}
+                    <img src="{{ site_settings.discover_intro_image.url }}"
+                         alt="{{ site_settings.discover_intro_title|default:'Kenya' }}"
+                         class="discover-intro-img">
+                {% else %}
+                    <div class="discover-intro-placeholder">
+                        <i class="bi bi-image" style="font-size: 5rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Top Attractions — dynamic #}
+{% if attractions %}
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Must See</span>
+            <h2>Top Attractions</h2>
+            <p>Must-visit destinations across Kenya</p>
+        </div>
+        <div class="row g-4">
+            {% for a in attractions %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'core:attraction_detail' a.slug %}" class="attraction-card text-decoration-none text-reset d-flex">
+                    <div class="card-img-wrap">
+                        {% if a.image %}
+                            <img src="{{ a.image.url }}" alt="{{ a.title }}" loading="lazy">
+                        {% else %}
+                            <i class="bi {{ a.icon|default:'bi-geo-alt' }} card-icon-fallback"></i>
+                        {% endif %}
+                        {% if a.featured %}<span class="featured-ribbon">Featured</span>{% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h4>
+                            {% if a.icon and a.image %}<i class="bi {{ a.icon }} me-2 text-kck-red"></i>{% endif %}
+                            {{ a.title }}
+                        </h4>
+                        <p>{{ a.short_description }}</p>
+                        <span class="attraction-more mt-auto fw-semibold text-kck-red">
+                            Explore <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Culture & Cuisine — dynamic text #}
+<section>
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <h2 class="text-kck-blue">{{ site_settings.discover_culture_title|default:"Culture & Heritage" }}</h2>
+                <div>{{ site_settings.discover_culture_text|linebreaks }}</div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="text-kck-blue">{{ site_settings.discover_cuisine_title|default:"Food & Cuisine" }}</h2>
+                <div>{{ site_settings.discover_cuisine_text|linebreaks }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Travel Essentials — dynamic #}
+{% if essentials %}
+<section class="section-alt" id="travel-essentials">
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Good to Know</span>
+            <h2>Travel Essentials</h2>
+        </div>
+        <div class="row g-4">
+            {% for e in essentials %}
+            <div class="col-md-6 col-lg-3">
+                <div class="essential-card">
+                    <i class="bi {{ e.icon|default:'bi-info-circle' }}"></i>
+                    <h5>{{ e.title }}</h5>
+                    <p class="value">{{ e.value }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Explore Kenya?</h2>
+        <p class="lead">Start your journey by learning about visa options and embassy services.</p>
+        <a href="{% url 'services:visa_types' %}" class="btn btn-light btn-lg">
+            <i class="bi bi-passport"></i> Explore Visa Options
+        </a>
+        <a href="{% url 'embassy_liaison:info' %}" class="btn btn-outline-light btn-lg ms-2">
+            <i class="bi bi-info-circle"></i> Embassy Liaison
+        </a>
+    </div>
+</section>
+{% endblock %}

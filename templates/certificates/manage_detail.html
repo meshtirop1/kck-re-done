@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ certificate.cert_number }} - Manage - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'certificates:manage_list' %}">Certificates</a></li>
+                <li class="breadcrumb-item active">{{ certificate.cert_number }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white" style="background: #0B3D91;">
+                        <h4 class="mb-0">{{ certificate.get_cert_type_display }}</h4>
+                        <small class="text-white-50">{{ certificate.cert_number }}</small>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Recipient Name</dt>
+                            <dd class="col-sm-8">{{ certificate.recipient_name }}</dd>
+
+                            <dt class="col-sm-4">Recipient User</dt>
+                            <dd class="col-sm-8">
+                                {% if certificate.recipient_user %}
+                                    {{ certificate.recipient_user.get_full_name|default:certificate.recipient_user.username }}
+                                {% else %}
+                                    <span class="text-muted">Not linked to a user account</span>
+                                {% endif %}
+                            </dd>
+
+                            {% if certificate.title %}
+                            <dt class="col-sm-4">Title</dt>
+                            <dd class="col-sm-8">{{ certificate.title }}</dd>
+                            {% endif %}
+
+                            <dt class="col-sm-4">Body</dt>
+                            <dd class="col-sm-8">{{ certificate.body|linebreaksbr }}</dd>
+
+                            {% if certificate.event_title %}
+                            <dt class="col-sm-4">Event / Occasion</dt>
+                            <dd class="col-sm-8">{{ certificate.event_title }}</dd>
+                            {% endif %}
+
+                            <dt class="col-sm-4">Issued Date</dt>
+                            <dd class="col-sm-8">{{ certificate.issued_date|date:"F j, Y" }}</dd>
+
+                            <dt class="col-sm-4">Issued By</dt>
+                            <dd class="col-sm-8">
+                                {% if certificate.issued_by %}
+                                    {{ certificate.issued_by.user.get_full_name }} ({{ certificate.issued_by.get_role_display }})
+                                {% else %}
+                                    {{ certificate.issued_by_name|default:"-" }}
+                                    {% if certificate.issued_by_role %} ({{ certificate.issued_by_role }}){% endif %}
+                                {% endif %}
+                            </dd>
+
+                            <dt class="col-sm-4">Verification Code</dt>
+                            <dd class="col-sm-8"><code class="small">{{ certificate.verification_code }}</code></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Status</h6>
+                        <h3>
+                            {% if certificate.status == 'published' %}
+                                <span class="badge bg-success">Published</span>
+                            {% elif certificate.status == 'draft' %}
+                                <span class="badge bg-secondary">Draft</span>
+                            {% elif certificate.status == 'generating' %}
+                                <span class="badge bg-info">Generating</span>
+                            {% elif certificate.status == 'revoked' %}
+                                <span class="badge bg-warning text-dark">Revoked</span>
+                            {% elif certificate.status == 'failed' %}
+                                <span class="badge bg-danger">Failed</span>
+                            {% endif %}
+                        </h3>
+
+                        {% if certificate.status != 'published' and certificate.status != 'revoked' %}
+                        <form method="post" action="{% url 'certificates:publish' certificate.pk %}" class="mt-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-send-check"></i> Publish &amp; Generate PDF
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {% if certificate.pdf_file %}
+                        <a href="{% url 'certificates:download' certificate.pk %}" class="btn btn-outline-primary w-100 mt-2">
+                            <i class="bi bi-download"></i> Download PDF
+                        </a>
+                        <a href="{% url 'certificates:verify' certificate.verification_code %}" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="bi bi-patch-check"></i> Public View
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body small text-muted">
+                        <div><strong>Created:</strong> {{ certificate.created_at|date:"M j, Y H:i" }}</div>
+                        {% if certificate.created_by %}
+                        <div><strong>By:</strong> {{ certificate.created_by.get_full_name|default:certificate.created_by.username }}</div>
+                        {% endif %}
+                        <div class="mt-1"><strong>Updated:</strong> {{ certificate.updated_at|date:"M j, Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

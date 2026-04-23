@@ -1,0 +1,54 @@
+{% extends 'dashboards/_base.html' %}
+{% block title %}Treasurer Dashboard — {{ SITE_NAME }}{% endblock %}
+
+{% block sidebar_role %}Treasurer{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'memberships:treasurer_dashboard' %}" class="{% if request.resolver_match.url_name == 'treasurer_dashboard' %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-speedometer2"></i></span> Dashboard
+</a>
+
+<h6>Verification</h6>
+<a href="{% url 'memberships:treasurer_queue' %}?status=awaiting_verification" class="{% if 'queue' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-hourglass-split"></i></span> Pending Queue
+</a>
+<a href="{% url 'memberships:treasurer_queue' %}?status=active">
+    <span class="nav-icon"><i class="bi bi-check-circle"></i></span> Active Members
+</a>
+<a href="{% url 'memberships:treasurer_queue' %}?status=rejected">
+    <span class="nav-icon"><i class="bi bi-x-circle"></i></span> Rejected
+</a>
+<a href="{% url 'memberships:treasurer_queue' %}?status=all">
+    <span class="nav-icon"><i class="bi bi-list-ul"></i></span> All Memberships
+</a>
+<a href="{% url 'memberships:treasurer_bank_import' %}" class="{% if 'bank-import' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-file-earmark-spreadsheet"></i></span> Bank CSV Import
+</a>
+
+<h6>Configuration</h6>
+<a href="{% url 'memberships:treasurer_tier' %}" class="{% if 'tier' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-cash-stack"></i></span> Membership Fee
+</a>
+<a href="{% url 'memberships:treasurer_bank' %}" class="{% if 'bank-settings' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-bank"></i></span> Bank Details
+</a>
+<a href="{% url 'memberships:treasurer_benefits' %}" class="{% if 'benefit' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-gift"></i></span> Benefits
+</a>
+
+<h6>Audit</h6>
+<a href="{% url 'memberships:treasurer_audit_log' %}" class="{% if 'audit-log' in request.path %}active{% endif %}">
+    <span class="nav-icon"><i class="bi bi-journal-text"></i></span> Audit Log
+</a>
+
+<h6>Links</h6>
+<a href="{% url 'memberships:home' %}" target="_blank">
+    <span class="nav-icon"><i class="bi bi-globe"></i></span> Public page
+</a>
+<a href="{% url 'accounts:dashboard' %}">
+    <span class="nav-icon"><i class="bi bi-person-circle"></i></span> My Account
+</a>
+<a href="{% url 'core:home' %}">
+    <span class="nav-icon"><i class="bi bi-arrow-left"></i></span> Back to Site
+</a>
+{% endblock %}

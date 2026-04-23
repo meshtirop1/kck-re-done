@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Our Community - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Our Community</h1>
+        <p class="lead">Learn about who we are, where we came from, and where we're headed</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-book" style="font-size:2.5rem;"></i></div>
+                        <h5>Our History</h5>
+                        <p class="text-muted">Trace the journey of our community from its founding through decades of growth and cultural preservation.</p>
+                        <a href="{% url 'community:history' %}" class="btn btn-outline-primary">Read History</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-bullseye" style="font-size:2.5rem;"></i></div>
+                        <h5>Our Mission</h5>
+                        <p class="text-muted">Discover the values and commitments that guide our work with members and partners every day.</p>
+                        <a href="{% url 'community:mission' %}" class="btn btn-outline-primary">Our Mission</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-eye" style="font-size:2.5rem;"></i></div>
+                        <h5>Our Vision</h5>
+                        <p class="text-muted">See how we envision the future of our community and the goals we are working to achieve together.</p>
+                        <a href="{% url 'community:vision' %}" class="btn btn-outline-primary">Our Vision</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-newspaper" style="font-size:2.5rem;"></i></div>
+                        <h5>News & Updates</h5>
+                        <p class="text-muted">Stay current with the latest announcements, community stories, and important updates.</p>
+                        <a href="{% url 'community:news_list' %}" class="btn btn-outline-primary">Latest News</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-geo-alt" style="font-size:2.5rem;"></i></div>
+                        <h5>Our Location</h5>
+                        <p class="text-muted">Find directions to our offices, parking information, and a map of the surrounding area.</p>
+                        <a href="{% url 'community:location' %}" class="btn btn-outline-primary">Get Directions</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-kck-blue mb-3"><i class="bi bi-clock" style="font-size:2.5rem;"></i></div>
+                        <h5>Office Hours</h5>
+                        <p class="text-muted">Review our weekly operating hours and contact us for appointments or inquiries.</p>
+                        <a href="{% url 'community:hours' %}" class="btn btn-outline-primary">View Hours</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <h3>Hear from our community</h3>
+        <p class="lead">Read what members have to say about their experiences</p>
+        <a href="{% url 'community:testimonials' %}" class="btn btn-light btn-lg">Read Testimonials</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Visa Services - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Visa Services</h1>
+        <p class="lead">Comprehensive visa assistance from application to approval</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <h2 class="text-center mb-4 text-kck-blue">What We Offer</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-file-earmark-text"></i></div>
+                    <h5>Application Guidance</h5>
+                    <p class="text-muted">Step-by-step guidance through the entire visa application process, ensuring you submit a complete and accurate application.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-folder-check"></i></div>
+                    <h5>Documentation Support</h5>
+                    <p class="text-muted">Expert assistance with preparing, reviewing, and verifying all required supporting documents for your visa category.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-search"></i></div>
+                    <h5>Status Tracking</h5>
+                    <p class="text-muted">Real-time tracking of your application status with timely updates and notifications throughout the process.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="container">
+        <h2 class="text-center mb-4 text-kck-blue">Available Visa Types</h2>
+        <div class="row g-4">
+            {% for visa in visa_types %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card visa-card p-4 h-100">
+                    <div class="visa-icon text-kck-blue mb-2">{{ visa.icon }}</div>
+                    <h5>{{ visa.name }}</h5>
+                    <p class="text-muted small">{{ visa.description|truncatechars:100 }}</p>
+                    <a href="{% url 'services:visa_type_detail' visa.slug %}" class="btn btn-sm btn-outline-primary mt-auto">Learn More</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted">
+                <p>Visa types will be listed here.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'services:visa_apply' %}" class="btn btn-danger btn-lg">Start Your Application</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container text-center">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-4"
+             style="background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); color: var(--kck-gold); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">
+            <span class="decor-dot"></span> {{ site_settings.hero_badge_text }} <span class="decor-dot"></span>
+        </div>
+        <h1 class="hero-title text-shadow">
+            {{ site_settings.hero_title }} <br><span class="accent">{{ site_settings.hero_title_accent }}</span>
+        </h1>
+        <div class="slogan-hero my-4">
+            <span class="slogan-line"></span>
+            <span class="slogan-text">{{ SLOGAN }}</span>
+            <span class="slogan-line"></span>
+        </div>
+        <p class="slogan-translation mb-4"><em>&mdash; {{ SLOGAN_TRANSLATION }} &mdash;</em></p>
+        <p class="hero-subtitle">{{ site_settings.hero_subtitle }}</p>
+        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mt-4">
+            <a href="{% url 'accounts:register' %}" class="btn btn-danger btn-lg">
+                <i class="bi bi-people-fill me-1"></i> {{ site_settings.hero_cta_primary_text }}
+            </a>
+            <a href="{% url 'events:event_list' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-calendar-event me-1"></i> {{ site_settings.hero_cta_secondary_text }}
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="embassy-cta-section">
+    <div class="container">
+        <div class="embassy-cta-card">
+            <div class="row align-items-center g-4 g-lg-5">
+                <div class="col-lg-8">
+                    <div class="d-inline-flex align-items-center gap-2 mb-3 embassy-cta-pill">
+                        <i class="bi bi-building-gear"></i>
+                        <span>{{ site_settings.embassy_cta_eyebrow }}</span>
+                    </div>
+                    <h2 class="fw-bold mb-3 text-white">{{ site_settings.embassy_cta_title }}</h2>
+                    <p class="lead text-white-90 mb-3">{{ site_settings.embassy_cta_description }}</p>
+                    <p class="mb-0 text-white-75 small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        {{ site_settings.embassy_cta_note }}
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="d-flex flex-column gap-3">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'embassy_liaison:request_create' %}" class="btn btn-warning btn-lg fw-bold w-100">
+                                <i class="bi bi-file-earmark-plus me-1"></i> Submit a Request
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}?next={% url 'embassy_liaison:request_create' %}" class="btn btn-warning btn-lg fw-bold w-100">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Login to Submit
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'embassy_liaison:info' %}" class="btn btn-outline-light btn-lg w-100">
+                            <i class="bi bi-info-circle me-1"></i> How It Works
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Announcement Banner: latest news or pinned announcements #}
+{% if latest_announcements or latest_news %}
+<section class="py-3" style="background: #fff3cd; border-bottom: 2px solid #ffc107;">
+    <div class="container">
+        <div class="d-flex gap-3 align-items-center flex-wrap">
+            <span class="badge bg-warning text-dark p-2"><i class="bi bi-megaphone-fill"></i> Announcements</span>
+            <div class="flex-grow-1">
+                {% if latest_announcements %}
+                    {% for ann in latest_announcements|slice:":2" %}
+                        <div class="mb-1">
+                            <strong>{{ ann.title }}</strong>
+                            {% if ann.published_at %}<small class="text-muted ms-2">{{ ann.published_at|date:"M j, Y" }}</small>{% endif %}
+                        </div>
+                    {% endfor %}
+                {% elif latest_news %}
+                    {% with featured=latest_news.0 %}
+                        <strong>{{ featured.title }}</strong>
+                        <small class="text-muted ms-2">{{ featured.published_at|date:"M j, Y" }}</small>
+                    {% endwith %}
+                {% endif %}
+            </div>
+            <a href="{% url 'communications:public_list' %}" class="btn btn-sm btn-outline-dark">View All</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">What We Do</span>
+            <h2>Supporting Every Kenyan in Korea</h2>
+            <p>From embassy liaison to community events, official letters to recognition — we're here for you.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card p-4 text-center">
+                    <div class="card-icon">🌍</div>
+                    <h4>Visa Services</h4>
+                    <p class="text-muted">Information and applications for all Kenya visa types including tourist, business, student, and work permits.</p>
+                    <a href="{% url 'services:visa_types' %}" class="btn btn-outline-primary mt-auto">Learn More</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4 text-center">
+                    <div class="card-icon">📘</div>
+                    <h4>Embassy Liaison</h4>
+                    <p class="text-muted">Need passport, notarisation or other consular help? Submit a request and KCK officers will coordinate with the Kenyan Embassy on your behalf.</p>
+                    <a href="{% url 'embassy_liaison:info' %}" class="btn btn-outline-primary mt-auto">Learn More</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4 text-center">
+                    <div class="card-icon">🎉</div>
+                    <h4>Community Events</h4>
+                    <p class="text-muted">Stay connected with the Kenyan community through cultural events, celebrations, and networking gatherings.</p>
+                    <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary mt-auto">View Events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if visa_types %}
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Visa Information</span>
+            <h2>Going to Kenya?</h2>
+            <p>Explore the different visa categories — our officers can guide you through the application.</p>
+        </div>
+        <div class="row g-4">
+            {% for visa in visa_types %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card visa-card p-4">
+                    <div class="visa-icon">{{ visa.icon }}</div>
+                    <h5>{{ visa.name }}</h5>
+                    <p class="text-muted small">{{ visa.description|truncatewords:20 }}</p>
+                    <div class="small text-muted">
+                        <div><strong>Processing:</strong> {{ visa.processing_time }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'services:visa_types' %}" class="btn btn-primary btn-lg">View All Visa Types</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if president_message %}
+<section class="home-president-section">
+    <div class="container">
+        <div class="home-president-card">
+            <div class="home-president-photo">
+                {% if president_message.photo %}
+                    <img src="{{ president_message.photo.url }}" alt="{{ president_message.user.get_full_name }}">
+                {% else %}
+                    <div class="home-president-initials">
+                        {{ president_message.user.first_name|slice:":1"|upper }}{{ president_message.user.last_name|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="home-president-text">
+                <span class="eyebrow eyebrow--gold"><i class="bi bi-chat-quote"></i> {{ president_message.message_title|default:"A Message from Our President" }}</span>
+                <blockquote class="home-president-quote">
+                    {{ president_message.message|truncatewords:60 }}
+                </blockquote>
+                <div class="home-president-signature">
+                    <div>
+                        <div class="fw-bold">{{ president_message.user.get_full_name|default:president_message.user.username }}</div>
+                        <div class="text-muted small">{{ president_message.title|default:president_message.get_role_display }}, Kenya Community in Korea</div>
+                    </div>
+                    <a href="{% url 'core:presidents_message' %}" class="btn btn-primary"><i class="bi bi-arrow-right-circle"></i> Read full message</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Don't Miss</span>
+            <h2>Upcoming Community Events</h2>
+            <p>Cultural nights, celebrations, workshops and gatherings — stay connected.</p>
+        </div>
+        {% if upcoming_events %}
+        <div class="row g-4">
+            {% for event in upcoming_events %}
+            <div class="col-md-4">
+                <div class="card event-card">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                    {% else %}
+                        <div class="bg-kck-blue text-white text-center py-5">
+                            <i class="bi bi-calendar-event" style="font-size:3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="event-date-badge small">
+                            <i class="bi bi-calendar-event me-1"></i>{{ event.date|date:"M j, Y" }}
+                        </span>
+                        <h5 class="mt-3">{{ event.title }}</h5>
+                        <p class="text-muted small">{{ event.description|truncatewords:15 }}</p>
+                        <div class="small text-muted mb-2">
+                            <div><i class="bi bi-geo-alt"></i> {{ event.location }}</div>
+                            <div><i class="bi bi-clock"></i> {{ event.date|date:"g:i a" }}</div>
+                            {% if event.capacity %}
+                                <div><i class="bi bi-people"></i> {{ event.registration_count }}/{{ event.capacity }} registered</div>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-sm btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary">View All Events</a>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x text-muted" style="font-size: 3rem; opacity: 0.4;"></i>
+            <p class="text-muted mt-3 mb-0">No upcoming events at the moment. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{# Recent Communications / Latest Announcements Section #}
+{% if latest_communications %}
+<section class="section-alt">
+    <div class="container">
+        <div class="section-title">
+            <h2>Recent Communications</h2>
+            <p>Official letters and announcements from community leadership</p>
+        </div>
+        <div class="row g-4">
+            {% for comm in latest_communications %}
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-envelope-paper-fill text-kck-blue me-2" style="font-size:1.5rem;"></i>
+                            <small class="text-muted">{{ comm.published_at|date:"M j, Y" }}</small>
+                        </div>
+                        <h5>{{ comm.title }}</h5>
+                        {% if comm.summary %}
+                            <p class="text-muted small">{{ comm.summary|truncatewords:20 }}</p>
+                        {% endif %}
+                        <a href="{% url 'communications:public_list' %}" class="btn btn-sm btn-outline-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'communications:public_list' %}" class="btn btn-outline-primary">View All Communications</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section{% if not latest_communications %} class="section-alt"{% endif %}>
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Testimonials</span>
+            <h2>Voices From Our Community</h2>
+            <p>Hear from fellow Kenyans who call Korea home.</p>
+        </div>
+        <div class="row g-4">
+            {% for t in testimonials %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100 border-0 shadow-sm">
+                    <i class="bi bi-quote text-kck-blue" style="font-size:2.5rem;"></i>
+                    <p class="text-muted">{{ t.message }}</p>
+                    <div class="d-flex align-items-center mt-auto">
+                        {% if t.photo %}<img src="{{ t.photo.url }}" alt="{{ t.name }}" class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">{% endif %}
+                        <div>
+                            <strong>{{ t.name }}</strong>
+                            {% if t.role %}<div class="small text-muted">{{ t.role }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if latest_news %}
+<section>
+    <div class="container">
+        <div class="section-title">
+            <span class="eyebrow">Community Updates</span>
+            <h2>Latest News &amp; Announcements</h2>
+            <p>Stay informed about the Kenyan community in Korea.</p>
+        </div>
+        <div class="row g-4">
+            {% for article in latest_news %}
+            <div class="col-md-4">
+                <div class="card news-card">
+                    {% if article.featured_image %}<img src="{{ article.featured_image.url }}" alt="{{ article.title }}">{% endif %}
+                    <div class="card-body">
+                        <small class="text-muted">{{ article.published_at|date:"M j, Y" }}</small>
+                        <h5 class="mt-2">{{ article.title }}</h5>
+                        <p class="text-muted small">{{ article.excerpt|truncatewords:18 }}</p>
+                        <a href="{% url 'community:news_detail' article.slug %}" class="btn btn-sm btn-outline-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Need Assistance?</h2>
+        <p class="lead">Contact us for any inquiries about community events or member services.</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">Contact Us</a>
+    </div>
+</section>
+{% endblock %}

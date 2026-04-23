@@ -1,0 +1,146 @@
+{% extends 'portal/portal_base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}All Sellers — Leader Portal{% endblock %}
+{% block dash_extra_css %}
+<style>
+.status-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; border-bottom: 1px solid var(--kck-line); padding-bottom: 0.5rem; }
+.status-tab { padding: 0.5rem 1.1rem; border-radius: 999px; background: white; border: 1.5px solid var(--kck-line); color: var(--kck-ink); font-weight: 600; font-size: 0.88rem; text-decoration: none; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 0.4rem; }
+.status-tab:hover { border-color: var(--kck-blue); color: var(--kck-blue); }
+.status-tab.active { background: var(--kck-blue); border-color: var(--kck-blue); color: white; }
+.status-tab .count { background: rgba(0,0,0,0.08); padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 800; }
+.status-tab.active .count { background: rgba(255,255,255,0.2); }
+.sellers-table { background: white; border: 1px solid var(--kck-line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.sellers-table table { margin: 0; }
+.sellers-table th { background: #f8fafc; font-weight: 700; color: var(--kck-muted); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.78rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--kck-line); }
+.sellers-table td { padding: 0.9rem 1rem; vertical-align: middle; border-bottom: 1px solid var(--kck-line); }
+.sellers-table tr:last-child td { border-bottom: 0; }
+.biz-cell { display: flex; gap: 0.75rem; align-items: center; }
+.biz-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #f1f5f9; border: 1px solid var(--kck-line); display: flex; align-items: center; justify-content: center; color: var(--kck-muted); }
+.status-pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.status-pending { background: #fef3c7; color: #78350f; }
+.status-approved { background: #bbf7d0; color: #14532d; }
+.status-rejected { background: #fecaca; color: #7f1d1d; }
+.status-suspended { background: #e2e8f0; color: #334155; }
+.empty-state { background: white; border: 2px dashed var(--kck-line); border-radius: var(--r-lg); padding: 3rem 2rem; text-align: center; color: var(--kck-muted); }
+.empty-state i { font-size: 3.5rem; opacity: 0.3; }
+</style>
+{% endblock %}
+{% block portal_content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-people-fill"></i> All Sellers</h2>
+        <p class="text-muted mb-0">Manage every seller application and account on the Kenyan Market.</p>
+    </div>
+    <a href="{% url 'market:leader_queue' %}" class="btn btn-outline-primary">
+        <i class="bi bi-clipboard-check"></i> Pending queue
+    </a>
+</div>
+
+<div class="status-tabs">
+    <a href="?status=all" class="status-tab {% if current_status == 'all' or not current_status %}active{% endif %}">
+        All <span class="count">{{ total_count|default:0 }}</span>
+    </a>
+    <a href="?status=approved" class="status-tab {% if current_status == 'approved' %}active{% endif %}">
+        <i class="bi bi-check-circle"></i> Approved <span class="count">{{ approved_count|default:0 }}</span>
+    </a>
+    <a href="?status=pending" class="status-tab {% if current_status == 'pending' %}active{% endif %}">
+        <i class="bi bi-hourglass"></i> Pending <span class="count">{{ pending_count|default:0 }}</span>
+    </a>
+    <a href="?status=rejected" class="status-tab {% if current_status == 'rejected' %}active{% endif %}">
+        <i class="bi bi-x-circle"></i> Rejected <span class="count">{{ rejected_count|default:0 }}</span>
+    </a>
+    <a href="?status=suspended" class="status-tab {% if current_status == 'suspended' %}active{% endif %}">
+        <i class="bi bi-pause-circle"></i> Suspended <span class="count">{{ suspended_count|default:0 }}</span>
+    </a>
+</div>
+
+{% if sellers %}
+<div class="sellers-table table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Business</th>
+                <th>Applicant</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Applied</th>
+                <th>Products</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sellers %}
+            <tr>
+                <td>
+                    <div class="biz-cell">
+                        {% if s.profile_photo %}
+                            <img src="{{ s.profile_photo.url }}" alt="{{ s.business_name }}" class="biz-avatar">
+                        {% else %}
+                            <div class="biz-avatar"><i class="bi bi-shop"></i></div>
+                        {% endif %}
+                        <div>
+                            <strong>{{ s.business_name }}</strong>
+                            {% if s.status == 'approved' %}
+                                <div class="small"><a href="{% url 'market:seller_detail' s.slug %}" class="text-decoration-none">View shop</a></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {{ s.user.get_full_name|default:s.user.username }}
+                    <div class="small text-muted">@{{ s.user.username }}</div>
+                </td>
+                <td>{{ s.city|title|default:"—" }}</td>
+                <td><span class="status-pill status-{{ s.status }}">{{ s.status }}</span></td>
+                <td>
+                    <span title="{{ s.applied_at|date:'M j, Y g:i a' }}">
+                        {{ s.applied_at|date:"M j, Y" }}
+                    </span>
+                </td>
+                <td>{{ s.products_count|default:0|intcomma }}</td>
+                <td class="text-end">
+                    <a href="{% url 'market:leader_review' s.id %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> Review
+                    </a>
+                    {% if s.status == 'approved' %}
+                    <form method="post" action="{% url 'market:leader_suspend' s.id %}" class="d-inline"
+                          onsubmit="return confirm('Suspend this seller? Their products will be hidden.');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pause-circle"></i> Suspend
+                        </button>
+                    </form>
+                    {% elif s.status == 'suspended' %}
+                    <form method="post" action="{% url 'market:leader_reinstate' s.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-arrow-clockwise"></i> Reinstate
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if sellers.paginator.num_pages > 1 %}
+<nav class="mt-3"><ul class="pagination justify-content-center">
+    {% if sellers.has_previous %}<li class="page-item"><a class="page-link" href="?status={{ current_status }}&page={{ sellers.previous_page_number }}">&laquo;</a></li>{% endif %}
+    {% for n in sellers.paginator.page_range %}
+        <li class="page-item {% if n == sellers.number %}active{% endif %}"><a class="page-link" href="?status={{ current_status }}&page={{ n }}">{{ n }}</a></li>
+    {% endfor %}
+    {% if sellers.has_next %}<li class="page-item"><a class="page-link" href="?status={{ current_status }}&page={{ sellers.next_page_number }}">&raquo;</a></li>{% endif %}
+</ul></nav>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-person-slash"></i>
+    <h4 class="mt-3 fw-bold">No sellers found</h4>
+    <p class="mb-0">No seller records match this filter.</p>
+</div>
+{% endif %}
+{% endblock %}

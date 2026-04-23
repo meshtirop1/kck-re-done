@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Our Mission - {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Our Mission</h1>
+        <p class="lead">The purpose that guides everything we do</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5 text-center">
+                        <i class="bi bi-bullseye text-kck-red" style="font-size:3rem;"></i>
+                        <h3 class="mt-3">Mission Statement</h3>
+                        <p class="lead mt-3 mb-0">We are dedicated to serving our members with integrity, strengthening cultural identity, and providing accessible services that help families and individuals thrive at home and abroad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="text-center mt-5 mb-4">Our Core Values</h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-heart-fill text-kck-red" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Service</h5>
+                        <p class="text-muted">We put members first in every interaction and strive to exceed expectations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check text-kck-blue" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Integrity</h5>
+                        <p class="text-muted">We act with transparency, honesty, and accountability in all that we do.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-globe-americas text-kck-blue" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Cultural Pride</h5>
+                        <p class="text-muted">We celebrate and preserve the rich cultural heritage of our community.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill text-kck-red" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Inclusion</h5>
+                        <p class="text-muted">Everyone is welcome. We value the voices, backgrounds, and experiences of all.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-lightbulb-fill text-kck-blue" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Innovation</h5>
+                        <p class="text-muted">We embrace new tools and ideas to improve the services we deliver.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-hand-thumbs-up-fill text-kck-red" style="font-size:2rem;"></i>
+                        <h5 class="mt-3">Excellence</h5>
+                        <p class="text-muted">We set high standards for our work and continually seek to improve.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container text-center">
+        <h3>Partner with us in our mission</h3>
+        <p class="lead">Volunteer, attend an event, or join as a member</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">Get Involved</a>
+    </div>
+</section>
+{% endblock %}

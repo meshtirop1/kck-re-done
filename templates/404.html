@@ -1,0 +1,9 @@
+{% extends 'errors/_base.html' %}
+{% block title %}Page Not Found — {{ SITE_NAME }}{% endblock %}
+{% block err_kicker %}Page not found{% endblock %}
+{% block err_code %}404{% endblock %}
+{% block err_title %}We couldn't find that page{% endblock %}
+{% block err_message %}
+The link may be broken, outdated, or the page has moved. Don't worry — let's get you back on track.
+{% endblock %}
+{% block err_icon %}bi-compass{% endblock %}

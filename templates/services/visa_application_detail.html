@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Application #{{ application.pk }} - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Visa Application #{{ application.pk }}</h1>
+        <p class="lead">{{ application.visa_type.name }} - <span class="badge badge-status-{{ application.status }}">{{ application.get_status_display }}</span></p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white"><h5 class="mb-0">Personal Information</h5></div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Full Name</dt><dd class="col-sm-8">{{ application.full_name }}</dd>
+                            <dt class="col-sm-4">Date of Birth</dt><dd class="col-sm-8">{{ application.date_of_birth }}</dd>
+                            <dt class="col-sm-4">Nationality</dt><dd class="col-sm-8">{{ application.nationality }}</dd>
+                            <dt class="col-sm-4">Passport Number</dt><dd class="col-sm-8">{{ application.passport_number }}</dd>
+                            <dt class="col-sm-4">Phone</dt><dd class="col-sm-8">{{ application.phone }}</dd>
+                            <dt class="col-sm-4">Address</dt><dd class="col-sm-8">{{ application.address|linebreaksbr }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white"><h5 class="mb-0">Trip Details</h5></div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Purpose</dt><dd class="col-sm-8">{{ application.purpose_of_visit|linebreaksbr }}</dd>
+                            <dt class="col-sm-4">Intended Arrival</dt><dd class="col-sm-8">{{ application.intended_arrival }}</dd>
+                            <dt class="col-sm-4">Intended Departure</dt><dd class="col-sm-8">{{ application.intended_departure }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                {% if application.admin_notes %}
+                <div class="alert alert-warning">
+                    <h6><i class="bi bi-chat-left-text"></i> Admin Notes</h6>
+                    <p class="mb-0">{{ application.admin_notes|linebreaksbr }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h6>Application Status</h6>
+                        <p><span class="badge badge-status-{{ application.status }} fs-6">{{ application.get_status_display }}</span></p>
+                        <hr>
+                        <p class="small mb-1"><strong>Submitted:</strong><br>{{ application.submitted_at|date:"F j, Y, g:i a" }}</p>
+                        {% if application.reviewed_at %}
+                        <p class="small mb-1"><strong>Reviewed:</strong><br>{{ application.reviewed_at|date:"F j, Y, g:i a" }}</p>
+                        {% endif %}
+                        {% if application.supporting_document %}
+                        <hr>
+                        <a href="{{ application.supporting_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100"><i class="bi bi-file-earmark-pdf"></i> View Document</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-outline-secondary w-100 mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

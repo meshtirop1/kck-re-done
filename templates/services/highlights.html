@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Service Highlights - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Service Highlights</h1>
+        <p class="lead">Discover what makes our community support and embassy-liaison services trusted and efficient.</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h5>Secure Processing</h5>
+                    <p class="text-muted">Every application is handled with strict confidentiality and protected through secure submission channels.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-lightning-charge"></i></div>
+                    <h5>Fast Turnaround</h5>
+                    <p class="text-muted">Optimized workflows ensure visa and passport services are processed within published timelines.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 p-4 text-center">
+                    <div class="display-4 text-kck-blue mb-3"><i class="bi bi-people"></i></div>
+                    <h5>Dedicated Support</h5>
+                    <p class="text-muted">Our experienced staff provides personalized guidance throughout your service journey.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="container">
+        <h2 class="text-center text-kck-blue mb-4">By The Numbers</h2>
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <h2 class="display-4 text-kck-red fw-bold">10k+</h2>
+                <p class="text-muted">Applications Processed</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-4 text-kck-red fw-bold">98%</h2>
+                <p class="text-muted">Satisfaction Rate</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-4 text-kck-red fw-bold">24/7</h2>
+                <p class="text-muted">Online Portal Access</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2 class="display-4 text-kck-red fw-bold">15+</h2>
+                <p class="text-muted">Years of Service</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Experience Our Services</h2>
+        <p class="lead">Start your visa or passport application today</p>
+        <a href="{% url 'services:visa_apply' %}" class="btn btn-light btn-lg">Get Started</a>
+    </div>
+</section>
+{% endblock %}

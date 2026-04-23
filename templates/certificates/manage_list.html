@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Certificates - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="fw-bold" style="color: #0B3D91;"><i class="bi bi-award"></i> Manage Certificates</h1>
+                <p class="text-muted mb-0">Issue and manage official KCK certificates.</p>
+            </div>
+            <a href="{% url 'certificates:create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Certificate
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Number</th>
+                                <th>Recipient</th>
+                                <th>Type</th>
+                                <th>Issued</th>
+                                <th>Issued By</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cert in certificates %}
+                            <tr>
+                                <td><code class="small">{{ cert.cert_number }}</code></td>
+                                <td><strong>{{ cert.recipient_name }}</strong></td>
+                                <td><span class="badge bg-light text-dark">{{ cert.get_cert_type_display }}</span></td>
+                                <td>{{ cert.issued_date|date:"M j, Y" }}</td>
+                                <td>
+                                    {% if cert.issued_by %}
+                                        {{ cert.issued_by.user.get_full_name }}
+                                    {% else %}
+                                        <span class="text-muted">{{ cert.issued_by_name|default:"-" }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if cert.status == 'published' %}
+                                        <span class="badge bg-success">Published</span>
+                                    {% elif cert.status == 'draft' %}
+                                        <span class="badge bg-secondary">Draft</span>
+                                    {% elif cert.status == 'generating' %}
+                                        <span class="badge bg-info">Generating</span>
+                                    {% elif cert.status == 'revoked' %}
+                                        <span class="badge bg-warning text-dark">Revoked</span>
+                                    {% elif cert.status == 'failed' %}
+                                        <span class="badge bg-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{% url 'certificates:manage_detail' cert.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mt-2 mb-0">No certificates have been created yet.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

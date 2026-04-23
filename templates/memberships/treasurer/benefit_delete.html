@@ -1,0 +1,12 @@
+{% extends 'memberships/treasurer/_base.html' %}
+{% block dash_content %}
+<div class="dash-card p-4" style="max-width: 520px;">
+    <h4 class="mb-3">Delete "{{ benefit.title }}"?</h4>
+    <p>This will permanently remove the benefit from the public membership page.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+        <a href="{% url 'memberships:treasurer_benefits' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
