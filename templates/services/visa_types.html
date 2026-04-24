@@ -37,7 +37,13 @@
             {% endfor %}
         </div>
         <div class="text-center mt-5">
-            <a href="{% url 'services:visa_apply' %}" class="btn btn-danger btn-lg">Apply for Visa <i class="bi bi-arrow-right"></i></a>
+            <p class="text-muted mb-3">KCK doesn't process visa applications — we help you prepare. The application itself is made at the Embassy of Kenya in Seoul.</p>
+            <a href="{% url 'embassy_liaison:info' %}" class="btn btn-primary btn-lg"><i class="bi bi-people"></i> Get help via KCK Liaison</a>
+            {% if site_settings.embassy_official_url %}
+            <a href="{{ site_settings.embassy_official_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-lg ms-2">
+                <i class="bi bi-building"></i> Embassy website <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+            {% endif %}
         </div>
     </div>
 </section>

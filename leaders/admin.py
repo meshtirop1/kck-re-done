@@ -1,5 +1,21 @@
 from django.contrib import admin
 from .models import Leader, LeaderPermission
+from .audit_models import PermissionAuditLog
+
+
+@admin.register(PermissionAuditLog)
+class PermissionAuditLogAdmin(admin.ModelAdmin):
+    list_display = ('created_at', 'actor', 'leader', 'flag', 'old_value', 'new_value', 'summary')
+    list_filter = ('flag', 'new_value')
+    search_fields = ('actor__username', 'leader__user__username', 'summary')
+    readonly_fields = [f.name for f in PermissionAuditLog._meta.fields]
+    date_hierarchy = 'created_at'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class LeaderPermissionInline(admin.StackedInline):

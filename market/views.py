@@ -12,18 +12,8 @@ from .forms import SellerApplicationForm, ProductForm, SellerReviewForm
 
 
 def _is_leader(user):
-    if not user.is_authenticated:
-        return False
-    if user.is_superuser or getattr(user, 'is_admin', False) or user.is_staff:
-        return True
-    try:
-        if not user.leader_profile.is_active:
-            return False
-        return (user.leader_profile.permissions.can_manage_users
-                or user.leader_profile.permissions.can_verify_users
-                or user.leader_profile.role in ('president', 'vice_president', 'secretary'))
-    except Exception:
-        return False
+    from leaders.permissions import user_has_perm
+    return user_has_perm(user, 'can_review_market_sellers')
 
 
 def market_home(request):

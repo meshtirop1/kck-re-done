@@ -1,19 +1,22 @@
 {% extends 'portal/portal_base.html' %}
+{% load perms %}
 {% block title %}Admin Portal — {{ SITE_NAME }}{% endblock %}
 {% block portal_content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold mb-1">Admin Portal</h2>
-        <p class="text-muted mb-0">Welcome back, {{ user.first_name|default:user.username }}. Manage all site content from here.</p>
+        <p class="text-muted mb-0">Welcome back, {{ user.first_name|default:user.username }}. Manage what your role allows.</p>
     </div>
     <div class="d-none d-md-flex gap-2">
-        <a href="{% url 'portal:list' 'visa-types' %}?new=1" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> Add Visa Type</a>
-        <a href="{% url 'portal:list' 'events' %}" class="btn btn-danger"><i class="bi bi-calendar-plus"></i> New Event</a>
+        {% if user|has_perm:"can_manage_content" %}<a href="{% url 'portal:list' 'visa-types' %}?new=1" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> Add Visa Type</a>{% endif %}
+        {% if user|has_perm:"can_manage_events" %}<a href="{% url 'portal:list' 'events' %}" class="btn btn-danger"><i class="bi bi-calendar-plus"></i> New Event</a>{% endif %}
     </div>
 </div>
 
-{# Stats grid #}
+{# Content stats — only for content managers #}
+{% if user|has_perm:"can_manage_content" or user|has_perm:"can_manage_events" %}
 <div class="row g-3 mb-4">
+    {% if user|has_perm:"can_manage_content" %}
     <div class="col-md-3 col-sm-6">
         <a href="{% url 'portal:list' 'visa-types' %}" class="portal-stat portal-card p-3 d-block">
             <div class="d-flex justify-content-between align-items-center">
@@ -30,6 +33,8 @@
             </div>
         </a>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_manage_events" %}
     <div class="col-md-3 col-sm-6">
         <a href="{% url 'portal:list' 'events' %}" class="portal-stat portal-card p-3 d-block">
             <div class="d-flex justify-content-between align-items-center">
@@ -38,19 +43,13 @@
             </div>
         </a>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_manage_content" %}
     <div class="col-md-3 col-sm-6">
         <a href="{% url 'portal:list' 'faqs' %}" class="portal-stat portal-card p-3 d-block">
             <div class="d-flex justify-content-between align-items-center">
                 <div><div class="stat-number">{{ stats.faqs }}</div><div class="stat-label">FAQs</div></div>
                 <div class="stat-icon">❓</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3 col-sm-6">
-        <a href="{% url 'portal:list' 'announcements' %}" class="portal-stat portal-card p-3 d-block">
-            <div class="d-flex justify-content-between align-items-center">
-                <div><div class="stat-number">{{ stats.announcements }}</div><div class="stat-label">Announcements</div></div>
-                <div class="stat-icon">📢</div>
             </div>
         </a>
     </div>
@@ -63,14 +62,6 @@
         </a>
     </div>
     <div class="col-md-3 col-sm-6">
-        <a href="{% url 'portal:list' 'leaders' %}" class="portal-stat portal-card p-3 d-block">
-            <div class="d-flex justify-content-between align-items-center">
-                <div><div class="stat-number">{{ stats.leaders }}</div><div class="stat-label">Leaders</div></div>
-                <div class="stat-icon">👥</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3 col-sm-6">
         <a href="{% url 'portal:list' 'testimonials' %}" class="portal-stat portal-card p-3 d-block">
             <div class="d-flex justify-content-between align-items-center">
                 <div><div class="stat-number">{{ stats.testimonials }}</div><div class="stat-label">Testimonials</div></div>
@@ -78,24 +69,33 @@
             </div>
         </a>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_send_communications" %}
     <div class="col-md-3 col-sm-6">
-        <a href="{% url 'market:leader_queue' %}" class="portal-stat portal-card p-3 d-block">
+        <a href="{% url 'portal:list' 'announcements' %}" class="portal-stat portal-card p-3 d-block">
             <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-number">
-                        {{ stats.market_sellers_pending }}
-                        {% if stats.market_sellers_pending %}<span class="badge bg-danger" style="font-size:0.5em; vertical-align:middle;">NEW</span>{% endif %}
-                    </div>
-                    <div class="stat-label">Market Sellers (pending)</div>
-                </div>
-                <div class="stat-icon">🛒</div>
+                <div><div class="stat-number">{{ stats.announcements }}</div><div class="stat-label">Announcements</div></div>
+                <div class="stat-icon">📢</div>
             </div>
         </a>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_manage_leaders" %}
+    <div class="col-md-3 col-sm-6">
+        <a href="{% url 'portal:list' 'leaders' %}" class="portal-stat portal-card p-3 d-block">
+            <div class="d-flex justify-content-between align-items-center">
+                <div><div class="stat-number">{{ stats.leaders }}</div><div class="stat-label">Leaders</div></div>
+                <div class="stat-icon">👥</div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
 </div>
+{% endif %}
 
-{# Workflow counters #}
+{# Workflow counters — each gated by its own permission #}
 <div class="row g-3 mb-4">
+    {% if user|has_perm:"can_review_embassy_requests" %}
     <div class="col-md-4">
         <div class="portal-card p-3 border-start border-4 border-warning">
             <div class="d-flex justify-content-between">
@@ -104,6 +104,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if user.is_superuser or user.is_admin %}
     <div class="col-md-4">
         <div class="portal-card p-3 border-start border-4 border-info">
             <div class="d-flex justify-content-between">
@@ -112,6 +114,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_issue_certificates" %}
     <div class="col-md-4">
         <div class="portal-card p-3 border-start border-4 border-success">
             <div class="d-flex justify-content-between">
@@ -120,6 +124,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_review_market_sellers" %}
     <div class="col-md-4">
         <div class="portal-card p-3 border-start border-4 {% if stats.market_sellers_pending %}border-danger{% else %}border-warning{% endif %}">
             <div class="d-flex justify-content-between">
@@ -127,9 +133,7 @@
                     <div class="stat-number">{{ stats.market_sellers_pending }}</div>
                     <div class="stat-label">
                         Pending Market Sellers
-                        {% if stats.market_sellers_pending %}
-                            <span class="badge bg-danger ms-1">Review now</span>
-                        {% endif %}
+                        {% if stats.market_sellers_pending %}<span class="badge bg-danger ms-1">Review now</span>{% endif %}
                     </div>
                 </div>
                 <a href="{% url 'market:leader_queue' %}" class="btn btn-sm btn-outline-primary align-self-center">Review</a>
@@ -152,6 +156,17 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if user|has_perm:"can_manage_memberships" %}
+    <div class="col-md-4">
+        <div class="portal-card p-3 border-start border-4 border-success">
+            <div class="d-flex justify-content-between">
+                <div><div class="stat-number"><i class="bi bi-cash-stack"></i></div><div class="stat-label">Membership Treasury</div></div>
+                <a href="{% url 'memberships:treasurer_dashboard' %}" class="btn btn-sm btn-outline-primary align-self-center">Open</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {# Recent activity #}

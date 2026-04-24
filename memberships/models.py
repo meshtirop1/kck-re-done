@@ -69,8 +69,9 @@ class Membership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='memberships')
     tier = models.ForeignKey(MembershipTier, on_delete=models.PROTECT, related_name='memberships')
 
-    member_number = models.CharField(max_length=30, blank=True, null=True, unique=True,
-        help_text='Assigned on first activation. Persistent across renewals.')
+    member_number = models.CharField(max_length=30, blank=True, null=True, db_index=True,
+        help_text='Assigned on first activation. Persistent across renewals — '
+                  'the same number is reused for every subsequent membership row of the same user.')
     reference_code = models.CharField(max_length=30, unique=True, default=_gen_reference_code,
         help_text='Unique code the member uses in their bank transfer description.')
 

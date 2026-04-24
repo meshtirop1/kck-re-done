@@ -63,9 +63,10 @@
 
 <section class="cta-section">
     <div class="container">
-        <h2>Experience Our Services</h2>
-        <p class="lead">Start your visa or passport application today</p>
-        <a href="{% url 'services:visa_apply' %}" class="btn btn-light btn-lg">Get Started</a>
+        <h2>Get prepared the right way</h2>
+        <p class="lead">Browse the document checklists for each visa type — KCK can help you prepare before you visit the embassy.</p>
+        <a href="{% url 'services:visa_types' %}" class="btn btn-light btn-lg me-2">Browse visa info</a>
+        <a href="{% url 'embassy_liaison:info' %}" class="btn btn-outline-light btn-lg">KCK Liaison support</a>
     </div>
 </section>
 {% endblock %}

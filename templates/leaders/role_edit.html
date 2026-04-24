@@ -1,0 +1,60 @@
+{% extends 'portal/portal_base.html' %}
+{% block title %}Edit Permissions — {{ leader.user.get_full_name|default:leader.user.username }}{% endblock %}
+
+{% block portal_content %}
+<div class="dash-header">
+    <div>
+        <nav class="breadcrumb mb-1">
+            <a href="{% url 'leaders:roles_overview' %}">Roles &amp; Permissions</a>
+            &nbsp;›&nbsp;
+            <span>{{ leader.user.get_full_name|default:leader.user.username }}</span>
+        </nav>
+        <h2>{{ leader.user.get_full_name|default:leader.user.username }}</h2>
+        <p class="dash-subtitle">{{ leader.get_role_display }} · {{ leader.user.email }}</p>
+    </div>
+    <form method="post" action="{% url 'leaders:role_reset_defaults' leader.pk %}"
+          onsubmit="return confirm('Reset all permissions to the defaults for {{ leader.get_role_display }}?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset to role defaults
+        </button>
+    </form>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {% for group, items in catalog_groups.items %}
+    <div class="dash-card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">{{ group }}</h6>
+            <small class="text-muted">{{ items|length }} permission{{ items|length|pluralize }}</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for p in items %}
+            <li class="list-group-item">
+                <div class="form-check d-flex align-items-start gap-3 mb-0">
+                    <input type="checkbox" class="form-check-input mt-1"
+                           id="id_{{ p.flag }}" name="{{ p.flag }}"
+                           {% if p.is_on %}checked{% endif %}>
+                    <label class="form-check-label flex-grow-1" for="id_{{ p.flag }}">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <strong>{{ p.label }}</strong>
+                            {% if p.default_on %}
+                                <span class="badge bg-light text-muted small" title="On by default for {{ leader.get_role_display }}">role default</span>
+                            {% endif %}
+                        </div>
+                        <div class="small text-muted">{{ p.desc }} <code class="ms-1">{{ p.flag }}</code></div>
+                    </label>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-save"></i> Save permissions</button>
+        <a href="{% url 'leaders:roles_overview' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    </div>
+</form>
+{% endblock %}

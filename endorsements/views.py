@@ -9,17 +9,8 @@ from .services import issue_endorsement
 
 
 def _can_endorse(user):
-    if not user.is_authenticated:
-        return False
-    if user.is_superuser or getattr(user, 'is_admin', False) or user.is_staff:
-        return True
-    try:
-        if not user.leader_profile.is_active:
-            return False
-        return (user.leader_profile.permissions.can_send_communications
-                or user.leader_profile.role in ('president', 'secretary', 'vice_president'))
-    except Exception:
-        return False
+    from leaders.permissions import user_has_perm
+    return user_has_perm(user, 'can_review_endorsements')
 
 
 def verify_home(request):

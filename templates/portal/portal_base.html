@@ -1,5 +1,6 @@
 {% extends 'dashboards/_base.html' %}
 {% load static %}
+{% load perms %}
 
 {% block sidebar_role %}Admin Portal{% endblock %}
 
@@ -8,34 +9,68 @@
     <span class="nav-icon"><i class="bi bi-speedometer2"></i></span> Dashboard
 </a>
 
+{% if user|has_perm:"can_manage_content" or user|has_perm:"can_manage_events" %}
 <h6>Content</h6>
+{% if user|has_perm:"can_manage_content" %}
 <a href="{% url 'portal:list' 'visa-types' %}" class="{% if 'visa-types' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-passport"></i></span> Visa Types</a>
 <a href="{% url 'portal:list' 'service-guides' %}" class="{% if 'service-guides' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-clipboard-data"></i></span> Service Guides</a>
+{% endif %}
+{% if user|has_perm:"can_manage_events" %}
 <a href="{% url 'portal:list' 'events' %}" class="{% if '/events' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-calendar-event"></i></span> Events</a>
+{% endif %}
+{% if user|has_perm:"can_manage_content" %}
 <a href="{% url 'portal:list' 'faqs' %}" class="{% if 'faqs' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-question-circle"></i></span> FAQs</a>
 <a href="{% url 'portal:list' 'news' %}" class="{% if '/news' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-newspaper"></i></span> News</a>
 <a href="{% url 'portal:list' 'announcements' %}" class="{% if '/announcements' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-megaphone"></i></span> Announcements</a>
 <a href="{% url 'portal:list' 'site-banners' %}" class="{% if 'site-banners' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-bell"></i></span> Site Banners</a>
 <a href="{% url 'portal:list' 'testimonials' %}" class="{% if 'testimonials' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-chat-quote"></i></span> Testimonials</a>
 <a href="{% url 'portal:list' 'pages' %}" class="{% if '/pages' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-file-earmark-text"></i></span> Content Pages</a>
+{% endif %}
+{% endif %}
 
+{% if user|has_perm:"can_manage_users" or user|has_perm:"can_manage_leaders" %}
 <h6>People</h6>
-<a href="{% url 'portal:list' 'leaders' %}" class="{% if '/leaders' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-people-fill"></i></span> Leaders</a>
+{% if user|has_perm:"can_manage_leaders" %}
+<a href="{% url 'portal:list' 'leaders' %}" class="{% if '/portal/leaders' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-people-fill"></i></span> Leaders</a>
+<a href="{% url 'leaders:roles_overview' %}" class="{% if '/leaders/manage/roles' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-shield-lock-fill"></i></span> Roles &amp; Permissions</a>
+{% endif %}
+{% endif %}
 
+{% if user|has_any_perm:"can_review_embassy_requests,can_review_endorsements,can_issue_certificates,can_send_communications,can_review_market_sellers,can_manage_memberships,can_view_audit_log" %}
 <h6>Workflows</h6>
+{% if user|has_perm:"can_review_embassy_requests" %}
 <a href="{% url 'embassy_liaison:officer_request_list' %}"><span class="nav-icon"><i class="bi bi-passport-fill"></i></span> Embassy Requests</a>
+{% endif %}
+{% if user|has_perm:"can_review_endorsements" %}
 <a href="{% url 'endorsements:manage_list' %}" class="{% if '/endorsements' in request.path and 'manage' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-pen-fill"></i></span> Endorsements</a>
+{% endif %}
+{% if user|has_perm:"can_issue_certificates" %}
 <a href="{% url 'certificates:manage_list' %}"><span class="nav-icon"><i class="bi bi-award-fill"></i></span> Certificates</a>
+{% endif %}
+{% if user|has_perm:"can_send_communications" %}
 <a href="{% url 'communications:manage_list' %}"><span class="nav-icon"><i class="bi bi-envelope-fill"></i></span> Communications</a>
+{% endif %}
+{% if user|has_perm:"can_review_market_sellers" %}
 <a href="{% url 'market:leader_queue' %}" class="{% if '/market/review' in request.path or '/market/sellers' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-shop"></i></span> Market Sellers</a>
+{% endif %}
+{% if user|has_perm:"can_manage_memberships" %}
 <a href="{% url 'memberships:treasurer_dashboard' %}" class="{% if '/membership/treasurer' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-cash-stack"></i></span> Memberships (Treasurer)</a>
+{% endif %}
+{% if user|has_perm:"can_view_audit_log" %}
 <a href="{% url 'memberships:oversight_dashboard' %}" class="{% if '/membership/oversight' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-eye-fill"></i></span> Oversight (Read-only)</a>
+{% endif %}
+{% endif %}
 
+{% if user|has_perm:"can_manage_settings" or user.is_superuser or user.is_admin %}
 <h6>System</h6>
+{% if user|has_perm:"can_manage_settings" %}
 <a href="{% url 'portal:site_settings' %}" class="{% if 'site-settings' in request.path %}active{% endif %}"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span> Site Settings</a>
+{% endif %}
 {% if user.is_superuser or user.is_admin %}
 <a href="/django-admin/" target="_blank"><span class="nav-icon"><i class="bi bi-tools"></i></span> Django Admin</a>
 {% endif %}
+{% endif %}
+
 <a href="{% url 'core:home' %}"><span class="nav-icon"><i class="bi bi-arrow-left"></i></span> Back to Site</a>
 {% endblock %}
 

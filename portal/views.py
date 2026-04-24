@@ -22,24 +22,64 @@ from market.models import SellerProfile, Product, ProductCategory
 
 
 def _is_portal_staff(user):
+    """Anyone with at least one permission flag (or superuser/admin) can see the portal."""
     if not user.is_authenticated:
         return False
-    if user.is_superuser or getattr(user, 'is_admin', False) or user.is_staff:
+    if user.is_superuser or getattr(user, 'is_admin', False):
         return True
-    try:
-        return user.leader_profile.is_active
-    except Exception:
-        return False
+    from leaders.permissions import user_perm_set
+    return bool(user_perm_set(user))
+
+
+def _portal_staff_required(view):
+    """Decorator: login required + must be portal-eligible. Returns 403 (not redirect-loop) for blocked authenticated users."""
+    from functools import wraps
+    from django.core.exceptions import PermissionDenied
+
+    @wraps(view)
+    @login_required
+    def wrapped(request, *args, **kwargs):
+        if not _is_portal_staff(request.user):
+            raise PermissionDenied('You do not have any portal permissions. Contact the President if you need access.')
+        return view(request, *args, **kwargs)
+    return wrapped
 
 
 class PortalStaffMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = '/accounts/login/'
+    raise_exception = True  # 403 instead of redirect loop
     def test_func(self):
         return _is_portal_staff(self.request.user)
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+# Map portal CRUD keys to the permission flag that gates them.
+# Anything not listed is gated by the catch-all rule (must hold ANY permission).
+PORTAL_KEY_PERMS = {
+    'visa-types': 'can_manage_content',
+    'service-guides': 'can_manage_content',
+    'faqs': 'can_manage_content',
+    'news': 'can_manage_content',
+    'site-banners': 'can_manage_content',
+    'testimonials': 'can_manage_content',
+    'pages': 'can_manage_content',
+    'discover-attractions': 'can_manage_content',
+    'travel-essentials': 'can_manage_content',
+    'announcements': 'can_send_communications',
+    'events': 'can_manage_events',
+    'leaders': 'can_manage_leaders',
+}
+
+
+def _require_portal_perm(request, key):
+    """Raise 403 if the user lacks the right permission for a portal CRUD key."""
+    from leaders.permissions import user_has_perm
+    from django.core.exceptions import PermissionDenied
+    flag = PORTAL_KEY_PERMS.get(key)
+    if flag and not user_has_perm(request.user, flag):
+        raise PermissionDenied(f'You need the "{flag}" permission to manage {key.replace("-", " ")}.')
+
+
+@_portal_staff_required
 def dashboard(request):
     stats = {
         'visa_types': VisaType.objects.count(),
@@ -187,9 +227,9 @@ def _render_field_value(obj, field_name):
     return s[:80] + '...' if len(s) > 80 else s
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+@_portal_staff_required
 def generic_list(request, key):
+    _require_portal_perm(request, key)
     cfg = _get_config(key)
     Model = cfg['model']
     qs = Model.objects.all()
@@ -215,9 +255,9 @@ def generic_list(request, key):
     })
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+@_portal_staff_required
 def generic_create(request, key):
+    _require_portal_perm(request, key)
     cfg = _get_config(key)
     Model = cfg['model']
     FormClass = _form_class_for(Model, cfg['fields'])
@@ -236,9 +276,9 @@ def generic_create(request, key):
     })
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+@_portal_staff_required
 def generic_edit(request, key, pk):
+    _require_portal_perm(request, key)
     cfg = _get_config(key)
     Model = cfg['model']
     obj = get_object_or_404(Model, pk=pk)
@@ -258,9 +298,9 @@ def generic_edit(request, key, pk):
     })
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+@_portal_staff_required
 def generic_delete(request, key, pk):
+    _require_portal_perm(request, key)
     cfg = _get_config(key)
     Model = cfg['model']
     obj = get_object_or_404(Model, pk=pk)
@@ -276,9 +316,12 @@ def generic_delete(request, key, pk):
     })
 
 
-@login_required
-@user_passes_test(_is_portal_staff)
+@_portal_staff_required
 def site_settings(request):
+    from leaders.permissions import user_has_perm
+    from django.core.exceptions import PermissionDenied
+    if not user_has_perm(request.user, 'can_manage_settings'):
+        raise PermissionDenied('You need the "can_manage_settings" permission.')
     from django import forms as djforms
     obj = SiteSettings.load()
 

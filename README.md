@@ -125,3 +125,91 @@ Preserves the original KCK branding:
 - Accent red: `#C8102E`
 - Gold: `#FFD700`
 - Font: Figtree via Google Fonts
+
+
+## 🐳 Running with Docker
+
+The project ships with a production-ready Docker setup (multi-stage build,
+non-root user, WhiteNoise for static files, gunicorn for WSGI, optional
+Postgres via a compose profile).
+
+### Quick start
+
+```bash
+cp .env.example .env       # then edit .env with your secrets
+docker compose up --build  # first time: builds the image
+docker compose up -d       # subsequent runs (detached)
+```
+
+The site is available at **http://localhost:8000/**.
+Sports is at **http://localhost:8000/sports/**.
+
+### Common commands
+
+```bash
+# Follow logs
+docker compose logs -f web
+
+# Create a superuser inside the container
+docker compose exec web python manage.py createsuperuser
+
+# Run the daily membership cron
+docker compose exec web python manage.py membership_daily
+
+# Seed demo data
+docker compose exec web python manage.py seed_data
+
+# Reset everything (wipes DB + media — be careful!)
+docker compose down -v
+```
+
+### Switching to Postgres
+
+1. Uncomment `psycopg[binary]>=3.2` in `requirements.txt`.
+2. Set `POSTGRES_*` variables in `.env`.
+3. Start with the `postgres` profile:
+   ```bash
+   docker compose --profile postgres up --build
+   ```
+4. Migrations run automatically on container start.
+
+### First-boot superuser
+
+Set these three env vars in `.env` and the entrypoint will create / update
+the superuser on every container start:
+
+```env
+DJANGO_SUPERUSER_USERNAME=admin
+[email protected]
+DJANGO_SUPERUSER_PASSWORD=strong-password-here
+```
+
+Leave them blank to skip the auto-provisioning.
+
+### Production hardening (when serving HTTPS)
+
+Flip these in `.env` (all default to `False` for safe local dev):
+
+```env
+DEBUG=False
+DJANGO_ALLOWED_HOSTS=kenyakorea.com,www.kenyakorea.com,sports.kenyakorea.com
+DJANGO_SECURE_SSL_REDIRECT=True
+DJANGO_SESSION_COOKIE_SECURE=True
+DJANGO_CSRF_COOKIE_SECURE=True
+DJANGO_BEHIND_PROXY=True              # if Nginx/Cloudflare terminates TLS
+DJANGO_SECURE_HSTS_SECONDS=31536000   # enable only AFTER HTTPS is confirmed
+DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+DJANGO_SECURE_HSTS_PRELOAD=True
+```
+
+### Persistent data
+
+Two host-bound volumes keep your data across rebuilds:
+
+| Host path     | Container path      | What it holds |
+|---------------|---------------------|---------------|
+| `./media`     | `/app/media`        | User uploads (logos, photos, proofs) |
+| `./data`      | `/app/data`         | SQLite database (`db.sqlite3`) |
+
+If you're on Postgres, the DB instead lives in the `postgres_data` named
+volume, managed by Docker.

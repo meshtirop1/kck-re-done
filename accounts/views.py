@@ -28,6 +28,8 @@ class CustomLoginView(LoginView):
 @login_required
 def dashboard(request):
     context = {
+        # KCK no longer accepts visa/passport applications — kept for backward
+        # compatibility (any historical rows still render counts/badges if used)
         'visa_applications': request.user.visa_applications.all()[:10],
         'passport_applications': request.user.passport_applications.all()[:10],
         'event_registrations': request.user.event_registrations.select_related('event').all()[:10],

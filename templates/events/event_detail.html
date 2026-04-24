@@ -32,41 +32,114 @@
                         <div class="mb-3"><i class="bi bi-calendar text-kck-blue"></i> <strong>Date:</strong><br>{{ event.date|date:"l, F j, Y" }}</div>
                         <div class="mb-3"><i class="bi bi-clock text-kck-blue"></i> <strong>Time:</strong><br>{{ event.date|date:"g:i a" }}{% if event.end_date %} - {{ event.end_date|date:"g:i a" }}{% endif %}</div>
                         <div class="mb-3"><i class="bi bi-geo-alt text-kck-blue"></i> <strong>Location:</strong><br>{{ event.location }}</div>
+                        {% if event.members_only %}
+                        <div class="mb-3">
+                            <span class="badge" style="background: linear-gradient(135deg, var(--kck-gold), #ffa500); color: var(--kck-ink); padding: 0.45rem 0.8rem;">
+                                <i class="bi bi-shield-fill-check"></i> Members-only event
+                            </span>
+                        </div>
+                        {% endif %}
                         {% if event.capacity %}
                         <div class="mb-3">
-                            <i class="bi bi-people text-kck-blue"></i> <strong>Registered:</strong> {{ event.registration_count }} / {{ event.capacity }}
+                            <i class="bi bi-people text-kck-blue"></i> <strong>Confirmed:</strong> {{ event.registration_count }} / {{ event.capacity }}
                             <div class="progress mt-2" style="height:6px;">
-                                <div class="progress-bar bg-kck-red" style="width: {% widthratio event.registration_count event.capacity 100 %}%"></div>
+                                <div class="progress-bar {% if event.is_full %}bg-danger{% elif event.spots_low %}bg-warning{% else %}bg-success{% endif %}" style="width: {% widthratio event.registration_count event.capacity 100 %}%"></div>
                             </div>
+                            {% if event.is_full %}
+                                <div class="small text-danger mt-2 fw-semibold"><i class="bi bi-exclamation-triangle-fill"></i> Event is full</div>
+                                {% if event.waitlist_enabled and event.waitlist_count %}
+                                    <div class="small text-muted">{{ event.waitlist_count }} on the waitlist</div>
+                                {% endif %}
+                            {% elif event.spots_low %}
+                                <div class="small text-warning mt-2 fw-semibold"><i class="bi bi-fire"></i> Only {{ event.spots_available }} spot{{ event.spots_available|pluralize }} left!</div>
+                            {% else %}
+                                <div class="small text-muted mt-2">{{ event.spots_available }} spots available</div>
+                            {% endif %}
                         </div>
                         {% endif %}
                         {% if event.registration_deadline %}
-                        <div class="mb-3"><i class="bi bi-hourglass text-kck-blue"></i> <strong>Deadline:</strong><br>{{ event.registration_deadline|date:"M j, Y" }}</div>
+                        <div class="mb-3">
+                            <i class="bi bi-hourglass {% if event.deadline_passed %}text-danger{% else %}text-kck-blue{% endif %}"></i>
+                            <strong>Deadline:</strong><br>
+                            {{ event.registration_deadline|date:"M j, Y H:i" }}
+                            {% if event.deadline_passed %}
+                                <span class="badge bg-danger ms-1">Closed</span>
+                            {% endif %}
+                        </div>
                         {% endif %}
                     </div>
                 </div>
 
-                {% if not event.is_past %}
-                    {% if user.is_authenticated %}
-                        {% if is_registered %}
-                        <div class="alert alert-success"><i class="bi bi-check-circle"></i> You are registered for this event!</div>
-                        <form method="post" action="{% url 'events:event_cancel' event.slug %}" class="confirm-form" data-confirm="Cancel your registration?">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger w-100">Cancel Registration</button>
-                        </form>
-                        {% else %}
-                        <form method="post" action="{% url 'events:event_register' event.slug %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-lg w-100"><i class="bi bi-check-circle"></i> Register Now</button>
-                        </form>
-                        {% endif %}
-                    {% else %}
+                {% if event.is_past %}
+                    <div class="alert alert-secondary"><i class="bi bi-calendar-x"></i> This event has ended.</div>
+
+                {% elif user.is_authenticated and my_reg and my_reg.status == 'registered' %}
+                    {# Already confirmed — always show, even after deadline #}
+                    <div class="alert alert-success">
+                        <i class="bi bi-patch-check-fill"></i> <strong>You're confirmed!</strong>
+                        {% if my_reg.promoted_at %}<div class="small mt-1">Promoted from waitlist on {{ my_reg.promoted_at|date:"M j, Y" }}.</div>{% endif %}
+                    </div>
+                    <form method="post" action="{% url 'events:event_cancel' event.slug %}" class="confirm-form" data-confirm="Cancel your registration? If the event is full, your seat will be given to the next person on the waitlist.">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger w-100">Cancel my registration</button>
+                    </form>
+
+                {% elif user.is_authenticated and my_reg and my_reg.status == 'waitlisted' %}
+                    {# Still on waitlist — even after deadline; auto-promotion still works if a seat opens #}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-hourglass-split"></i> <strong>You're on the waitlist — position #{{ my_reg.waitlist_position }}</strong>
+                        <div class="small mt-1">
+                            {% if event.deadline_passed %}
+                                Registration is closed, but if a confirmed person cancels you'll still be promoted automatically and emailed.
+                            {% else %}
+                                We'll email you the moment a seat opens up.
+                            {% endif %}
+                            {% if my_reg.is_member %} <span class="text-success fw-semibold">(Member priority active)</span>{% endif %}
+                        </div>
+                    </div>
+                    <form method="post" action="{% url 'events:event_cancel' event.slug %}" class="confirm-form" data-confirm="Leave the waitlist?">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary w-100">Leave waitlist</button>
+                    </form>
+
+                {% elif event.deadline_passed %}
+                    {# Anyone else seeing the page after the deadline #}
+                    <div class="alert alert-secondary">
+                        <i class="bi bi-clock-history"></i> <strong>Registration closed</strong>
+                        <div class="small mt-1">The deadline was {{ event.registration_deadline|date:"M j, Y" }} at {{ event.registration_deadline|date:"H:i" }}.</div>
+                    </div>
+                    <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-calendar-event"></i> Browse other events
+                    </a>
+
+                {% elif not user.is_authenticated %}
                     <div class="alert alert-info">
                         <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100">Login to Register</a>
                     </div>
-                    {% endif %}
+
+                {% elif event.members_only and not is_member %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-shield-fill-check"></i> This is a <strong>members-only</strong> event.
+                    </div>
+                    <a href="{% url 'memberships:home' %}" class="btn btn-primary w-100"><i class="bi bi-shield-check"></i> Become a KCK member</a>
+
+                {% elif event.is_full and event.waitlist_enabled %}
+                    <div class="alert alert-warning small">
+                        <i class="bi bi-info-circle-fill"></i> The event is full. You can join the waitlist below — KCK members get priority.
+                    </div>
+                    <form method="post" action="{% url 'events:event_register' event.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-lg w-100"><i class="bi bi-hourglass-split"></i> Join the waitlist</button>
+                    </form>
+
+                {% elif event.is_full %}
+                    <div class="alert alert-danger small"><i class="bi bi-x-circle-fill"></i> This event is full and the waitlist is closed.</div>
+
                 {% else %}
-                <div class="alert alert-secondary">This event has ended.</div>
+                    <form method="post" action="{% url 'events:event_register' event.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg w-100"><i class="bi bi-check-circle"></i> Register Now</button>
+                    </form>
                 {% endif %}
             </div>
         </div>

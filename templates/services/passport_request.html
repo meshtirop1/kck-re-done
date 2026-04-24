@@ -84,9 +84,14 @@
 
 <section class="cta-section">
     <div class="container">
-        <h2>Ready to Apply?</h2>
-        <p class="lead">Start your passport application online today</p>
-        <a href="{% url 'services:passport_apply' %}" class="btn btn-light btn-lg">Apply for Passport</a>
+        <h2>Ready to apply?</h2>
+        <p class="lead">Passport applications are processed by the Embassy of Kenya in Seoul. KCK can help you prepare your documents and provide a community endorsement.</p>
+        {% if site_settings.embassy_official_url %}
+        <a href="{{ site_settings.embassy_official_url }}" target="_blank" rel="noopener" class="btn btn-light btn-lg me-2">
+            <i class="bi bi-building"></i> Embassy website <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+        {% endif %}
+        <a href="{% url 'embassy_liaison:info' %}" class="btn btn-outline-light btn-lg">KCK Liaison support</a>
     </div>
 </section>
 {% endblock %}

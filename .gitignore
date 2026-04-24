@@ -1,0 +1,97 @@
+# =========================================================
+# Secrets & env files  — NEVER commit these
+# =========================================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+*.pem
+*.key
+*.cert
+*.crt
+
+# =========================================================
+# Virtualenv & Python artefacts
+# =========================================================
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.tox/
+.pyre/
+pip-log.txt
+pip-delete-this-directory.txt
+.python-version
+
+# =========================================================
+# Django runtime artefacts
+# =========================================================
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+data/
+/logs/
+*.log
+
+# =========================================================
+# IDE / Editor
+# =========================================================
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*.swn
+.claude/
+
+# =========================================================
+# OS cruft
+# =========================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# =========================================================
+# CSS / backup files
+# =========================================================
+*.bak
+*.css.bak
+*.orig
+
+# =========================================================
+# Local test / probe scripts
+# =========================================================
+_probe*.py
+_sports_patch.css
+
+# =========================================================
+# Node modules (if any frontend tooling appears later)
+# =========================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+
+# =========================================================
+# Docker
+# =========================================================
+# Don't commit the local postgres volume or any per-developer compose overrides
+docker-compose.override.yml
+.docker-data/

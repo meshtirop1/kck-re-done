@@ -1,0 +1,60 @@
+# Local / single-server dev+staging compose file.
+#
+# Usage:
+#   cp .env.example .env            # edit your secrets
+#   docker compose up --build       # first run
+#   docker compose up -d            # detached
+#   docker compose logs -f web      # tail logs
+#   docker compose exec web python manage.py createsuperuser
+#
+# The web container runs gunicorn + whitenoise, so no separate nginx is
+# required for a single-server deployment. Add one behind it in production
+# if you expect real traffic volume.
+
+name: kck
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kck:latest
+    container_name: kck-web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Anything not in .env falls through to safe defaults here
+      PORT: "8000"
+      DJANGO_SETTINGS_MODULE: kck_project.settings
+    ports:
+      - "${PUBLIC_PORT:-8000}:8000"
+    volumes:
+      # Persist user-uploaded media across container rebuilds
+      - ./media:/app/media
+      # Persist the SQLite DB file (comment out if using Postgres)
+      - ./data:/app/data
+    depends_on:
+      - db   # harmless when db is disabled; remove if you really don't want Postgres
+
+  # ---- Optional Postgres (recommended for production) ---------------------
+  # Leave commented for SQLite. To switch:
+  #   1. Uncomment this block
+  #   2. Set POSTGRES_* in .env
+  #   3. Uncomment the psycopg line in requirements.txt and rebuild
+  #   4. Update kck_project/settings.py DATABASES to read POSTGRES_* env vars
+  db:
+    image: postgres:16-alpine
+    container_name: kck-db
+    restart: unless-stopped
+    profiles: ["postgres"]   # only starts when `docker compose --profile postgres up`
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-kck}
+      POSTGRES_USER:     ${POSTGRES_USER:-kck}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"   # bind to loopback only
+
+volumes:
+  postgres_data:

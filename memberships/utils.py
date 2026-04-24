@@ -28,32 +28,16 @@ def log_action(*, membership=None, actor=None, action, description='', request=N
 
 
 def is_treasurer(user):
-    """Treasurer = leader with role='treasurer', or anyone with can_manage_memberships."""
-    if not user or not user.is_authenticated:
-        return False
-    if user.is_superuser:
-        return True
-    leader = getattr(user, 'leader_role', None)
-    if not leader:
-        return False
-    if leader.role == 'treasurer':
-        return True
-    perms = getattr(leader, 'permissions', None)
-    if perms and perms.can_manage_memberships:
-        return True
-    return False
+    """Anyone with `can_manage_memberships` permission (defaults to treasurers)."""
+    from leaders.permissions import user_has_perm
+    return user_has_perm(user, 'can_manage_memberships')
 
 
 def is_president_or_secretary(user):
-    """Read-only oversight: president, vice_president, secretary, or superuser."""
-    if not user or not user.is_authenticated:
-        return False
-    if user.is_superuser:
-        return True
-    leader = getattr(user, 'leader_role', None)
-    if not leader:
-        return False
-    return leader.role in ('president', 'vice_president', 'secretary')
+    """Read-only oversight access — anyone with `can_view_audit_log` permission
+    (defaults to president, vice_president, secretary, treasurer)."""
+    from leaders.permissions import user_has_perm
+    return user_has_perm(user, 'can_view_audit_log')
 
 
 def user_active_membership(user):

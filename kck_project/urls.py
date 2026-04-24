@@ -19,6 +19,10 @@ urlpatterns = [
     path('market/', include('market.urls', namespace='market')),
     path('membership/', include('memberships.urls', namespace='memberships')),
     path('portal/', include('portal.urls', namespace='portal')),
+    # KCK Sports mounted at /sports/ so it's reachable at http://localhost:8000/sports/
+    # In production it's also served via sports.kenyakorea.com (the SubdomainURLRoutingMiddleware
+    # swaps to sports_urls.py for sports.* hostnames — both paths resolve the same views).
+    path('sports/', include('sports.urls', namespace='sports')),
     path('', include('core.urls', namespace='core')),
 ]
 
